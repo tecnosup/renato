@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Modern App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-shape shape1"></div>
+    <div class="bg-shape shape2"></div>
+
+    <div class="glass-container">
+        <h1 class="title">Bem-vindo de volta</h1>
+        <p class="subtitle">Faça login para acessar o sistema.</p>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="email" class="input-label">E-mail</label>
+                <input type="email" id="email" class="input-field" placeholder="seu@email.com" required autocomplete="email">
+            </div>
+
+            <div class="input-group">
+                <label for="password" class="input-label">Senha</label>
+                <input type="password" id="password" class="input-field" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+
+            <div id="errorMsg" class="error-msg">E-mail ou senha incorretos. (Use admin@admin.com / 123)</div>
+
+            <button type="submit" class="btn-primary" id="loginBtn">Entrar</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
