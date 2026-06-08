@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sua Jornada - Barbearia Século XXI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .timeline-line {
+            position: absolute;
+            left: 24px;
+            top: 40px;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #3b82f6, #10b981);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-8 md:p-16 flex justify-center items-center">
+
+    <div class="max-w-4xl w-full">
+        <!-- Header -->
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 mb-4">
+                O Futuro da Século XXI
+            </h1>
+            <p class="text-xl text-slate-400 font-light max-w-2xl mx-auto">
+                O que acontece após fecharmos nossa parceria? Veja como vamos transformar a sua barbearia em uma operação padrão internacional.
+            </p>
+        </div>
+
+        <!-- Timeline Container -->
+        <div class="relative relative pt-4 pb-12">
+            <!-- Continuous Line -->
+            <div class="timeline-line hidden md:block"></div>
+
+            <!-- Step 1 -->
+            <div class="relative flex flex-col md:flex-row items-start mb-12 group">
+                <div class="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-slate-900 border-2 border-blue-500 text-blue-400 z-10 shrink-0 group-hover:bg-blue-500 group-hover:text-white transition-all shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                    <i data-lucide="pen-tool"></i>
+                </div>
+                <div class="md:ml-8 glass-panel p-6 rounded-2xl w-full hover:border-blue-500/50 transition-all">
+                    <h3 class="text-2xl font-bold text-white mb-2">1. A Assinatura (Fim do Aluguel)</h3>
+                    <p class="text-slate-300 leading-relaxed">
+                        O aperto de mãos que muda o jogo. A partir deste momento, você para de pagar "aluguel" em sistemas de terceiros e nós começamos a construir o <strong>seu próprio patrimônio digital</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="relative flex flex-col md:flex-row items-start mb-12 group">
+                <div class="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-slate-900 border-2 border-blue-400 text-blue-400 z-10 shrink-0 group-hover:bg-blue-400 group-hover:text-white transition-all shadow-[0_0_15px_rgba(96,165,250,0.5)]">
+                    <i data-lucide="code-2"></i>
+                </div>
+                <div class="md:ml-8 glass-panel p-6 rounded-2xl w-full hover:border-blue-400/50 transition-all">
+                    <h3 class="text-2xl font-bold text-white mb-2">2. Engenharia Premium (20 Dias)</h3>
+                    <p class="text-slate-300 leading-relaxed mb-3">
+                        Nossa equipe foca 100% no desenvolvimento de uma infraestrutura robusta, entregando dois pilares:
+                    </p>
+                    <ul class="list-disc list-inside text-slate-400 space-y-1 ml-2">
+                        <li><strong>Painel Admin Internacional:</strong> Focado em otimizar seu caixa, estoque e fluxo de comandas para maximizar seus lucros.</li>
+                        <li><strong>App do Cliente:</strong> Agendamento ultra-rápido, sem fricção, projetado para lotar sua agenda.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="relative flex flex-col md:flex-row items-start mb-12 group">
+                <div class="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-slate-900 border-2 border-teal-400 text-teal-400 z-10 shrink-0 group-hover:bg-teal-400 group-hover:text-white transition-all shadow-[0_0_15px_rgba(45,212,191,0.5)]">
+                    <i data-lucide="palette"></i>
+                </div>
+                <div class="md:ml-8 glass-panel p-6 rounded-2xl w-full hover:border-teal-400/50 transition-all">
+                    <h3 class="text-2xl font-bold text-white mb-2">3. Exclusividade e Identidade Visual</h3>
+                    <p class="text-slate-300 leading-relaxed">
+                        Assim que a sua nova marca ficar pronta, nós a aplicamos no sistema. Seus clientes não verão "mais um app de barbearia", eles verão o <strong>App Exclusivo da Século XXI</strong>. A percepção de valor da sua marca vai às alturas.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="relative flex flex-col md:flex-row items-start mb-12 group">
+                <div class="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-slate-900 border-2 border-emerald-400 text-emerald-400 z-10 shrink-0 group-hover:bg-emerald-400 group-hover:text-white transition-all shadow-[0_0_15px_rgba(52,211,153,0.5)]">
+                    <i data-lucide="users"></i>
+                </div>
+                <div class="md:ml-8 glass-panel p-6 rounded-2xl w-full hover:border-emerald-400/50 transition-all">
+                    <h3 class="text-2xl font-bold text-white mb-2">4. Treinamento VIP da Equipe</h3>
+                    <p class="text-slate-300 leading-relaxed">
+                        Entregamos as chaves virtuais da sua barbearia. Vamos treinar seus profissionais para usarem o painel no balcão de forma instintiva. O foco aqui é: <strong>menos tempo no computador, mais tempo faturando na cadeira.</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="relative flex flex-col md:flex-row items-start group">
+                <div class="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-slate-900 border-2 border-emerald-500 text-emerald-500 z-10 shrink-0 group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-[0_0_20px_rgba(16,185,129,0.8)]">
+                    <i data-lucide="rocket"></i>
+                </div>
+                <div class="md:ml-8 p-6 rounded-2xl w-full bg-gradient-to-br from-emerald-900/40 to-slate-900 border border-emerald-500/30 hover:border-emerald-500/80 transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-2xl font-bold text-emerald-400">5. O Lançamento (Go-Live)</h3>
+                        <span class="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Novo Padrão</span>
+                    </div>
+                    <p class="text-slate-300 leading-relaxed">
+                        Sua barbearia entra em uma nova era. Seus clientes recebem <strong>lembretes automáticos via WhatsApp</strong> (diminuindo as faltas a zero), a experiência de agendamento fica de cair o queixo, e você ganha um painel que te dá controle absoluto para expandir e abrir suas franquias com total segurança.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

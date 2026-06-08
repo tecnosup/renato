@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano de Migração - Século XXI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Animações de entrada */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Gradientes neutros premium */
+        .text-gradient {
+            background: linear-gradient(to right, #e2e8f0, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .wireframe-box {
+            border: 2px dashed #334155;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 0.75rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-slate-700 selection:text-white">
+
+    <!-- Hero Section -->
+    <header class="relative min-h-[60vh] flex items-center justify-center overflow-hidden border-b border-slate-800">
+        <!-- Glow effects -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-slate-800 rounded-full blur-[100px] opacity-50 z-0"></div>
+        
+        <div class="relative z-10 text-center max-w-4xl px-6">
+            <div class="inline-block px-4 py-1.5 rounded-full border border-slate-700 bg-slate-800/50 text-slate-300 text-sm font-medium mb-6 fade-in-up">
+                Proposta Técnica • TecnoSup
+            </div>
+            <h1 class="text-5xl md:text-6xl font-bold tracking-tight mb-6 text-gradient fade-in-up delay-100">
+                Evolução Digital: Século XXI
+            </h1>
+            <p class="text-xl text-slate-400 mb-10 max-w-2xl mx-auto fade-in-up delay-200">
+                Planejamento de engenharia para uma transição sem atritos e elevação do padrão tecnológico da sua barbearia para o modelo de franquias.
+            </p>
+        </div>
+    </header>
+
+    <!-- O que vamos construir -->
+    <section class="py-24 px-6 relative">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-16 fade-in-up">
+                <h2 class="text-3xl font-bold mb-4">O que vamos entregar</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">Estruturas exclusivas criadas para a sua operação, focadas em velocidade e zero atrito para a sua equipe.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="glass-panel p-8 rounded-2xl fade-in-up delay-100 hover:border-slate-600 transition-colors">
+                    <div class="w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-slate-200">App do Cliente (Wireframe)</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Agendamento ultra-rápido sem download. Como sua Identidade Visual está sendo criada, iniciaremos tudo num padrão <strong>Wireframe (neutro)</strong>. Assim o app fica pronto para inaugurar e apenas "vestimos" com suas cores depois.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-panel p-8 rounded-2xl fade-in-up delay-200 hover:border-slate-600 transition-colors">
+                    <div class="w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-slate-200">Balcão Sob Medida</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Sua equipe não vai sentir o peso da mudança. Vamos replicar o visual exato da Agenda que vocês usam, incluindo Fila de Ordem de Chegada, sistema de Comandas abertas e Fechamento de Caixa.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-panel p-8 rounded-2xl fade-in-up delay-300 hover:border-slate-600 transition-colors">
+                    <div class="w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-slate-200">Pronto para Franquias</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        A arquitetura do banco de dados já nascerá com suporte multi-filiais. Você poderá expandir e abrir novas unidades no futuro gerenciando tudo do mesmo painel central.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cronograma -->
+    <section class="py-24 px-6 bg-slate-900/50 border-t border-slate-800">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16 fade-in-up">
+                <h2 class="text-3xl font-bold mb-4">Cronograma Acelerado (15 Dias)</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">Tudo entregue e testado ANTES da finalização da obra no dia 30/Junho, com tempo de sobra para treinamento da equipe.</p>
+            </div>
+
+            <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-700 before:to-transparent">
+                
+                <!-- Fase 1 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active fade-in-up">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-slate-900 bg-slate-700 text-slate-300 font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow">1</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass-panel p-6 rounded-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-bold text-lg text-slate-200">App e Agenda</h4>
+                            <span class="text-xs font-semibold px-2 py-1 bg-slate-800 rounded text-slate-400">Dias 1 a 4</span>
+                        </div>
+                        <p class="text-sm text-slate-400">Desenvolvimento do App do cliente (estrutura neutra/wireframe) e do Painel de Agenda interno dos barbeiros.</p>
+                    </div>
+                </div>
+
+                <!-- Fase 2 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active fade-in-up delay-100">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-slate-900 bg-slate-700 text-slate-300 font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow">2</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass-panel p-6 rounded-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-bold text-lg text-slate-200">Comandas e Caixa</h4>
+                            <span class="text-xs font-semibold px-2 py-1 bg-slate-800 rounded text-slate-400">Dias 5 a 8</span>
+                        </div>
+                        <p class="text-sm text-slate-400">Finalização do sistema de Comandas (lançamentos extras) e Controle de Caixa Diário.</p>
+                    </div>
+                </div>
+
+                <!-- Fase 3 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active fade-in-up delay-200">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-slate-900 bg-slate-700 text-slate-300 font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow">3</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass-panel p-6 rounded-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-bold text-lg text-slate-200">Fila e Carteira</h4>
+                            <span class="text-xs font-semibold px-2 py-1 bg-slate-800 rounded text-slate-400">Dias 9 a 12</span>
+                        </div>
+                        <p class="text-sm text-slate-400">Painel digital da Fila de Espera (Ordem de Chegada) e a Carteira do Cliente para pacotes e créditos.</p>
+                    </div>
+                </div>
+
+                <!-- Fase 4 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active fade-in-up delay-300">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-slate-900 bg-slate-700 text-slate-300 font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow">4</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass-panel p-6 rounded-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-bold text-lg text-slate-200">Testes Finais</h4>
+                            <span class="text-xs font-semibold px-2 py-1 bg-slate-800 rounded text-slate-400">Dias 13 a 15</span>
+                        </div>
+                        <p class="text-sm text-slate-400">Importação do banco de dados antigo e testes práticos de usabilidade no balcão diretamente com a equipe.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 text-center text-slate-500 text-sm border-t border-slate-800">
+        <p>Proposta desenvolvida por <strong>TecnoSup</strong> para Barbearia Século XXI.</p>
+    </footer>
+
+    <script>
+        // Intersection Observer para animar os elementos no scroll
+        document.addEventListener("DOMContentLoaded", function() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const elements = document.querySelectorAll('.fade-in-up');
+            elements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>
