@@ -43,7 +43,6 @@ function FabMenu({ onAgendar }: { onAgendar: (hora: string) => void }) {
   );
 }
 
-// --- Dados mockados ---
 const AGENDAMENTOS: Record<string, { hora: string; cliente: string; servico: string; status: "agendado" | "bloqueado" | "concluido" }[]> = {
   "2026-06-08": [
     { hora: "09:00", cliente: "João Silva", servico: "Corte + Barba", status: "concluido" },
@@ -99,7 +98,6 @@ export default function AgendaPage() {
     setExpandido(false);
   };
 
-  // Dados do dia selecionado
   const agendDia = AGENDAMENTOS[diaSelecionado] ?? [];
   const agendPorHora: Record<string, typeof agendDia[0]> = {};
   agendDia.forEach((a) => { agendPorHora[a.hora] = a; });
@@ -112,10 +110,8 @@ export default function AgendaPage() {
   const dataSelecionadaObj = new Date(diaSelecionado + "T12:00:00");
   const nomeDia = dataSelecionadaObj.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
 
-  // Semana do dia selecionado
   const diasDaSemana = getDiasSemana(diaSelecionado);
 
-  // Grid do mês
   const primeiroDia = new Date(ano, mes, 1).getDay();
   const diasNoMes = new Date(ano, mes + 1, 0).getDate();
   const celulas = Array(primeiroDia).fill(null).concat(Array.from({ length: diasNoMes }, (_, i) => i + 1));
@@ -158,8 +154,6 @@ export default function AgendaPage() {
 
       {/* Calendário compacto / expansível */}
       <div className="mx-4 mb-4 rounded-2xl overflow-hidden bg-linear-to-br from-slate-800/80 to-slate-900/60">
-
-        {/* Header do card — sempre visível */}
         <div className="flex items-center justify-between px-4 pt-4 pb-3">
           <button onClick={() => navMes(-1)} className="text-slate-400 hover:text-white transition-colors">
             <ChevronLeft className="w-5 h-5" />
@@ -176,14 +170,12 @@ export default function AgendaPage() {
           </button>
         </div>
 
-        {/* Cabeçalho dias semana — sempre visível */}
         <div className="grid grid-cols-7 px-2 mb-1">
           {DIAS_SEMANA_CURTO.map((d, i) => (
             <p key={d} className={`text-center text-[11px] font-medium ${i === 0 ? "text-red-400" : "text-slate-500"}`}>{d}</p>
           ))}
         </div>
 
-        {/* Strip de dias da semana — visível quando recolhido */}
         {!expandido && (
           <div className="grid grid-cols-7 px-2 pb-3 gap-y-1">
             {diasDaSemana.map((d) => {
@@ -208,7 +200,6 @@ export default function AgendaPage() {
           </div>
         )}
 
-        {/* Grid mensal completo — visível quando expandido */}
         {expandido && (
           <div className="px-2 pb-4">
             <div className="grid grid-cols-7 gap-y-1">
@@ -239,8 +230,6 @@ export default function AgendaPage() {
                 );
               })}
             </div>
-
-            {/* Legenda */}
             <div className="flex items-center gap-4 mt-3 pt-3 border-t border-slate-800/60">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
@@ -324,10 +313,8 @@ export default function AgendaPage() {
         </ul>
       </div>
 
-      {/* FAB mobile */}
       <FabMenu onAgendar={(hora) => setModal({ hora })} />
 
-      {/* Modal novo agendamento */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
           <div className="absolute inset-0 bg-black/70" onClick={() => setModal(null)} />
@@ -345,54 +332,36 @@ export default function AgendaPage() {
                 <X className="w-5 h-5" />
               </button>
             </div>
-
             <div className="space-y-3">
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">Nome do cliente</label>
-                <input
-                  type="text"
-                  placeholder="Ex: João Silva"
-                  value={form.cliente}
+                <input type="text" placeholder="Ex: João Silva" value={form.cliente}
                   onChange={(e) => setForm({ ...form, cliente: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
-                />
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors" />
               </div>
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">WhatsApp (opcional)</label>
-                <input
-                  type="tel"
-                  placeholder="11999999999"
-                  value={form.whatsapp}
+                <input type="tel" placeholder="11999999999" value={form.whatsapp}
                   onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
-                />
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors" />
               </div>
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">Serviço</label>
-                <select
-                  value={form.servico}
-                  onChange={(e) => setForm({ ...form, servico: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
-                >
+                <select value={form.servico} onChange={(e) => setForm({ ...form, servico: e.target.value })}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors">
                   {SERVICOS.map((s) => <option key={s}>{s}</option>)}
                 </select>
               </div>
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">Preço (R$)</label>
-                <input
-                  type="number"
-                  value={form.preco}
+                <input type="number" value={form.preco}
                   onChange={(e) => setForm({ ...form, preco: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
-                />
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors" />
               </div>
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">Barbeiro</label>
-                <select
-                  value={form.barbeiro}
-                  onChange={(e) => setForm({ ...form, barbeiro: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
-                >
+                <select value={form.barbeiro} onChange={(e) => setForm({ ...form, barbeiro: e.target.value })}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors">
                   <option>Qualquer disponível</option>
                   <option>Renato</option>
                   <option>Franciele</option>
@@ -400,14 +369,9 @@ export default function AgendaPage() {
                 </select>
               </div>
             </div>
-
             <div className="flex gap-3 pt-1">
-              <button onClick={() => setModal(null)} className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl text-sm font-semibold transition-colors">
-                Cancelar
-              </button>
-              <button onClick={() => setModal(null)} className="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-900 py-3 rounded-xl text-sm font-semibold transition-colors">
-                Confirmar
-              </button>
+              <button onClick={() => setModal(null)} className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl text-sm font-semibold transition-colors">Cancelar</button>
+              <button onClick={() => setModal(null)} className="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-900 py-3 rounded-xl text-sm font-semibold transition-colors">Confirmar</button>
             </div>
           </div>
         </div>

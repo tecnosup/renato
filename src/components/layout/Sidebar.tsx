@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react"; // useState usado em NavLink
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -15,6 +15,7 @@ import {
   Menu,
   Percent,
 } from "lucide-react";
+import { FaCashRegister } from "react-icons/fa";
 
 const navItems = [
   {
@@ -237,8 +238,8 @@ function MobileBottomNav() {
           {/* Comissões */}
           <NavBottomItem href="/financeiro/comissoes" icon={Percent} label="Comissões" pathname={pathname} />
 
-          {/* Comandas */}
-          <NavBottomItem href="/comandas" icon={FileText} label="Comandas" pathname={pathname} />
+          {/* Caixa */}
+          <NavBottomItem href="/financeiro/caixa" icon={FaCashRegister} label="Caixa" pathname={pathname} />
 
           {/* Agenda — centralizada e elevada */}
           <div className="flex flex-col items-center flex-1">
