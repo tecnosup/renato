@@ -16,27 +16,34 @@ function FabMenu({ onAgendar }: { onAgendar: (hora: string) => void }) {
     <>
       {open && <div className="fixed inset-0 z-30 md:hidden" onClick={() => setOpen(false)} />}
       <div className="fixed bottom-20 right-4 z-40 flex flex-col items-end gap-3 md:hidden">
-        {open && (
-          <div className="flex flex-col items-end gap-2">
-            {fabActions.map(({ label, icon: Icon }) => (
-              <button
-                key={label}
-                onClick={() => { setOpen(false); if (label === "Agendar horário") onAgendar(""); }}
-                className="flex items-center gap-3 bg-slate-800 hover:bg-slate-700 text-slate-100 pl-4 pr-3 py-2.5 rounded-full shadow-lg transition-colors text-sm font-medium"
-              >
-                {label}
-                <span className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center shrink-0">
-                  <Icon className="w-4 h-4 text-slate-300" />
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="flex flex-col items-end gap-2">
+          {fabActions.map(({ label, icon: Icon }, i) => (
+            <button
+              key={label}
+              onClick={() => { setOpen(false); if (label === "Agendar horário") onAgendar(""); }}
+              style={{
+                transitionDelay: open ? `${i * 30}ms` : "0ms",
+                transformOrigin: "bottom right",
+              }}
+              className={`flex items-center gap-3 bg-slate-800/95 hover:bg-slate-700/95 text-slate-100 pl-4 pr-3 py-2.5 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.25)] text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                open
+                  ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
+                  : "opacity-0 scale-75 translate-y-2 pointer-events-none"
+              }`}
+            >
+              {label}
+              <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                <Icon className="w-4 h-4 text-cyan-300" />
+              </span>
+            </button>
+          ))}
+        </div>
         <button
           onClick={() => setOpen(!open)}
-          className="w-14 h-14 rounded-full bg-blue-500 hover:bg-blue-400 text-white flex items-center justify-center shadow-xl transition-all"
+          className="relative w-14 h-14 rounded-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 flex items-center justify-center transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
         >
-          {open ? <X className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
+          <Plus className={`w-6 h-6 absolute transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-135 opacity-0 scale-50" : "rotate-0 opacity-100 scale-100"}`} />
+          <X className={`w-6 h-6 absolute transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-0 opacity-100 scale-100" : "-rotate-135 opacity-0 scale-50"}`} />
         </button>
       </div>
     </>
@@ -130,37 +137,37 @@ export default function AgendaPage() {
 
       {/* Cards de resumo */}
       <div className="grid grid-cols-2 gap-2 px-4 pb-4">
-        <div className="rounded-xl p-3 bg-linear-to-br from-slate-800/80 to-slate-900/60">
+        <div className="rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
           <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Agendamentos</p>
           <p className="text-2xl font-bold text-slate-100 leading-none">{totalAgend}</p>
           <p className="text-[10px] text-slate-500 mt-1 truncate capitalize">{nomeDia}</p>
         </div>
-        <div className="rounded-xl p-3 bg-linear-to-br from-slate-800/80 to-slate-900/60">
+        <div className="rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
           <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Horários Livres</p>
           <p className="text-2xl font-bold text-slate-100 leading-none">{livres}</p>
           <p className="text-[10px] text-slate-500 mt-1">de {HORARIOS.length} no dia</p>
         </div>
-        <div className="rounded-xl p-3 bg-linear-to-br from-emerald-950/60 to-slate-900/60">
-          <p className="text-[9px] font-semibold text-emerald-600 uppercase tracking-widest mb-1">Faturado</p>
+        <div className="rounded-xl p-3 bg-emerald-400/10 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
+          <p className="text-[9px] font-semibold text-emerald-400 uppercase tracking-widest mb-1">Faturado</p>
           <p className="text-xl font-bold text-emerald-400 leading-none">R$ {faturado.toFixed(2).replace(".", ",")}</p>
           <p className="text-[10px] text-slate-500 mt-1">{concluidos} concluídos</p>
         </div>
-        <div className="rounded-xl p-3 bg-linear-to-br from-slate-800/80 to-slate-900/60">
+        <div className="rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
           <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Caixa</p>
           <p className="text-xs font-semibold text-slate-300 leading-none mt-0.5">🔒 Em aberto</p>
-          <button className="text-[9px] text-blue-400 font-semibold mt-1 uppercase tracking-widest">Ver no Financeiro</button>
+          <button className="text-[9px] text-cyan-400 font-semibold mt-1 uppercase tracking-widest">Ver no Financeiro</button>
         </div>
       </div>
 
       {/* Calendário compacto / expansível */}
-      <div className="mx-4 mb-4 rounded-2xl overflow-hidden bg-linear-to-br from-slate-800/80 to-slate-900/60">
+      <div className="mx-4 mb-4 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
         <div className="flex items-center justify-between px-4 pt-4 pb-3">
           <button onClick={() => navMes(-1)} className="text-slate-400 hover:text-white transition-colors">
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={() => setExpandido(!expandido)}
-            className="flex items-center gap-1.5 text-sm font-semibold text-slate-100 hover:text-blue-400 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-semibold text-slate-100 hover:text-cyan-400 transition-colors"
           >
             {MESES[mes]} {ano}
             <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${expandido ? "rotate-180" : ""}`} />
@@ -189,7 +196,7 @@ export default function AgendaPage() {
                   key={key}
                   onClick={() => setDiaSelecionado(key)}
                   className={`flex flex-col items-center justify-center aspect-square rounded-xl transition-colors ${
-                    isSel ? "bg-blue-500 text-white" : isHoje ? "border border-blue-500 text-slate-100" : "hover:bg-slate-800 text-slate-300"
+                    isSel ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : isHoje ? "border border-cyan-400/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
                   }`}
                 >
                   <span className={`text-sm font-semibold ${isDom && !isSel ? "text-red-400" : ""}`}>{d.getDate()}</span>
@@ -216,7 +223,7 @@ export default function AgendaPage() {
                     key={key}
                     onClick={() => selecionarDia(key)}
                     className={`relative flex flex-col items-center justify-center aspect-square rounded-xl transition-colors ${
-                      isSel ? "bg-blue-500 text-white" : isHoje ? "border border-blue-500 text-slate-100" : "hover:bg-slate-800 text-slate-300"
+                      isSel ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : isHoje ? "border border-cyan-400/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
                     }`}
                   >
                     <span className={`text-sm font-semibold ${isDom && !isSel ? "text-red-400" : ""}`}>{dia}</span>
@@ -230,7 +237,7 @@ export default function AgendaPage() {
                 );
               })}
             </div>
-            <div className="flex items-center gap-4 mt-3 pt-3 border-t border-slate-800/60">
+            <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
                 <span className="text-[10px] text-slate-400">agendamentos</span>
@@ -240,7 +247,7 @@ export default function AgendaPage() {
                 <span className="text-[10px] text-slate-400">caixa aberto</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded border border-blue-500" />
+                <span className="w-3 h-3 rounded border border-cyan-400/40" />
                 <span className="text-[10px] text-slate-400">hoje</span>
               </div>
             </div>
@@ -249,8 +256,8 @@ export default function AgendaPage() {
       </div>
 
       {/* Grade de horários */}
-      <div className="mx-4 mb-24 rounded-2xl overflow-hidden bg-linear-to-br from-slate-800/80 to-slate-900/60">
-        <div className="px-4 py-3 border-b border-slate-800/60">
+      <div className="mx-4 mb-24 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
+        <div className="px-4 py-3 border-b border-white/5">
           <div className="flex items-center gap-2">
             <span className="text-slate-400 text-sm">⊞</span>
             <p className="text-sm font-bold text-slate-100">Grade de horários</p>
@@ -258,13 +265,13 @@ export default function AgendaPage() {
           <p className="text-xs text-slate-500 mt-0.5 capitalize">{nomeDia} · Clique para agendar ou bloquear</p>
         </div>
 
-        <ul className="divide-y divide-slate-800/60">
+        <ul className="divide-y divide-white/5">
           {HORARIOS.map((hora) => {
             const agend = agendPorHora[hora];
 
             if (agend?.status === "bloqueado") {
               return (
-                <li key={hora} className="flex items-center gap-4 px-4 py-3 bg-slate-800/50">
+                <li key={hora} className="flex items-center gap-4 px-4 py-3 bg-black/15">
                   <div className="w-12 shrink-0">
                     <p className="text-sm font-mono font-semibold text-slate-500">{hora}</p>
                     <p className="text-[10px] text-slate-600">bloqueado</p>
@@ -278,16 +285,16 @@ export default function AgendaPage() {
             if (agend) {
               const isConc = agend.status === "concluido";
               return (
-                <li key={hora} className={`flex items-center gap-4 px-4 py-3 ${isConc ? "bg-emerald-500/5" : "bg-blue-500/5"}`}>
+                <li key={hora} className={`flex items-center gap-4 px-4 py-3 ${isConc ? "bg-emerald-400/5" : "bg-cyan-400/5"}`}>
                   <div className="w-12 shrink-0">
-                    <p className={`text-sm font-mono font-semibold ${isConc ? "text-emerald-400" : "text-blue-400"}`}>{hora}</p>
+                    <p className={`text-sm font-mono font-semibold ${isConc ? "text-emerald-400" : "text-cyan-400"}`}>{hora}</p>
                     <p className="text-[10px] text-slate-500">0/1</p>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-slate-200 truncate">{agend.cliente}</p>
                     <p className="text-xs text-slate-400 truncate">{agend.servico}</p>
                   </div>
-                  <span className={`text-[10px] font-semibold px-2 py-1 rounded-full ${isConc ? "bg-emerald-500/20 text-emerald-400" : "bg-blue-500/20 text-blue-400"}`}>
+                  <span className={`text-[10px] font-semibold px-2 py-1 rounded-full ${isConc ? "bg-emerald-400/15 text-emerald-400" : "bg-cyan-400/15 text-cyan-400"}`}>
                     {isConc ? "Concluído" : "Agendado"}
                   </span>
                 </li>
@@ -295,13 +302,13 @@ export default function AgendaPage() {
             }
 
             return (
-              <li key={hora} className="flex items-center gap-4 px-4 py-3 hover:bg-slate-800/40 transition-colors cursor-pointer" onClick={() => setModal({ hora })}>
+              <li key={hora} className="flex items-center gap-4 px-4 py-3 hover:bg-white/5 transition-colors cursor-pointer" onClick={() => setModal({ hora })}>
                 <div className="w-12 shrink-0">
                   <p className="text-sm font-mono font-semibold text-slate-400">{hora}</p>
                   <p className="text-[10px] text-slate-600">0/1</p>
                 </div>
                 <p className="text-sm text-emerald-400 font-medium flex-1">Disponível</p>
-                <button className="flex items-center gap-1.5 border border-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-lg hover:border-blue-500 hover:text-blue-400 transition-colors">
+                <button className="flex items-center gap-1.5 bg-white/8 backdrop-blur-md text-slate-300 text-xs px-3 py-1.5 rounded-lg hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors">
                   <Calendar className="w-3 h-3" /> Agendar
                 </button>
                 <button className="text-slate-600 hover:text-red-400 transition-colors">
@@ -317,8 +324,8 @@ export default function AgendaPage() {
 
       {modal && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
-          <div className="absolute inset-0 bg-black/70" onClick={() => setModal(null)} />
-          <div className="relative bg-slate-900 border border-slate-700 rounded-t-3xl md:rounded-2xl w-full md:max-w-md p-6 pb-10 md:pb-6 space-y-4 shadow-2xl">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setModal(null)} />
+          <div className="relative bg-slate-900/80 backdrop-blur-2xl border border-white/10 rounded-t-3xl md:rounded-2xl w-full md:max-w-md p-6 pb-10 md:pb-6 space-y-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_40px_rgba(0,0,0,0.5)]">
             <div className="flex items-center justify-between mb-1">
               <div>
                 <h3 className="text-base font-bold text-slate-100">Novo agendamento presencial</h3>
@@ -337,18 +344,18 @@ export default function AgendaPage() {
                 <label className="text-xs text-slate-400 mb-1 block">Nome do cliente</label>
                 <input type="text" placeholder="Ex: João Silva" value={form.cliente}
                   onChange={(e) => setForm({ ...form, cliente: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors" />
+                  className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400/50 transition-colors" />
               </div>
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">WhatsApp (opcional)</label>
                 <input type="tel" placeholder="11999999999" value={form.whatsapp}
                   onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors" />
+                  className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400/50 transition-colors" />
               </div>
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">Serviço</label>
                 <select value={form.servico} onChange={(e) => setForm({ ...form, servico: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors">
+                  className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-400/50 transition-colors">
                   {SERVICOS.map((s) => <option key={s}>{s}</option>)}
                 </select>
               </div>
@@ -361,7 +368,7 @@ export default function AgendaPage() {
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">Barbeiro</label>
                 <select value={form.barbeiro} onChange={(e) => setForm({ ...form, barbeiro: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors">
+                  className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-400/50 transition-colors">
                   <option>Qualquer disponível</option>
                   <option>Renato</option>
                   <option>Franciele</option>
@@ -370,8 +377,8 @@ export default function AgendaPage() {
               </div>
             </div>
             <div className="flex gap-3 pt-1">
-              <button onClick={() => setModal(null)} className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl text-sm font-semibold transition-colors">Cancelar</button>
-              <button onClick={() => setModal(null)} className="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-900 py-3 rounded-xl text-sm font-semibold transition-colors">Confirmar</button>
+              <button onClick={() => setModal(null)} className="flex-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 py-3 rounded-xl text-sm font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] transition-colors">Cancelar</button>
+              <button onClick={() => setModal(null)} className="flex-1 bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-semibold transition-all">Confirmar</button>
             </div>
           </div>
         </div>

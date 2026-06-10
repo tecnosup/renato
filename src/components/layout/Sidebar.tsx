@@ -96,14 +96,14 @@ function NavLink({
       <li>
         <button
           onClick={() => setOpen(!open)}
-          className={`group w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors ${
+          className={`group w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
             isActive
-              ? "bg-slate-800 text-white"
-              : "text-slate-300 hover:bg-slate-800 hover:text-white"
+              ? "bg-white/10 backdrop-blur-md border border-cyan-400/20 text-white shadow-[0_0_20px_rgba(56,189,248,0.15)]"
+              : "text-slate-300 border border-transparent hover:bg-white/5 hover:text-white"
           }`}
         >
           <div className="flex items-center">
-            <Icon className={`w-5 h-5 mr-3 text-slate-400 ${item.accent}`} />
+            <Icon className={`w-5 h-5 mr-3 ${isActive ? "text-cyan-400" : "text-slate-400"} ${item.accent}`} />
             <span className="text-sm font-medium">{item.label}</span>
           </div>
           {open ? (
@@ -113,7 +113,7 @@ function NavLink({
           )}
         </button>
         {open && (
-          <ul className="mt-1 mb-2 ml-11 space-y-1 border-l border-slate-700 pl-3">
+          <ul className="mt-1 mb-2 ml-11 space-y-1 border-l border-white/10 pl-3">
             {item.children.map((child) => (
               <li key={child.href}>
                 <Link
@@ -121,7 +121,7 @@ function NavLink({
                   onClick={onClick}
                   className={`block py-2 text-sm transition-colors ${
                     pathname === child.href
-                      ? "text-white font-medium"
+                      ? "text-cyan-400 font-medium"
                       : "text-slate-400 hover:text-slate-100"
                   }`}
                 >
@@ -140,13 +140,13 @@ function NavLink({
       <Link
         href={item.href}
         onClick={onClick}
-        className={`group flex items-center px-3 py-2.5 rounded-lg transition-colors ${
+        className={`group flex items-center px-3 py-2.5 rounded-xl transition-all ${
           isActive
-            ? "bg-slate-800 text-white"
-            : "text-slate-300 hover:bg-slate-800 hover:text-white"
+            ? "bg-white/10 backdrop-blur-md border border-cyan-400/20 text-white shadow-[0_0_20px_rgba(56,189,248,0.15)]"
+            : "text-slate-300 border border-transparent hover:bg-white/5 hover:text-white"
         }`}
       >
-        <Icon className={`w-5 h-5 mr-3 text-slate-400 ${item.accent}`} />
+        <Icon className={`w-5 h-5 mr-3 ${isActive ? "text-cyan-400" : "text-slate-400"} ${item.accent}`} />
         <span className="text-sm font-medium">{item.label}</span>
       </Link>
     </li>
@@ -156,9 +156,9 @@ function NavLink({
 // Sidebar lateral — só aparece em md+
 function DesktopSidebar() {
   return (
-    <aside className="hidden md:flex w-64 bg-slate-900 border-r border-slate-800 flex-col h-screen sticky top-0">
-      <div className="h-16 flex items-center px-6 border-b border-slate-800">
-        <div className="w-8 h-8 bg-slate-700 rounded-md mr-3" />
+    <aside className="hidden md:flex w-64 bg-slate-900/70 backdrop-blur-xl border-r border-white/5 flex-col h-screen sticky top-0 shadow-[inset_-1px_0_0_rgba(255,255,255,0.04)]">
+      <div className="h-16 flex items-center px-6 border-b border-white/5">
+        <div className="w-8 h-8 bg-linear-to-br from-blue-400 to-cyan-500 rounded-md mr-3 shadow-[0_0_16px_rgba(56,189,248,0.5)]" />
         <h1 className="text-xl font-bold tracking-tight text-slate-100">Século XXI</h1>
       </div>
 
@@ -170,9 +170,9 @@ function DesktopSidebar() {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-slate-800">
-        <div className="flex items-center w-full px-3 py-2 bg-slate-800/50 rounded-lg">
-          <div className="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-xs font-bold mr-3">
+      <div className="p-4 border-t border-white/5">
+        <div className="flex items-center w-full px-3 py-2 bg-white/5 backdrop-blur-md border border-white/5 rounded-lg">
+          <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-400 to-cyan-500 flex items-center justify-center text-xs font-bold mr-3 text-slate-950 shadow-[0_0_12px_rgba(56,189,248,0.45)]">
             RV
           </div>
           <div className="flex-1 overflow-hidden">
@@ -212,11 +212,13 @@ function NavBottomItem({
       href={href}
       onClick={handleClick}
       className={`flex flex-col items-center justify-end gap-1 flex-1 pb-2 transition-colors ${
-        isActive ? "text-blue-400" : "text-slate-400 hover:text-white"
+        isActive ? "text-cyan-400" : "text-slate-400 hover:text-white"
       }`}
     >
-      <div className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
-        isActive ? "bg-blue-500 text-white" : "text-slate-400"
+      <div className={`flex items-center justify-center w-10 h-10 rounded-full transition-all ${
+        isActive
+          ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 shadow-[0_0_22px_rgba(34,211,238,0.6)]"
+          : "text-slate-400"
       }`}>
         <Icon className="w-5 h-5" />
       </div>
@@ -232,7 +234,7 @@ function MobileBottomNav() {
   return (
     <>
       {/* Barra inferior fixa */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 bg-slate-900 border-t border-slate-800 md:hidden overflow-visible">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 bg-slate-900/40 backdrop-blur-2xl backdrop-saturate-150 md:hidden overflow-visible shadow-[0_-8px_40px_rgba(0,0,0,0.45)] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-linear-to-r before:from-transparent before:via-white/15 before:to-transparent">
         <div className="flex items-end justify-around h-16 px-2">
 
           {/* Comissões */}
@@ -246,15 +248,15 @@ function MobileBottomNav() {
             <Link
               href="/"
               onClick={() => { if (pathname === "/") document.getElementById("agenda-scroll")?.scrollTo({ top: 0, behavior: "smooth" }); }}
-              className={`flex items-center justify-center w-16 h-16 rounded-full -translate-y-4 shadow-lg transition-colors ${
+              className={`flex items-center justify-center w-16 h-16 rounded-full -translate-y-4 backdrop-blur-md transition-all ${
                 pathname === "/"
-                  ? "bg-blue-500 text-white"
-                  : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                  ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 shadow-[0_0_28px_rgba(34,211,238,0.55)]"
+                  : "bg-white/8 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_4px_rgba(0,0,0,0.25),0_4px_16px_rgba(0,0,0,0.25)] hover:bg-white/12"
               }`}
             >
               <Calendar className="w-6 h-6" />
             </Link>
-            <span className={`text-[10px] -mt-3 pb-2 font-medium ${pathname === "/" ? "text-blue-400" : "text-slate-400"}`}>
+            <span className={`text-[10px] -mt-3 pb-2 font-medium ${pathname === "/" ? "text-cyan-400" : "text-slate-400"}`}>
               Agenda
             </span>
           </div>

@@ -1,42 +1,75 @@
 "use client";
 
 import { useState, useLayoutEffect, useRef } from "react";
-import { ChevronLeft, ChevronRight, Scissors, TrendingDown, Lock, Plus, X, ChevronDown } from "lucide-react";
+import { ChevronLeft, ChevronRight, Scissors, TrendingDown, Lock, Plus, X, ChevronDown, Banknote, CreditCard, QrCode, Trash2 } from "lucide-react";
 import { FaCashRegister } from "react-icons/fa";
 
 const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const DIAS_SEMANA = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 
-type Atendimento = { id: string; descricao: string; valor: number; profissional: string };
+const FORMAS_PAGAMENTO = ["Dinheiro", "Pix", "Cartão Débito", "Cartão Crédito"] as const;
+type FormaPagamento = (typeof FORMAS_PAGAMENTO)[number];
+
+const PAGAMENTO_ICONS: Record<FormaPagamento, React.ElementType> = {
+  "Dinheiro": Banknote,
+  "Pix": QrCode,
+  "Cartão Débito": CreditCard,
+  "Cartão Crédito": CreditCard,
+};
+
+type ItemComanda = { descricao: string; valor: number };
+type Comanda = {
+  id: string;
+  cliente: string;
+  profissional: string;
+  itens: ItemComanda[];
+  formaPagamento?: FormaPagamento;
+  status: "aberta" | "fechada";
+};
+type Despesa = { id: string; descricao: string; valor: number };
 type DiaCaixa = {
-  faturamento: number;
-  gastos: number;
-  atendimentos: Atendimento[];
+  comandas: Comanda[];
+  despesas: Despesa[];
   status: "fechado" | "aberto" | "pendente";
 };
 
-const CAIXAS: Record<string, DiaCaixa> = {
+const CAIXAS_INICIAL: Record<string, DiaCaixa> = {
   "2026-06-02": {
-    faturamento: 54.90, gastos: 0, status: "fechado",
-    atendimentos: [
-      { id: "1", descricao: "Corte Clássico", valor: 29.90, profissional: "Renato" },
-      { id: "2", descricao: "Barba Completa", valor: 25.00, profissional: "Renato" },
+    status: "fechado",
+    comandas: [
+      {
+        id: "1", cliente: "João Pedro", profissional: "Renato", formaPagamento: "Pix", status: "fechada",
+        itens: [{ descricao: "Corte Clássico", valor: 29.90 }, { descricao: "Barba Completa", valor: 25.00 }],
+      },
     ],
+    despesas: [],
   },
   "2026-05-14": {
-    faturamento: 477.00, gastos: 120.00, status: "fechado",
-    atendimentos: [{ id: "3", descricao: "Corte + Barba", valor: 477.00, profissional: "Renato" }],
+    status: "fechado",
+    comandas: [
+      {
+        id: "3", cliente: "Marcos Lima", profissional: "Renato", formaPagamento: "Cartão Crédito", status: "fechada",
+        itens: [{ descricao: "Corte + Barba", valor: 477.00 }],
+      },
+    ],
+    despesas: [{ id: "d1", descricao: "Material de limpeza", valor: 120.00 }],
   },
   "2026-05-13": {
-    faturamento: 81.50, gastos: 0, status: "fechado",
-    atendimentos: [
-      { id: "4", descricao: "Corte Clássico", valor: 29.90, profissional: "Franciele" },
-      { id: "5", descricao: "Barba Completa", valor: 25.00, profissional: "Franciele" },
-      { id: "6", descricao: "Raspadão", valor: 26.60, profissional: "Xavier" },
+    status: "fechado",
+    comandas: [
+      {
+        id: "4", cliente: "Carlos Eduardo", profissional: "Franciele", formaPagamento: "Dinheiro", status: "fechada",
+        itens: [{ descricao: "Corte Clássico", valor: 29.90 }, { descricao: "Barba Completa", valor: 25.00 }],
+      },
+      {
+        id: "6", cliente: "Bruno Souza", profissional: "Xavier", formaPagamento: "Pix", status: "fechada",
+        itens: [{ descricao: "Raspadão", valor: 26.60 }],
+      },
     ],
+    despesas: [],
   },
-  "2026-05-29": { faturamento: 0, gastos: 0, atendimentos: [], status: "pendente" },
-  "2026-05-16": { faturamento: 0, gastos: 0, atendimentos: [], status: "pendente" },
+  "2026-05-29": { comandas: [], despesas: [], status: "pendente" },
+  "2026-05-16": { comandas: [], despesas: [], status: "pendente" },
 };
 
 function toKey(y: number, m: number, d: number) {
@@ -44,6 +77,15 @@ function toKey(y: number, m: number, d: number) {
 }
 function fmt(v: number) {
   return v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function totalComanda(c: Comanda) {
+  return c.itens.reduce((s, i) => s + i.valor, 0);
+}
+function totalFaturamento(dia: DiaCaixa) {
+  return dia.comandas.filter((c) => c.status === "fechada").reduce((s, c) => s + totalComanda(c), 0);
+}
+function totalDespesas(dia: DiaCaixa) {
+  return dia.despesas.reduce((s, d) => s + d.valor, 0);
 }
 function getDiasSemana(diaKey: string) {
   const base = new Date(diaKey + "T12:00:00");
@@ -55,34 +97,307 @@ function getDiasSemana(diaKey: string) {
   });
 }
 
-// Componente que anima a entrada do calendário (slide in do lado certo)
+// Componente que anima a entrada do calendário (slide + fade do lado certo)
 function CalSlide({ dir, children }: { dir: "left" | "right"; children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const from = dir === "right" ? "100%" : "-100%";
+    const from = dir === "right" ? "24px" : "-24px";
     el.style.transition = "none";
+    el.style.opacity = "0";
     el.style.transform = `translateX(${from})`;
     el.getBoundingClientRect(); // força reflow
-    el.style.transition = "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+    el.style.transition = "transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease-out";
+    el.style.opacity = "1";
     el.style.transform = "translateX(0)";
   }, [dir]);
 
   return <div ref={ref}>{children}</div>;
 }
 
+// Anima a transição entre o modo semanal (recolhido) e mensal (expandido)
+function CalExpand({ expandido, children }: { expandido: boolean; children: React.ReactNode }) {
+  return (
+    <div
+      className="grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+      style={{ gridTemplateRows: expandido ? "1fr" : "0fr" }}
+    >
+      <div className="overflow-hidden">{children}</div>
+    </div>
+  );
+}
+
+// Modal genérico de fundo
+function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
+      <div
+        className="w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl bg-slate-900/80 backdrop-blur-2xl border border-white/10 max-h-[90vh] overflow-y-auto shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_40px_rgba(0,0,0,0.5)]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// Modal de Nova Comanda
+function NovaComandaModal({
+  onClose,
+  onSalvar,
+}: {
+  onClose: () => void;
+  onSalvar: (c: Comanda) => void;
+}) {
+  const [cliente, setCliente] = useState("");
+  const [profissional, setProfissional] = useState("");
+  const [itens, setItens] = useState<ItemComanda[]>([{ descricao: "", valor: 0 }]);
+
+  const total = itens.reduce((s, i) => s + (i.valor || 0), 0);
+  const podeSalvar = cliente.trim() && profissional.trim() && itens.some((i) => i.descricao.trim() && i.valor > 0);
+
+  const addItem = () => setItens((arr) => [...arr, { descricao: "", valor: 0 }]);
+  const removeItem = (idx: number) => setItens((arr) => arr.filter((_, i) => i !== idx));
+  const updateItem = (idx: number, campo: keyof ItemComanda, valor: string) => {
+    setItens((arr) =>
+      arr.map((it, i) =>
+        i === idx ? { ...it, [campo]: campo === "valor" ? Number(valor.replace(",", ".")) || 0 : valor } : it
+      )
+    );
+  };
+
+  const salvar = () => {
+    onSalvar({
+      id: `c-${Date.now()}`,
+      cliente: cliente.trim(),
+      profissional: profissional.trim(),
+      status: "aberta",
+      itens: itens.filter((i) => i.descricao.trim() && i.valor > 0),
+    });
+    onClose();
+  };
+
+  return (
+    <Modal onClose={onClose}>
+      <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/5">
+        <h2 className="text-base font-bold text-slate-100">Nova Comanda</h2>
+        <button onClick={onClose} className="text-slate-500 hover:text-slate-300">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="p-4 space-y-3">
+        <div>
+          <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Cliente</label>
+          <input
+            value={cliente}
+            onChange={(e) => setCliente(e.target.value)}
+            placeholder="Nome do cliente"
+            className="w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+          />
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Profissional</label>
+          <input
+            value={profissional}
+            onChange={(e) => setProfissional(e.target.value)}
+            placeholder="Nome do profissional"
+            className="w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+          />
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Serviços / Produtos</label>
+          <div className="space-y-2">
+            {itens.map((item, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <input
+                  value={item.descricao}
+                  onChange={(e) => updateItem(idx, "descricao", e.target.value)}
+                  placeholder="Descrição"
+                  className="flex-1 bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                />
+                <input
+                  value={item.valor || ""}
+                  onChange={(e) => updateItem(idx, "valor", e.target.value)}
+                  placeholder="0,00"
+                  inputMode="decimal"
+                  className="w-24 bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                />
+                {itens.length > 1 && (
+                  <button onClick={() => removeItem(idx)} className="text-slate-500 hover:text-red-400 shrink-0">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+          <button onClick={addItem} className="mt-2 flex items-center gap-1 text-xs font-semibold text-blue-400 hover:text-blue-300">
+            <Plus className="w-3.5 h-3.5" /> Adicionar item
+          </button>
+        </div>
+
+        <div className="flex items-center justify-between pt-2 border-t border-white/5">
+          <span className="text-sm font-semibold text-slate-400">Total</span>
+          <span className="text-lg font-bold text-slate-100">R$ {fmt(total)}</span>
+        </div>
+
+        <button
+          onClick={salvar}
+          disabled={!podeSalvar}
+          className="w-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 disabled:bg-white/5 disabled:bg-none disabled:text-slate-600 text-slate-950 disabled:cursor-not-allowed py-3 rounded-xl text-sm font-bold transition-all"
+        >
+          Abrir Comanda
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+// Modal de Fechar/Pagar Comanda
+function FecharComandaModal({
+  comanda,
+  onClose,
+  onConfirmar,
+}: {
+  comanda: Comanda;
+  onClose: () => void;
+  onConfirmar: (forma: FormaPagamento) => void;
+}) {
+  const [formaPagamento, setFormaPagamento] = useState<FormaPagamento>("Dinheiro");
+  const total = totalComanda(comanda);
+
+  return (
+    <Modal onClose={onClose}>
+      <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/5">
+        <h2 className="text-base font-bold text-slate-100">Fechar Comanda</h2>
+        <button onClick={onClose} className="text-slate-500 hover:text-slate-300">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="p-4 space-y-3">
+        <div className="rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+          <p className="text-sm font-bold text-slate-100">{comanda.cliente}</p>
+          <p className="text-xs text-slate-500">
+            {comanda.profissional} · {comanda.itens.map((i) => i.descricao).join(", ")}
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Forma de Pagamento</label>
+          <div className="grid grid-cols-2 gap-2">
+            {FORMAS_PAGAMENTO.map((forma) => {
+              const Icon = PAGAMENTO_ICONS[forma];
+              const ativo = formaPagamento === forma;
+              return (
+                <button
+                  key={forma}
+                  onClick={() => setFormaPagamento(forma)}
+                  className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                    ativo ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : "bg-white/5 backdrop-blur-md text-slate-400 hover:bg-white/8"
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" /> {forma}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-2 border-t border-white/5">
+          <span className="text-sm font-semibold text-slate-400">Total</span>
+          <span className="text-lg font-bold text-slate-100">R$ {fmt(total)}</span>
+        </div>
+
+        <button
+          onClick={() => onConfirmar(formaPagamento)}
+          className="w-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all"
+        >
+          Confirmar Pagamento
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+// Modal de Nova Despesa
+function NovaDespesaModal({
+  onClose,
+  onSalvar,
+}: {
+  onClose: () => void;
+  onSalvar: (d: Despesa) => void;
+}) {
+  const [descricao, setDescricao] = useState("");
+  const [valor, setValor] = useState("");
+
+  const podeSalvar = descricao.trim() && Number(valor.replace(",", ".")) > 0;
+
+  const salvar = () => {
+    onSalvar({ id: `d-${Date.now()}`, descricao: descricao.trim(), valor: Number(valor.replace(",", ".")) });
+    onClose();
+  };
+
+  return (
+    <Modal onClose={onClose}>
+      <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/5">
+        <h2 className="text-base font-bold text-slate-100">Nova Despesa</h2>
+        <button onClick={onClose} className="text-slate-500 hover:text-slate-300">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="p-4 space-y-3">
+        <div>
+          <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Descrição</label>
+          <input
+            value={descricao}
+            onChange={(e) => setDescricao(e.target.value)}
+            placeholder="Ex: Material de limpeza"
+            className="w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-red-400/50"
+          />
+        </div>
+        <div>
+          <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Valor</label>
+          <input
+            value={valor}
+            onChange={(e) => setValor(e.target.value)}
+            placeholder="0,00"
+            inputMode="decimal"
+            className="w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-red-400/50"
+          />
+        </div>
+
+        <button
+          onClick={salvar}
+          disabled={!podeSalvar}
+          className="w-full bg-red-400/15 backdrop-blur-md hover:bg-red-400/20 disabled:bg-white/5 disabled:text-slate-600 text-red-400 disabled:cursor-not-allowed py-3 rounded-xl text-sm font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-colors"
+        >
+          Salvar Despesa
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
 export default function CaixaPage() {
   const hoje = new Date();
   const hojeKey = toKey(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
 
+  const [caixas, setCaixas] = useState<Record<string, DiaCaixa>>(CAIXAS_INICIAL);
   const [mes, setMes] = useState(hoje.getMonth());
   const [ano, setAno] = useState(hoje.getFullYear());
   const [diaSelecionado, setDiaSelecionado] = useState(hojeKey);
   const [expandido, setExpandido] = useState(false);
   const [slideDir, setSlideDir] = useState<"left" | "right">("right");
   const [calKey, setCalKey] = useState(0);
+  const [modalAberto, setModalAberto] = useState<"comanda" | "despesa" | null>(null);
+  const [comandaParaFechar, setComandaParaFechar] = useState<Comanda | null>(null);
+  const [confirmarFechamento, setConfirmarFechamento] = useState(false);
 
   const navMes = (dir: number) => {
     setSlideDir(dir > 0 ? "right" : "left");
@@ -107,9 +422,17 @@ export default function CaixaPage() {
     setExpandido(false);
   };
 
-  const caixa = CAIXAS[diaSelecionado];
-  const liquido = caixa ? caixa.faturamento - caixa.gastos : 0;
+  const getCaixaDoDia = (key: string): DiaCaixa =>
+    caixas[key] ?? { comandas: [], despesas: [], status: key === hojeKey ? "aberto" : "pendente" };
+
+  const caixa = getCaixaDoDia(diaSelecionado);
+  const faturamento = totalFaturamento(caixa);
+  const gastos = totalDespesas(caixa);
+  const liquido = faturamento - gastos;
   const isHoje = diaSelecionado === hojeKey;
+  const caixaExiste = Boolean(caixas[diaSelecionado]);
+  const comandasAbertas = caixa.comandas.filter((c) => c.status === "aberta");
+  const comandasFechadas = caixa.comandas.filter((c) => c.status === "fechada");
 
   const dataFormatada = new Date(diaSelecionado + "T12:00:00")
     .toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -121,13 +444,48 @@ export default function CaixaPage() {
     Array.from({ length: diasNoMes }, (_, i) => i + 1)
   );
 
+  const atualizarDia = (key: string, fn: (dia: DiaCaixa) => DiaCaixa) => {
+    setCaixas((prev) => {
+      const atual = prev[key] ?? { comandas: [], despesas: [], status: key === hojeKey ? "aberto" : "pendente" };
+      return { ...prev, [key]: fn(atual) };
+    });
+  };
+
+  const adicionarComanda = (c: Comanda) => {
+    atualizarDia(diaSelecionado, (dia) => ({ ...dia, comandas: [...dia.comandas, c] }));
+  };
+
+  const adicionarDespesa = (d: Despesa) => {
+    atualizarDia(diaSelecionado, (dia) => ({ ...dia, despesas: [...dia.despesas, d] }));
+  };
+
+  const fecharComanda = (id: string, formaPagamento: FormaPagamento) => {
+    atualizarDia(diaSelecionado, (dia) => ({
+      ...dia,
+      comandas: dia.comandas.map((c) => (c.id === id ? { ...c, status: "fechada", formaPagamento } : c)),
+    }));
+  };
+
+  const fecharCaixa = () => {
+    if (comandasAbertas.length > 0 && !confirmarFechamento) {
+      setConfirmarFechamento(true);
+      return;
+    }
+    setConfirmarFechamento(false);
+    atualizarDia(diaSelecionado, (dia) => ({ ...dia, status: "fechado" }));
+  };
+
+  const reabrirCaixa = () => {
+    atualizarDia(diaSelecionado, (dia) => ({ ...dia, status: "aberto" }));
+  };
+
   return (
     <div className="flex-1 overflow-y-auto bg-slate-950">
 
       {/* Header */}
       <div className="flex items-center gap-3 px-4 pt-5 pb-4">
-        <div className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center shrink-0">
-          <FaCashRegister className="w-4 h-4 text-amber-400" />
+        <div className="w-9 h-9 rounded-xl bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] flex items-center justify-center shrink-0">
+          <FaCashRegister className="w-4 h-4 text-cyan-400" />
         </div>
         <div>
           <p className="text-base font-bold text-slate-100 leading-none">Caixa</p>
@@ -138,7 +496,7 @@ export default function CaixaPage() {
       </div>
 
       {/* Card único: calendário + painel do dia */}
-      <div className="mx-4 mb-24 rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden">
+      <div className="mx-4 mb-24 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
 
         {/* Header do calendário */}
         <div className="flex items-center justify-between px-4 pt-4 pb-3">
@@ -147,7 +505,7 @@ export default function CaixaPage() {
           </button>
           <button
             onClick={() => setExpandido(!expandido)}
-            className="flex items-center gap-1.5 text-sm font-semibold text-slate-100 hover:text-blue-400 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-semibold text-slate-100 hover:text-cyan-400 transition-colors"
           >
             {MESES[mes]} {ano}
             <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${expandido ? "rotate-180" : ""}`} />
@@ -165,82 +523,82 @@ export default function CaixaPage() {
         </div>
 
         {/* Strip semanal (recolhido) */}
-        {!expandido && (
+        <CalExpand expandido={!expandido}>
           <div className="overflow-hidden">
-          <CalSlide key={calKey} dir={slideDir}>
+          <CalSlide key={`week-${calKey}`} dir={slideDir}>
           <div className="grid grid-cols-7 px-2 pb-3 gap-y-1">
             {diasDaSemana.map((d) => {
               const key = toKey(d.getFullYear(), d.getMonth(), d.getDate());
-              const dados = CAIXAS[key];
+              const dados = caixas[key];
               const isSel = key === diaSelecionado;
               const isToday = key === hojeKey;
               const isDom = d.getDay() === 0;
               return (
                 <button key={key} onClick={() => setDiaSelecionado(key)}
                   className={`flex flex-col items-center justify-center aspect-square rounded-xl transition-colors ${
-                    isSel ? "bg-blue-500 text-white" : isToday ? "border border-blue-500 text-slate-100" : "hover:bg-slate-800 text-slate-300"
+                    isSel ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : isToday ? "border border-cyan-400/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
                   }`}
                 >
                   <span className={`text-sm font-semibold ${isDom && !isSel ? "text-red-400" : ""}`}>{d.getDate()}</span>
-                  {dados && <span className={`w-1 h-1 rounded-full mt-0.5 ${dados.status === "pendente" ? "bg-orange-400" : dados.faturamento > 0 ? "bg-emerald-400" : "bg-slate-600"}`} />}
+                  {dados && <span className={`w-1 h-1 rounded-full mt-0.5 ${dados.status === "pendente" ? "bg-orange-400" : totalFaturamento(dados) > 0 ? "bg-emerald-400" : "bg-slate-600"}`} />}
                 </button>
               );
             })}
           </div>
           </CalSlide>
           </div>
-        )}
+        </CalExpand>
 
         {/* Grade mensal (expandido) */}
-        {expandido && (
+        <CalExpand expandido={expandido}>
           <div className="overflow-hidden">
-          <CalSlide key={calKey} dir={slideDir}>
+          <CalSlide key={`month-${calKey}`} dir={slideDir}>
           <div className="px-2 pb-3">
             <div className="grid grid-cols-7 gap-y-1">
               {celulas.map((dia, i) => {
                 if (!dia) return <div key={`e-${i}`} />;
                 const key = toKey(ano, mes, dia);
-                const dados = CAIXAS[key];
+                const dados = caixas[key];
                 const isSel = key === diaSelecionado;
                 const isToday = key === hojeKey;
                 const isDom = new Date(ano, mes, dia).getDay() === 0;
                 return (
                   <button key={key} onClick={() => selecionarDia(key)}
-                    className={`flex flex-col items-center justify-center aspect-square rounded-xl transition-colors ${
-                      isSel ? "bg-blue-500 text-white" : isToday ? "border border-blue-500 text-slate-100" : "hover:bg-slate-800 text-slate-300"
+                    className={`flex flex-col items-center justify-center h-9 rounded-xl transition-colors ${
+                      isSel ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : isToday ? "border border-cyan-400/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
                     }`}
                   >
                     <span className={`text-sm font-semibold ${isDom && !isSel ? "text-red-400" : ""}`}>{dia}</span>
-                    {dados && <span className={`w-1 h-1 rounded-full mt-0.5 ${dados.status === "pendente" ? "bg-orange-400" : dados.faturamento > 0 ? "bg-emerald-400" : "bg-slate-600"}`} />}
+                    {dados && <span className={`w-1 h-1 rounded-full mt-0.5 ${dados.status === "pendente" ? "bg-orange-400" : totalFaturamento(dados) > 0 ? "bg-emerald-400" : "bg-slate-600"}`} />}
                   </button>
                 );
               })}
             </div>
-            <div className="flex items-center gap-4 mt-3 pt-3 border-t border-slate-800/60">
+            <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
               <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-400" /><span className="text-[10px] text-slate-400">caixa fechado</span></div>
               <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-orange-400" /><span className="text-[10px] text-slate-400">pendente</span></div>
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border border-blue-500" /><span className="text-[10px] text-slate-400">hoje</span></div>
+              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border border-cyan-400/40" /><span className="text-[10px] text-slate-400">hoje</span></div>
             </div>
           </div>
           </CalSlide>
           </div>
-        )}
+        </CalExpand>
 
         {/* Data + status */}
-        <div className="flex items-center justify-between px-4 pt-4 pb-3 border-t border-slate-800">
+        <div className="flex items-center justify-between px-4 pt-4 pb-3 border-t border-white/5">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-base font-bold text-slate-100">{dataFormatada}</span>
-            {caixa?.status === "fechado" && (
-              <span className="flex items-center gap-1 text-[10px] font-bold border border-slate-600 text-slate-400 px-2 py-0.5 rounded-full uppercase tracking-widest">
+            {caixa.status === "fechado" && (
+              <span className="flex items-center gap-1 text-[10px] font-bold bg-white/5 backdrop-blur-md text-slate-400 px-2 py-0.5 rounded-full uppercase tracking-widest shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                 <Lock className="w-2.5 h-2.5" /> Fechado
               </span>
             )}
-            {caixa?.status === "pendente" && (
+            {caixa.status === "pendente" && (
               <span className="text-[10px] font-bold bg-orange-500/20 text-orange-400 border border-orange-500/40 px-2 py-0.5 rounded-full uppercase tracking-widest">
                 Pendente
               </span>
             )}
-            {isHoje && !caixa && (
+            {isHoje && caixa.status === "aberto" && (
               <span className="text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40 px-2 py-0.5 rounded-full uppercase tracking-widest">
                 Hoje
               </span>
@@ -262,15 +620,15 @@ export default function CaixaPage() {
         </div>
 
         {/* Métricas */}
-        <div className="grid grid-cols-3 border-t border-slate-800">
+        <div className="grid grid-cols-3 border-t border-white/5">
           <div className="px-4 py-3">
             <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Faturamento</p>
-            <p className="text-base font-bold text-slate-100">R$ {fmt(caixa?.faturamento ?? 0)}</p>
+            <p className="text-base font-bold text-slate-100">R$ {fmt(faturamento)}</p>
           </div>
-          <div className="px-4 py-3 border-x border-slate-800">
+          <div className="px-4 py-3 border-x border-white/5">
             <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Gastos</p>
-            <p className={`text-base font-bold ${(caixa?.gastos ?? 0) > 0 ? "text-red-400" : "text-slate-100"}`}>
-              R$ {fmt(caixa?.gastos ?? 0)}
+            <p className={`text-base font-bold ${gastos > 0 ? "text-red-400" : "text-slate-100"}`}>
+              R$ {fmt(gastos)}
             </p>
           </div>
           <div className="px-4 py-3">
@@ -281,52 +639,85 @@ export default function CaixaPage() {
           </div>
         </div>
 
-        {/* Atendimentos */}
-        {caixa && caixa.atendimentos.length > 0 && (
-          <ul className="border-t border-slate-800 divide-y divide-slate-800/60">
-            {caixa.atendimentos.map((a) => (
-              <li key={a.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-6 h-6 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
-                    <Scissors className="w-3 h-3 text-amber-400" />
+        {/* Comandas fechadas (já pagas, somam no faturamento) */}
+        {comandasFechadas.length > 0 && (
+          <div className="border-t border-white/5 px-4 py-3 space-y-2">
+            {comandasFechadas.map((c) => {
+              const PagIcon = PAGAMENTO_ICONS[c.formaPagamento!];
+              return (
+                <div key={c.id} className="flex items-start justify-between gap-3 rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                  <div className="flex items-start gap-2.5 min-w-0">
+                    <div className="w-7 h-7 rounded-full bg-amber-400/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <Scissors className="w-3.5 h-3.5 text-amber-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-slate-100 truncate">{c.cliente}</p>
+                      <p className="text-xs text-slate-500 truncate">
+                        {c.profissional} · {c.itens.map((i) => i.descricao).join(", ")}
+                      </p>
+                      <p className="flex items-center gap-1 text-[10px] text-slate-600 mt-0.5">
+                        <PagIcon className="w-3 h-3" /> {c.formaPagamento}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm text-slate-200 truncate">
-                    <span className="font-bold">{a.profissional}</span>
-                    <span className="text-slate-500"> · </span>
-                    {a.descricao}
-                  </p>
+                  <span className="text-sm font-semibold text-slate-200 shrink-0">{fmt(totalComanda(c))}</span>
                 </div>
-                <span className="text-sm font-semibold text-slate-200 shrink-0">{fmt(a.valor)}</span>
-              </li>
-            ))}
-          </ul>
+              );
+            })}
+          </div>
         )}
-        {(!caixa || caixa.atendimentos.length === 0) && (
-          <p className="px-4 pb-3 pt-1 text-sm text-slate-600 border-t border-slate-800">
-            Nenhum atendimento registrado neste dia.
+
+        {/* Despesas */}
+        {caixa.despesas.length > 0 && (
+          <div className="border-t border-white/5 px-4 py-3 space-y-2">
+            {caixa.despesas.map((d) => (
+              <div key={d.id} className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-7 h-7 rounded-full bg-red-400/10 flex items-center justify-center shrink-0">
+                    <TrendingDown className="w-3.5 h-3.5 text-red-400" />
+                  </div>
+                  <p className="text-sm text-slate-200 truncate">{d.descricao}</p>
+                </div>
+                <span className="text-sm font-semibold text-red-400 shrink-0">- {fmt(d.valor)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {comandasFechadas.length === 0 && caixa.despesas.length === 0 && (
+          <p className="px-4 pb-3 pt-1 text-sm text-slate-600 border-t border-white/5">
+            Nenhuma comanda fechada neste dia.
           </p>
         )}
 
         {/* Botões */}
-        <div className="flex flex-col gap-2 px-4 pb-4 pt-3 border-t border-slate-800">
-          {caixa?.status === "fechado" ? (
-            <>
-              <button className="flex items-center justify-center gap-2 w-full border border-red-700/40 text-red-400 hover:bg-red-500/10 rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-colors">
-                <TrendingDown className="w-4 h-4" /> Despesa do Dia
-              </button>
-              <button className="flex items-center justify-center gap-2 w-full border border-slate-700 text-slate-400 hover:bg-slate-800 rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-colors">
-                <Lock className="w-4 h-4" /> Reabrir Caixa
-              </button>
-            </>
+        <div className="flex flex-col gap-2 px-4 pb-4 pt-3 border-t border-white/5">
+          {caixa.status === "fechado" ? (
+            <button
+              onClick={reabrirCaixa}
+              className="flex items-center justify-center gap-2 w-full bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-colors"
+            >
+              <Lock className="w-4 h-4" /> Reabrir Caixa
+            </button>
           ) : (
             <div className="grid grid-cols-3 gap-2">
-              <button className="flex flex-col items-center gap-1 border border-amber-600/40 text-amber-400 hover:bg-amber-500/10 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors">
-                <Plus className="w-4 h-4" /> Novo Atend.
+              <button
+                onClick={() => setModalAberto("comanda")}
+                className="flex flex-col items-center gap-1 bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 hover:brightness-110 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all"
+              >
+                <Plus className="w-4 h-4" /> Nova Comanda
               </button>
-              <button className="flex flex-col items-center gap-1 border border-red-700/40 text-red-400 hover:bg-red-500/10 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors">
+              <button
+                onClick={() => setModalAberto("despesa")}
+                className="flex flex-col items-center gap-1 bg-red-400/10 backdrop-blur-md text-red-400 hover:bg-red-400/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors"
+              >
                 <TrendingDown className="w-4 h-4" /> Despesa
               </button>
-              <button className="flex flex-col items-center gap-1 border border-slate-700 text-slate-400 hover:bg-slate-800 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors">
+              <button
+                onClick={fecharCaixa}
+                disabled={!caixaExiste && caixa.comandas.length === 0 && caixa.despesas.length === 0}
+                className="flex flex-col items-center gap-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] disabled:opacity-40 disabled:hover:bg-white/8 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors"
+              >
                 <Lock className="w-4 h-4" /> Fechar Caixa
               </button>
             </div>
@@ -334,6 +725,95 @@ export default function CaixaPage() {
         </div>
 
       </div>
+
+      {/* Card: Comandas do dia (abertas) */}
+      <div className="mx-4 mb-24 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
+        <div className="px-4 pt-4 pb-3">
+          <p className="text-sm font-bold text-slate-100">Comandas do dia</p>
+          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mt-0.5">
+            {comandasAbertas.length > 0 ? `${comandasAbertas.length} em aberto` : "Nenhuma comanda em aberto"}
+          </p>
+        </div>
+
+        {comandasAbertas.length > 0 ? (
+          <div className="px-4 pb-4 space-y-2">
+            {comandasAbertas.map((c) => (
+              <div key={c.id} className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <div className="w-7 h-7 rounded-full bg-amber-400/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <Scissors className="w-3.5 h-3.5 text-amber-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-slate-100 truncate">{c.cliente}</p>
+                    <p className="text-xs text-slate-500 truncate">
+                      {c.profissional} · {c.itens.map((i) => i.descricao).join(", ")}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-sm font-semibold text-slate-200">{fmt(totalComanda(c))}</span>
+                  <button
+                    onClick={() => setComandaParaFechar(c)}
+                    className="bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 hover:brightness-110 rounded-lg px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-all"
+                  >
+                    Fechar
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="px-4 pb-4 text-sm text-slate-600">
+            Comandas abertas aparecem aqui até serem pagas.
+          </p>
+        )}
+      </div>
+
+      {modalAberto === "comanda" && (
+        <NovaComandaModal onClose={() => setModalAberto(null)} onSalvar={adicionarComanda} />
+      )}
+      {modalAberto === "despesa" && (
+        <NovaDespesaModal onClose={() => setModalAberto(null)} onSalvar={adicionarDespesa} />
+      )}
+
+      {comandaParaFechar && (
+        <FecharComandaModal
+          comanda={comandaParaFechar}
+          onClose={() => setComandaParaFechar(null)}
+          onConfirmar={(forma) => {
+            fecharComanda(comandaParaFechar.id, forma);
+            setComandaParaFechar(null);
+          }}
+        />
+      )}
+
+      {confirmarFechamento && (
+        <Modal onClose={() => setConfirmarFechamento(false)}>
+          <div className="p-4 space-y-4">
+            <div>
+              <h2 className="text-base font-bold text-slate-100">Comandas em aberto</h2>
+              <p className="text-sm text-slate-400 mt-1">
+                Ainda há {comandasAbertas.length} comanda{comandasAbertas.length > 1 ? "s" : ""} em aberto neste dia.
+                Tem certeza que deseja fechar o caixa mesmo assim?
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmarFechamento(false)}
+                className="flex-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] py-3 rounded-xl text-sm font-semibold transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={fecharCaixa}
+                className="flex-1 bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all"
+              >
+                Fechar mesmo assim
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
 
     </div>
   );
