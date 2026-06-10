@@ -14,8 +14,8 @@ function FabMenu({ onAgendar }: { onAgendar: (hora: string) => void }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      {open && <div className="fixed inset-0 z-30 md:hidden" onClick={() => setOpen(false)} />}
-      <div className="fixed bottom-20 right-4 z-40 flex flex-col items-end gap-3 md:hidden">
+      {open && <div className="transform-gpu fixed inset-0 z-30 backdrop-blur-[2px] bg-black/10 md:hidden" onClick={() => setOpen(false)} />}
+      <div className="fixed bottom-24 right-4 z-40 flex flex-col items-end gap-3 md:hidden">
         <div className="flex flex-col items-end gap-2">
           {fabActions.map(({ label, icon: Icon }, i) => (
             <button
@@ -25,14 +25,14 @@ function FabMenu({ onAgendar }: { onAgendar: (hora: string) => void }) {
                 transitionDelay: open ? `${i * 30}ms` : "0ms",
                 transformOrigin: "bottom right",
               }}
-              className={`flex items-center gap-3 bg-slate-800/95 hover:bg-slate-700/95 text-slate-100 pl-4 pr-3 py-2.5 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.25)] text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              className={`transform-gpu flex items-center gap-3 bg-white/3 hover:bg-white/8 backdrop-blur-md backdrop-saturate-100 border border-white/15 text-slate-100 pl-4 pr-3 py-2.5 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_4px_20px_rgba(0,0,0,0.35)] text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 open
                   ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
                   : "opacity-0 scale-75 translate-y-2 pointer-events-none"
               }`}
             >
               {label}
-              <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+              <span className="w-8 h-8 rounded-full bg-white/8 border border-white/10 flex items-center justify-center shrink-0">
                 <Icon className="w-4 h-4 text-cyan-300" />
               </span>
             </button>
@@ -40,7 +40,7 @@ function FabMenu({ onAgendar }: { onAgendar: (hora: string) => void }) {
         </div>
         <button
           onClick={() => setOpen(!open)}
-          className="relative w-14 h-14 rounded-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 flex items-center justify-center transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          className="relative w-14 h-14 rounded-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 border border-white/30 text-slate-950 flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_24px_rgba(34,211,238,0.4)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
         >
           <Plus className={`w-6 h-6 absolute transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-135 opacity-0 scale-50" : "rotate-0 opacity-100 scale-100"}`} />
           <X className={`w-6 h-6 absolute transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-0 opacity-100 scale-100" : "-rotate-135 opacity-0 scale-50"}`} />
@@ -137,22 +137,22 @@ export default function AgendaPage() {
 
       {/* Cards de resumo */}
       <div className="grid grid-cols-2 gap-2 px-4 pb-4">
-        <div className="rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
+        <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
           <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Agendamentos</p>
           <p className="text-2xl font-bold text-slate-100 leading-none">{totalAgend}</p>
           <p className="text-[10px] text-slate-500 mt-1 truncate capitalize">{nomeDia}</p>
         </div>
-        <div className="rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
+        <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
           <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Horários Livres</p>
           <p className="text-2xl font-bold text-slate-100 leading-none">{livres}</p>
           <p className="text-[10px] text-slate-500 mt-1">de {HORARIOS.length} no dia</p>
         </div>
-        <div className="rounded-xl p-3 bg-emerald-400/10 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
+        <div className="transform-gpu rounded-xl p-3 bg-emerald-400/10 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
           <p className="text-[9px] font-semibold text-emerald-400 uppercase tracking-widest mb-1">Faturado</p>
           <p className="text-xl font-bold text-emerald-400 leading-none">R$ {faturado.toFixed(2).replace(".", ",")}</p>
           <p className="text-[10px] text-slate-500 mt-1">{concluidos} concluídos</p>
         </div>
-        <div className="rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
+        <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
           <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Caixa</p>
           <p className="text-xs font-semibold text-slate-300 leading-none mt-0.5">🔒 Em aberto</p>
           <button className="text-[9px] text-cyan-400 font-semibold mt-1 uppercase tracking-widest">Ver no Financeiro</button>
@@ -160,7 +160,7 @@ export default function AgendaPage() {
       </div>
 
       {/* Calendário compacto / expansível */}
-      <div className="mx-4 mb-4 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
+      <div className="transform-gpu mx-4 mb-4 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
         <div className="flex items-center justify-between px-4 pt-4 pb-3">
           <button onClick={() => navMes(-1)} className="text-slate-400 hover:text-white transition-colors">
             <ChevronLeft className="w-5 h-5" />
@@ -256,7 +256,7 @@ export default function AgendaPage() {
       </div>
 
       {/* Grade de horários */}
-      <div className="mx-4 mb-24 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
+      <div className="transform-gpu mx-4 mb-24 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
         <div className="px-4 py-3 border-b border-white/5">
           <div className="flex items-center gap-2">
             <span className="text-slate-400 text-sm">⊞</span>
@@ -308,7 +308,7 @@ export default function AgendaPage() {
                   <p className="text-[10px] text-slate-600">0/1</p>
                 </div>
                 <p className="text-sm text-emerald-400 font-medium flex-1">Disponível</p>
-                <button className="flex items-center gap-1.5 bg-white/8 backdrop-blur-md text-slate-300 text-xs px-3 py-1.5 rounded-lg hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors">
+                <button className="flex items-center gap-1.5 bg-white/8 text-slate-300 text-xs px-3 py-1.5 rounded-lg hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors">
                   <Calendar className="w-3 h-3" /> Agendar
                 </button>
                 <button className="text-slate-600 hover:text-red-400 transition-colors">
@@ -324,8 +324,8 @@ export default function AgendaPage() {
 
       {modal && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setModal(null)} />
-          <div className="relative bg-slate-900/80 backdrop-blur-2xl border border-white/10 rounded-t-3xl md:rounded-2xl w-full md:max-w-md p-6 pb-10 md:pb-6 space-y-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_40px_rgba(0,0,0,0.5)]">
+          <div className="transform-gpu absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setModal(null)} />
+          <div className="transform-gpu relative bg-slate-900/80 backdrop-blur-2xl border border-white/10 rounded-t-3xl md:rounded-2xl w-full md:max-w-md p-6 pb-10 md:pb-6 space-y-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_40px_rgba(0,0,0,0.5)]">
             <div className="flex items-center justify-between mb-1">
               <div>
                 <h3 className="text-base font-bold text-slate-100">Novo agendamento presencial</h3>
@@ -344,18 +344,18 @@ export default function AgendaPage() {
                 <label className="text-xs text-slate-400 mb-1 block">Nome do cliente</label>
                 <input type="text" placeholder="Ex: João Silva" value={form.cliente}
                   onChange={(e) => setForm({ ...form, cliente: e.target.value })}
-                  className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400/50 transition-colors" />
+                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400/50 transition-colors" />
               </div>
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">WhatsApp (opcional)</label>
                 <input type="tel" placeholder="11999999999" value={form.whatsapp}
                   onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-                  className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400/50 transition-colors" />
+                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400/50 transition-colors" />
               </div>
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">Serviço</label>
                 <select value={form.servico} onChange={(e) => setForm({ ...form, servico: e.target.value })}
-                  className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-400/50 transition-colors">
+                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-400/50 transition-colors">
                   {SERVICOS.map((s) => <option key={s}>{s}</option>)}
                 </select>
               </div>
@@ -368,7 +368,7 @@ export default function AgendaPage() {
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">Barbeiro</label>
                 <select value={form.barbeiro} onChange={(e) => setForm({ ...form, barbeiro: e.target.value })}
-                  className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-400/50 transition-colors">
+                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-400/50 transition-colors">
                   <option>Qualquer disponível</option>
                   <option>Renato</option>
                   <option>Franciele</option>
@@ -377,7 +377,7 @@ export default function AgendaPage() {
               </div>
             </div>
             <div className="flex gap-3 pt-1">
-              <button onClick={() => setModal(null)} className="flex-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 py-3 rounded-xl text-sm font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] transition-colors">Cancelar</button>
+              <button onClick={() => setModal(null)} className="transform-gpu flex-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 py-3 rounded-xl text-sm font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] transition-colors">Cancelar</button>
               <button onClick={() => setModal(null)} className="flex-1 bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-semibold transition-all">Confirmar</button>
             </div>
           </div>

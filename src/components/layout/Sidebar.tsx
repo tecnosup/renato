@@ -96,7 +96,7 @@ function NavLink({
       <li>
         <button
           onClick={() => setOpen(!open)}
-          className={`group w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
+          className={`transform-gpu group w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
             isActive
               ? "bg-white/10 backdrop-blur-md border border-cyan-400/20 text-white shadow-[0_0_20px_rgba(56,189,248,0.15)]"
               : "text-slate-300 border border-transparent hover:bg-white/5 hover:text-white"
@@ -140,7 +140,7 @@ function NavLink({
       <Link
         href={item.href}
         onClick={onClick}
-        className={`group flex items-center px-3 py-2.5 rounded-xl transition-all ${
+        className={`transform-gpu group flex items-center px-3 py-2.5 rounded-xl transition-all ${
           isActive
             ? "bg-white/10 backdrop-blur-md border border-cyan-400/20 text-white shadow-[0_0_20px_rgba(56,189,248,0.15)]"
             : "text-slate-300 border border-transparent hover:bg-white/5 hover:text-white"
@@ -156,7 +156,7 @@ function NavLink({
 // Sidebar lateral — só aparece em md+
 function DesktopSidebar() {
   return (
-    <aside className="hidden md:flex w-64 bg-slate-900/70 backdrop-blur-xl border-r border-white/5 flex-col h-screen sticky top-0 shadow-[inset_-1px_0_0_rgba(255,255,255,0.04)]">
+    <aside className="transform-gpu hidden md:flex w-64 bg-slate-900/70 backdrop-blur-xl border-r border-white/5 flex-col h-screen sticky top-0 shadow-[inset_-1px_0_0_rgba(255,255,255,0.04)]">
       <div className="h-16 flex items-center px-6 border-b border-white/5">
         <div className="w-8 h-8 bg-linear-to-br from-blue-400 to-cyan-500 rounded-md mr-3 shadow-[0_0_16px_rgba(56,189,248,0.5)]" />
         <h1 className="text-xl font-bold tracking-tight text-slate-100">Século XXI</h1>
@@ -171,7 +171,7 @@ function DesktopSidebar() {
       </nav>
 
       <div className="p-4 border-t border-white/5">
-        <div className="flex items-center w-full px-3 py-2 bg-white/5 backdrop-blur-md border border-white/5 rounded-lg">
+        <div className="transform-gpu flex items-center w-full px-3 py-2 bg-white/5 backdrop-blur-md border border-white/5 rounded-lg">
           <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-400 to-cyan-500 flex items-center justify-center text-xs font-bold mr-3 text-slate-950 shadow-[0_0_12px_rgba(56,189,248,0.45)]">
             RV
           </div>
@@ -211,7 +211,7 @@ function NavBottomItem({
     <Link
       href={href}
       onClick={handleClick}
-      className={`flex flex-col items-center justify-end gap-1 flex-1 pb-2 transition-colors ${
+      className={`flex flex-col items-center justify-end gap-1 flex-1 pb-1.5 transition-colors ${
         isActive ? "text-cyan-400" : "text-slate-400 hover:text-white"
       }`}
     >
@@ -232,44 +232,48 @@ function MobileBottomNav() {
   const pathname = usePathname();
 
   return (
-    <>
-      {/* Barra inferior fixa */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 bg-slate-900/40 backdrop-blur-2xl backdrop-saturate-150 md:hidden overflow-visible shadow-[0_-8px_40px_rgba(0,0,0,0.45)] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-linear-to-r before:from-transparent before:via-white/15 before:to-transparent">
-        <div className="flex items-end justify-around h-16 px-2">
+    <nav className="fixed bottom-3 left-3 right-3 z-30 md:hidden">
+      {/* Barra inferior flutuante */}
+      <div className="transform-gpu flex items-end justify-around h-16 px-2 rounded-[2rem] bg-white/3 backdrop-blur-md backdrop-saturate-100 border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_8px_32px_rgba(0,0,0,0.35)]">
 
-          {/* Comissões */}
-          <NavBottomItem href="/financeiro/comissoes" icon={Percent} label="Comissões" pathname={pathname} />
+        {/* Comissões */}
+        <NavBottomItem href="/financeiro/comissoes" icon={Percent} label="Comissões" pathname={pathname} />
 
-          {/* Caixa */}
-          <NavBottomItem href="/financeiro/caixa" icon={FaCashRegister} label="Caixa" pathname={pathname} />
+        {/* Caixa */}
+        <NavBottomItem href="/financeiro/caixa" icon={FaCashRegister} label="Caixa" pathname={pathname} />
 
-          {/* Agenda — centralizada e elevada */}
-          <div className="flex flex-col items-center flex-1">
-            <Link
-              href="/"
-              onClick={() => { if (pathname === "/") document.getElementById("agenda-scroll")?.scrollTo({ top: 0, behavior: "smooth" }); }}
-              className={`flex items-center justify-center w-16 h-16 rounded-full -translate-y-4 backdrop-blur-md transition-all ${
-                pathname === "/"
-                  ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 shadow-[0_0_28px_rgba(34,211,238,0.55)]"
-                  : "bg-white/8 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_4px_rgba(0,0,0,0.25),0_4px_16px_rgba(0,0,0,0.25)] hover:bg-white/12"
-              }`}
-            >
-              <Calendar className="w-6 h-6" />
-            </Link>
-            <span className={`text-[10px] -mt-3 pb-2 font-medium ${pathname === "/" ? "text-cyan-400" : "text-slate-400"}`}>
-              Agenda
-            </span>
-          </div>
-
-          {/* Clientes */}
-          <NavBottomItem href="/cadastros/clientes" icon={Users} label="Clientes" pathname={pathname} />
-
-          {/* Menu */}
-          <NavBottomItem href="/menu" icon={Menu} label="Menu" pathname={pathname} />
-
+        {/* Espaço reservado para o botão elevado da Agenda */}
+        <div className="flex-1 flex flex-col items-center pb-2.5">
+          <span className="w-10 h-10" />
+          <span className="text-[10px] opacity-0">Agenda</span>
         </div>
-      </nav>
-    </>
+
+        {/* Clientes */}
+        <NavBottomItem href="/cadastros/clientes" icon={Users} label="Clientes" pathname={pathname} />
+
+        {/* Menu */}
+        <NavBottomItem href="/menu" icon={Menu} label="Menu" pathname={pathname} />
+
+      </div>
+
+      {/* Agenda — elevada, fora da camada de blur da pill para evitar bug de backdrop-filter */}
+      <Link
+        href="/"
+        onClick={() => { if (pathname === "/") document.getElementById("agenda-scroll")?.scrollTo({ top: 0, behavior: "smooth" }); }}
+        className="absolute left-1/2 -translate-x-1/2 -top-5 flex flex-col items-center"
+      >
+        <div className={`transform-gpu flex items-center justify-center w-16 h-16 rounded-full backdrop-blur-md backdrop-saturate-100 border transition-all ${
+          pathname === "/"
+            ? "bg-linear-to-br from-blue-400 to-cyan-400 border-white/30 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_28px_rgba(34,211,238,0.55)]"
+            : "bg-white/6 border-white/20 text-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.15),0_4px_16px_rgba(0,0,0,0.25)] hover:bg-white/12"
+        }`}>
+          <Calendar className="w-6 h-6" />
+        </div>
+        <span className={`text-[10px] mt-1 font-medium ${pathname === "/" ? "text-cyan-400" : "text-slate-400"}`}>
+          Agenda
+        </span>
+      </Link>
+    </nav>
   );
 }
 

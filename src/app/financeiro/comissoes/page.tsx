@@ -13,7 +13,7 @@ export default function ComissoesPage() {
   const hoje = new Date().toLocaleDateString("pt-BR");
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-950 min-h-screen flex flex-col">
+    <div className="flex-1 overflow-y-auto bg-slate-950 flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-5 pb-4">
         <h1 className="text-xl font-bold text-slate-100">

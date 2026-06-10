@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useLayoutEffect, useRef } from "react";
-import { ChevronLeft, ChevronRight, Scissors, TrendingDown, Lock, Plus, X, ChevronDown, Banknote, CreditCard, QrCode, Trash2 } from "lucide-react";
+import { useState, useLayoutEffect, useEffect, useRef } from "react";
+import { ChevronLeft, ChevronRight, Scissors, TrendingDown, Lock, Plus, X, ChevronDown, Banknote, CreditCard, QrCode, Trash2, Check } from "lucide-react";
 import { FaCashRegister } from "react-icons/fa";
 
 const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
@@ -129,15 +129,34 @@ function CalExpand({ expandido, children }: { expandido: boolean; children: Reac
   );
 }
 
-// Modal genérico de fundo
-function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+// Modal genérico de fundo — sobe ao abrir, desce ao fechar
+function Modal({ children, onClose }: { children: (close: () => void) => React.ReactNode; onClose: () => void }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const close = () => {
+    setVisible(false);
+    setTimeout(onClose, 250);
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className={`transform-gpu fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm transition-opacity duration-200 ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
+      onClick={close}
+    >
       <div
-        className="w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl bg-slate-900/80 backdrop-blur-2xl border border-white/10 max-h-[90vh] overflow-y-auto shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_40px_rgba(0,0,0,0.5)]"
+        className={`transform-gpu w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl bg-slate-900/80 backdrop-blur-2xl border border-white/10 max-h-[90vh] overflow-y-auto shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_40px_rgba(0,0,0,0.5)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          visible ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
-        {children}
+        {children(close)}
       </div>
     </div>
   );
@@ -154,6 +173,7 @@ function NovaComandaModal({
   const [cliente, setCliente] = useState("");
   const [profissional, setProfissional] = useState("");
   const [itens, setItens] = useState<ItemComanda[]>([{ descricao: "", valor: 0 }]);
+  const [salvo, setSalvo] = useState(false);
 
   const total = itens.reduce((s, i) => s + (i.valor || 0), 0);
   const podeSalvar = cliente.trim() && profissional.trim() && itens.some((i) => i.descricao.trim() && i.valor > 0);
@@ -168,7 +188,7 @@ function NovaComandaModal({
     );
   };
 
-  const salvar = () => {
+  const salvar = (close: () => void) => {
     onSalvar({
       id: `c-${Date.now()}`,
       cliente: cliente.trim(),
@@ -176,83 +196,97 @@ function NovaComandaModal({
       status: "aberta",
       itens: itens.filter((i) => i.descricao.trim() && i.valor > 0),
     });
-    onClose();
+    setSalvo(true);
+    setTimeout(close, 700);
   };
 
   return (
     <Modal onClose={onClose}>
-      <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/5">
-        <h2 className="text-base font-bold text-slate-100">Nova Comanda</h2>
-        <button onClick={onClose} className="text-slate-500 hover:text-slate-300">
-          <X className="w-5 h-5" />
-        </button>
-      </div>
-
-      <div className="p-4 space-y-3">
-        <div>
-          <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Cliente</label>
-          <input
-            value={cliente}
-            onChange={(e) => setCliente(e.target.value)}
-            placeholder="Nome do cliente"
-            className="w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
-          />
-        </div>
-
-        <div>
-          <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Profissional</label>
-          <input
-            value={profissional}
-            onChange={(e) => setProfissional(e.target.value)}
-            placeholder="Nome do profissional"
-            className="w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
-          />
-        </div>
-
-        <div>
-          <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Serviços / Produtos</label>
-          <div className="space-y-2">
-            {itens.map((item, idx) => (
-              <div key={idx} className="flex items-center gap-2">
-                <input
-                  value={item.descricao}
-                  onChange={(e) => updateItem(idx, "descricao", e.target.value)}
-                  placeholder="Descrição"
-                  className="flex-1 bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
-                />
-                <input
-                  value={item.valor || ""}
-                  onChange={(e) => updateItem(idx, "valor", e.target.value)}
-                  placeholder="0,00"
-                  inputMode="decimal"
-                  className="w-24 bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
-                />
-                {itens.length > 1 && (
-                  <button onClick={() => removeItem(idx)} className="text-slate-500 hover:text-red-400 shrink-0">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            ))}
+      {(close) =>
+        salvo ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-14 px-4">
+            <div className="success-pop flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 shadow-[0_0_28px_rgba(34,211,238,0.55)]">
+              <Check className="w-8 h-8" strokeWidth={3} />
+            </div>
+            <p className="text-base font-bold text-slate-100">Comanda aberta!</p>
           </div>
-          <button onClick={addItem} className="mt-2 flex items-center gap-1 text-xs font-semibold text-blue-400 hover:text-blue-300">
-            <Plus className="w-3.5 h-3.5" /> Adicionar item
-          </button>
-        </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/5">
+              <h2 className="text-base font-bold text-slate-100">Nova Comanda</h2>
+              <button onClick={close} className="text-slate-500 hover:text-slate-300">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-white/5">
-          <span className="text-sm font-semibold text-slate-400">Total</span>
-          <span className="text-lg font-bold text-slate-100">R$ {fmt(total)}</span>
-        </div>
+            <div className="p-4 space-y-3">
+              <div>
+                <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Cliente</label>
+                <input
+                  value={cliente}
+                  onChange={(e) => setCliente(e.target.value)}
+                  placeholder="Nome do cliente"
+                  className="transform-gpu w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 focus:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_12px_rgba(34,211,238,0.25)] transition-shadow"
+                />
+              </div>
 
-        <button
-          onClick={salvar}
-          disabled={!podeSalvar}
-          className="w-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 disabled:bg-white/5 disabled:bg-none disabled:text-slate-600 text-slate-950 disabled:cursor-not-allowed py-3 rounded-xl text-sm font-bold transition-all"
-        >
-          Abrir Comanda
-        </button>
-      </div>
+              <div>
+                <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Profissional</label>
+                <input
+                  value={profissional}
+                  onChange={(e) => setProfissional(e.target.value)}
+                  placeholder="Nome do profissional"
+                  className="transform-gpu w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 focus:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_12px_rgba(34,211,238,0.25)] transition-shadow"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Serviços / Produtos</label>
+                <div className="space-y-2">
+                  {itens.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <input
+                        value={item.descricao}
+                        onChange={(e) => updateItem(idx, "descricao", e.target.value)}
+                        placeholder="Descrição"
+                        className="transform-gpu flex-1 bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 focus:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_12px_rgba(34,211,238,0.25)] transition-shadow"
+                      />
+                      <input
+                        value={item.valor || ""}
+                        onChange={(e) => updateItem(idx, "valor", e.target.value)}
+                        placeholder="0,00"
+                        inputMode="decimal"
+                        className="transform-gpu w-24 bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 focus:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_12px_rgba(34,211,238,0.25)] transition-shadow"
+                      />
+                      {itens.length > 1 && (
+                        <button onClick={() => removeItem(idx)} className="text-slate-500 hover:text-red-400 shrink-0">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button onClick={addItem} className="mt-2 flex items-center gap-1 text-xs font-semibold text-blue-400 hover:text-blue-300">
+                  <Plus className="w-3.5 h-3.5" /> Adicionar item
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                <span className="text-sm font-semibold text-slate-400">Total</span>
+                <span className="text-lg font-bold text-slate-100">R$ {fmt(total)}</span>
+              </div>
+
+              <button
+                onClick={() => salvar(close)}
+                disabled={!podeSalvar}
+                className="w-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 disabled:bg-white/5 disabled:bg-none disabled:text-slate-600 text-slate-950 disabled:cursor-not-allowed py-3 rounded-xl text-sm font-bold shadow-[0_0_24px_rgba(34,211,238,0.35)] disabled:shadow-none transition-all"
+              >
+                Abrir Comanda
+              </button>
+            </div>
+          </>
+        )
+      }
     </Modal>
   );
 }
@@ -272,54 +306,58 @@ function FecharComandaModal({
 
   return (
     <Modal onClose={onClose}>
-      <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/5">
-        <h2 className="text-base font-bold text-slate-100">Fechar Comanda</h2>
-        <button onClick={onClose} className="text-slate-500 hover:text-slate-300">
-          <X className="w-5 h-5" />
-        </button>
-      </div>
-
-      <div className="p-4 space-y-3">
-        <div className="rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-          <p className="text-sm font-bold text-slate-100">{comanda.cliente}</p>
-          <p className="text-xs text-slate-500">
-            {comanda.profissional} · {comanda.itens.map((i) => i.descricao).join(", ")}
-          </p>
-        </div>
-
-        <div>
-          <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Forma de Pagamento</label>
-          <div className="grid grid-cols-2 gap-2">
-            {FORMAS_PAGAMENTO.map((forma) => {
-              const Icon = PAGAMENTO_ICONS[forma];
-              const ativo = formaPagamento === forma;
-              return (
-                <button
-                  key={forma}
-                  onClick={() => setFormaPagamento(forma)}
-                  className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                    ativo ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : "bg-white/5 backdrop-blur-md text-slate-400 hover:bg-white/8"
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" /> {forma}
-                </button>
-              );
-            })}
+      {(close) => (
+        <>
+          <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/5">
+            <h2 className="text-base font-bold text-slate-100">Fechar Comanda</h2>
+            <button onClick={close} className="text-slate-500 hover:text-slate-300">
+              <X className="w-5 h-5" />
+            </button>
           </div>
-        </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-white/5">
-          <span className="text-sm font-semibold text-slate-400">Total</span>
-          <span className="text-lg font-bold text-slate-100">R$ {fmt(total)}</span>
-        </div>
+          <div className="p-4 space-y-3">
+            <div className="transform-gpu rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+              <p className="text-sm font-bold text-slate-100">{comanda.cliente}</p>
+              <p className="text-xs text-slate-500">
+                {comanda.profissional} · {comanda.itens.map((i) => i.descricao).join(", ")}
+              </p>
+            </div>
 
-        <button
-          onClick={() => onConfirmar(formaPagamento)}
-          className="w-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all"
-        >
-          Confirmar Pagamento
-        </button>
-      </div>
+            <div>
+              <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Forma de Pagamento</label>
+              <div className="grid grid-cols-2 gap-2">
+                {FORMAS_PAGAMENTO.map((forma) => {
+                  const Icon = PAGAMENTO_ICONS[forma];
+                  const ativo = formaPagamento === forma;
+                  return (
+                    <button
+                      key={forma}
+                      onClick={() => setFormaPagamento(forma)}
+                      className={`transform-gpu flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        ativo ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : "bg-white/5 backdrop-blur-md text-slate-400 hover:bg-white/8"
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" /> {forma}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t border-white/5">
+              <span className="text-sm font-semibold text-slate-400">Total</span>
+              <span className="text-lg font-bold text-slate-100">R$ {fmt(total)}</span>
+            </div>
+
+            <button
+              onClick={() => onConfirmar(formaPagamento)}
+              className="w-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all"
+            >
+              Confirmar Pagamento
+            </button>
+          </div>
+        </>
+      )}
     </Modal>
   );
 }
@@ -337,49 +375,53 @@ function NovaDespesaModal({
 
   const podeSalvar = descricao.trim() && Number(valor.replace(",", ".")) > 0;
 
-  const salvar = () => {
+  const salvar = (close: () => void) => {
     onSalvar({ id: `d-${Date.now()}`, descricao: descricao.trim(), valor: Number(valor.replace(",", ".")) });
-    onClose();
+    close();
   };
 
   return (
     <Modal onClose={onClose}>
-      <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/5">
-        <h2 className="text-base font-bold text-slate-100">Nova Despesa</h2>
-        <button onClick={onClose} className="text-slate-500 hover:text-slate-300">
-          <X className="w-5 h-5" />
-        </button>
-      </div>
+      {(close) => (
+        <>
+          <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/5">
+            <h2 className="text-base font-bold text-slate-100">Nova Despesa</h2>
+            <button onClick={close} className="text-slate-500 hover:text-slate-300">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
-      <div className="p-4 space-y-3">
-        <div>
-          <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Descrição</label>
-          <input
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
-            placeholder="Ex: Material de limpeza"
-            className="w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-red-400/50"
-          />
-        </div>
-        <div>
-          <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Valor</label>
-          <input
-            value={valor}
-            onChange={(e) => setValor(e.target.value)}
-            placeholder="0,00"
-            inputMode="decimal"
-            className="w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-red-400/50"
-          />
-        </div>
+          <div className="p-4 space-y-3">
+            <div>
+              <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Descrição</label>
+              <input
+                value={descricao}
+                onChange={(e) => setDescricao(e.target.value)}
+                placeholder="Ex: Material de limpeza"
+                className="transform-gpu w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-red-400/50"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Valor</label>
+              <input
+                value={valor}
+                onChange={(e) => setValor(e.target.value)}
+                placeholder="0,00"
+                inputMode="decimal"
+                className="transform-gpu w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-red-400/50"
+              />
+            </div>
 
-        <button
-          onClick={salvar}
-          disabled={!podeSalvar}
-          className="w-full bg-red-400/15 backdrop-blur-md hover:bg-red-400/20 disabled:bg-white/5 disabled:text-slate-600 text-red-400 disabled:cursor-not-allowed py-3 rounded-xl text-sm font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-colors"
-        >
-          Salvar Despesa
-        </button>
-      </div>
+            <button
+              onClick={() => salvar(close)}
+              disabled={!podeSalvar}
+              className="transform-gpu w-full bg-red-400/15 backdrop-blur-md hover:bg-red-400/20 disabled:bg-white/5 disabled:text-slate-600 text-red-400 disabled:cursor-not-allowed py-3 rounded-xl text-sm font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-colors"
+            >
+              Salvar Despesa
+            </button>
+          </div>
+        </>
+      )}
     </Modal>
   );
 }
@@ -484,7 +526,7 @@ export default function CaixaPage() {
 
       {/* Header */}
       <div className="flex items-center gap-3 px-4 pt-5 pb-4">
-        <div className="w-9 h-9 rounded-xl bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] flex items-center justify-center shrink-0">
+        <div className="transform-gpu w-9 h-9 rounded-xl bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] flex items-center justify-center shrink-0">
           <FaCashRegister className="w-4 h-4 text-cyan-400" />
         </div>
         <div>
@@ -496,7 +538,7 @@ export default function CaixaPage() {
       </div>
 
       {/* Card único: calendário + painel do dia */}
-      <div className="mx-4 mb-24 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
+      <div className="transform-gpu mx-4 mb-24 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
 
         {/* Header do calendário */}
         <div className="flex items-center justify-between px-4 pt-4 pb-3">
@@ -589,7 +631,7 @@ export default function CaixaPage() {
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-base font-bold text-slate-100">{dataFormatada}</span>
             {caixa.status === "fechado" && (
-              <span className="flex items-center gap-1 text-[10px] font-bold bg-white/5 backdrop-blur-md text-slate-400 px-2 py-0.5 rounded-full uppercase tracking-widest shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+              <span className="transform-gpu flex items-center gap-1 text-[10px] font-bold bg-white/5 backdrop-blur-md text-slate-400 px-2 py-0.5 rounded-full uppercase tracking-widest shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                 <Lock className="w-2.5 h-2.5" /> Fechado
               </span>
             )}
@@ -645,7 +687,7 @@ export default function CaixaPage() {
             {comandasFechadas.map((c) => {
               const PagIcon = PAGAMENTO_ICONS[c.formaPagamento!];
               return (
-                <div key={c.id} className="flex items-start justify-between gap-3 rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <div key={c.id} className="transform-gpu flex items-start justify-between gap-3 rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="flex items-start gap-2.5 min-w-0">
                     <div className="w-7 h-7 rounded-full bg-amber-400/10 flex items-center justify-center shrink-0 mt-0.5">
                       <Scissors className="w-3.5 h-3.5 text-amber-400" />
@@ -671,7 +713,7 @@ export default function CaixaPage() {
         {caixa.despesas.length > 0 && (
           <div className="border-t border-white/5 px-4 py-3 space-y-2">
             {caixa.despesas.map((d) => (
-              <div key={d.id} className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+              <div key={d.id} className="transform-gpu flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-7 h-7 rounded-full bg-red-400/10 flex items-center justify-center shrink-0">
                     <TrendingDown className="w-3.5 h-3.5 text-red-400" />
@@ -695,7 +737,7 @@ export default function CaixaPage() {
           {caixa.status === "fechado" ? (
             <button
               onClick={reabrirCaixa}
-              className="flex items-center justify-center gap-2 w-full bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-colors"
+              className="transform-gpu flex items-center justify-center gap-2 w-full bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-colors"
             >
               <Lock className="w-4 h-4" /> Reabrir Caixa
             </button>
@@ -709,14 +751,14 @@ export default function CaixaPage() {
               </button>
               <button
                 onClick={() => setModalAberto("despesa")}
-                className="flex flex-col items-center gap-1 bg-red-400/10 backdrop-blur-md text-red-400 hover:bg-red-400/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors"
+                className="transform-gpu flex flex-col items-center gap-1 bg-red-400/10 backdrop-blur-md text-red-400 hover:bg-red-400/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors"
               >
                 <TrendingDown className="w-4 h-4" /> Despesa
               </button>
               <button
                 onClick={fecharCaixa}
                 disabled={!caixaExiste && caixa.comandas.length === 0 && caixa.despesas.length === 0}
-                className="flex flex-col items-center gap-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] disabled:opacity-40 disabled:hover:bg-white/8 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors"
+                className="transform-gpu flex flex-col items-center gap-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] disabled:opacity-40 disabled:hover:bg-white/8 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors"
               >
                 <Lock className="w-4 h-4" /> Fechar Caixa
               </button>
@@ -727,7 +769,7 @@ export default function CaixaPage() {
       </div>
 
       {/* Card: Comandas do dia (abertas) */}
-      <div className="mx-4 mb-24 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transform-gpu">
+      <div className="transform-gpu mx-4 mb-24 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
         <div className="px-4 pt-4 pb-3">
           <p className="text-sm font-bold text-slate-100">Comandas do dia</p>
           <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mt-0.5">
@@ -738,7 +780,7 @@ export default function CaixaPage() {
         {comandasAbertas.length > 0 ? (
           <div className="px-4 pb-4 space-y-2">
             {comandasAbertas.map((c) => (
-              <div key={c.id} className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+              <div key={c.id} className="transform-gpu flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                 <div className="flex items-start gap-2.5 min-w-0">
                   <div className="w-7 h-7 rounded-full bg-amber-400/10 flex items-center justify-center shrink-0 mt-0.5">
                     <Scissors className="w-3.5 h-3.5 text-amber-400" />
@@ -789,29 +831,31 @@ export default function CaixaPage() {
 
       {confirmarFechamento && (
         <Modal onClose={() => setConfirmarFechamento(false)}>
-          <div className="p-4 space-y-4">
-            <div>
-              <h2 className="text-base font-bold text-slate-100">Comandas em aberto</h2>
-              <p className="text-sm text-slate-400 mt-1">
-                Ainda há {comandasAbertas.length} comanda{comandasAbertas.length > 1 ? "s" : ""} em aberto neste dia.
-                Tem certeza que deseja fechar o caixa mesmo assim?
-              </p>
+          {(close) => (
+            <div className="p-4 space-y-4">
+              <div>
+                <h2 className="text-base font-bold text-slate-100">Comandas em aberto</h2>
+                <p className="text-sm text-slate-400 mt-1">
+                  Ainda há {comandasAbertas.length} comanda{comandasAbertas.length > 1 ? "s" : ""} em aberto neste dia.
+                  Tem certeza que deseja fechar o caixa mesmo assim?
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={close}
+                  className="transform-gpu flex-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] py-3 rounded-xl text-sm font-semibold transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={fecharCaixa}
+                  className="flex-1 bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all"
+                >
+                  Fechar mesmo assim
+                </button>
+              </div>
             </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setConfirmarFechamento(false)}
-                className="flex-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] py-3 rounded-xl text-sm font-semibold transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={fecharCaixa}
-                className="flex-1 bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all"
-              >
-                Fechar mesmo assim
-              </button>
-            </div>
-          </div>
+          )}
         </Modal>
       )}
 
