@@ -40,7 +40,7 @@ function FabMenu({ onAgendar }: { onAgendar: (hora: string) => void }) {
         </div>
         <button
           onClick={() => setOpen(!open)}
-          className="relative w-14 h-14 rounded-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 border border-white/30 text-slate-950 flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_24px_rgba(34,211,238,0.4)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          className="relative w-14 h-14 rounded-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 border border-white/30 text-slate-950 flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
         >
           <Plus className={`w-6 h-6 absolute transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-135 opacity-0 scale-50" : "rotate-0 opacity-100 scale-100"}`} />
           <X className={`w-6 h-6 absolute transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-0 opacity-100 scale-100" : "-rotate-135 opacity-0 scale-50"}`} />

@@ -130,7 +130,7 @@ function CalExpand({ expandido, children }: { expandido: boolean; children: Reac
 }
 
 // Modal genérico de fundo — sobe ao abrir, desce ao fechar
-function Modal({ children, onClose }: { children: (close: () => void) => React.ReactNode; onClose: () => void }) {
+function Modal({ children, onClose, panelClassName, overlayClassName }: { children: (close: () => void) => React.ReactNode; onClose: () => void; panelClassName?: string; overlayClassName?: string }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -140,19 +140,23 @@ function Modal({ children, onClose }: { children: (close: () => void) => React.R
 
   const close = () => {
     setVisible(false);
-    setTimeout(onClose, 250);
+    setTimeout(onClose, 300);
   };
 
   return (
     <div
-      className={`transform-gpu fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm transition-opacity duration-200 ${
+      className={`transform-gpu fixed inset-0 z-50 flex items-end sm:items-center justify-center transition-opacity duration-200 ${
+        overlayClassName ?? "bg-black/70 backdrop-blur-sm"
+      } ${
         visible ? "opacity-100" : "opacity-0"
       }`}
       onClick={close}
     >
       <div
-        className={`transform-gpu w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl bg-slate-900/80 backdrop-blur-2xl border border-white/10 max-h-[90vh] overflow-y-auto shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_40px_rgba(0,0,0,0.5)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          visible ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+        className={`transform-gpu w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl max-h-[90vh] overflow-y-auto transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          panelClassName ?? "bg-slate-900/80 backdrop-blur-2xl border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_40px_rgba(0,0,0,0.5)]"
+        } ${
+          visible ? "translate-y-0 scale-100 opacity-100" : "translate-y-full sm:translate-y-24 scale-95 opacity-0"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -174,6 +178,7 @@ function NovaComandaModal({
   const [profissional, setProfissional] = useState("");
   const [itens, setItens] = useState<ItemComanda[]>([{ descricao: "", valor: 0 }]);
   const [salvo, setSalvo] = useState(false);
+  const [fechando, setFechando] = useState(false);
 
   const total = itens.reduce((s, i) => s + (i.valor || 0), 0);
   const podeSalvar = cliente.trim() && profissional.trim() && itens.some((i) => i.descricao.trim() && i.valor > 0);
@@ -201,7 +206,11 @@ function NovaComandaModal({
   };
 
   return (
-    <Modal onClose={onClose}>
+    <Modal
+      onClose={onClose}
+      overlayClassName="bg-black/20"
+      panelClassName="bg-white/3 backdrop-blur-md backdrop-saturate-100 border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_4px_20px_rgba(0,0,0,0.35)] sm:rounded-3xl rounded-t-3xl"
+    >
       {(close) =>
         salvo ? (
           <div className="flex flex-col items-center justify-center gap-3 py-14 px-4">
@@ -212,36 +221,42 @@ function NovaComandaModal({
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/5">
+            <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/10">
               <h2 className="text-base font-bold text-slate-100">Nova Comanda</h2>
-              <button onClick={close} className="text-slate-500 hover:text-slate-300">
-                <X className="w-5 h-5" />
+              <button
+                onClick={() => {
+                  setFechando(true);
+                  setTimeout(close, 150);
+                }}
+                className="group text-slate-400 hover:text-slate-200"
+              >
+                <X className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-90 ${fechando ? "rotate-180" : ""}`} />
               </button>
             </div>
 
             <div className="p-4 space-y-3">
               <div>
-                <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Cliente</label>
+                <label className="block text-[11px] font-bold text-slate-200 uppercase tracking-widest mb-1.5">Cliente</label>
                 <input
                   value={cliente}
                   onChange={(e) => setCliente(e.target.value)}
                   placeholder="Nome do cliente"
-                  className="transform-gpu w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 focus:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_12px_rgba(34,211,238,0.25)] transition-shadow"
+                  className="transform-gpu w-full bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-400 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 transition-shadow"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Profissional</label>
+                <label className="block text-[11px] font-bold text-slate-200 uppercase tracking-widest mb-1.5">Profissional</label>
                 <input
                   value={profissional}
                   onChange={(e) => setProfissional(e.target.value)}
                   placeholder="Nome do profissional"
-                  className="transform-gpu w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 focus:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_12px_rgba(34,211,238,0.25)] transition-shadow"
+                  className="transform-gpu w-full bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-400 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 transition-shadow"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Serviços / Produtos</label>
+                <label className="block text-[11px] font-bold text-slate-200 uppercase tracking-widest mb-1.5">Serviços / Produtos</label>
                 <div className="space-y-2">
                   {itens.map((item, idx) => (
                     <div key={idx} className="flex items-center gap-2">
@@ -249,37 +264,37 @@ function NovaComandaModal({
                         value={item.descricao}
                         onChange={(e) => updateItem(idx, "descricao", e.target.value)}
                         placeholder="Descrição"
-                        className="transform-gpu flex-1 bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 focus:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_12px_rgba(34,211,238,0.25)] transition-shadow"
+                        className="transform-gpu flex-1 bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-400 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 transition-shadow"
                       />
                       <input
                         value={item.valor || ""}
                         onChange={(e) => updateItem(idx, "valor", e.target.value)}
                         placeholder="0,00"
                         inputMode="decimal"
-                        className="transform-gpu w-24 bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 focus:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_12px_rgba(34,211,238,0.25)] transition-shadow"
+                        className="transform-gpu w-24 bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-400 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 transition-shadow"
                       />
                       {itens.length > 1 && (
-                        <button onClick={() => removeItem(idx)} className="text-slate-500 hover:text-red-400 shrink-0">
+                        <button onClick={() => removeItem(idx)} className="text-slate-400 hover:text-red-400 shrink-0">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       )}
                     </div>
                   ))}
                 </div>
-                <button onClick={addItem} className="mt-2 flex items-center gap-1 text-xs font-semibold text-blue-400 hover:text-blue-300">
+                <button onClick={addItem} className="mt-2 flex items-center gap-1 text-xs font-semibold text-blue-300 hover:text-blue-200">
                   <Plus className="w-3.5 h-3.5" /> Adicionar item
                 </button>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-white/5">
-                <span className="text-sm font-semibold text-slate-400">Total</span>
+              <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                <span className="text-sm font-semibold text-slate-300">Total</span>
                 <span className="text-lg font-bold text-slate-100">R$ {fmt(total)}</span>
               </div>
 
               <button
                 onClick={() => salvar(close)}
                 disabled={!podeSalvar}
-                className="w-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 disabled:bg-white/5 disabled:bg-none disabled:text-slate-600 text-slate-950 disabled:cursor-not-allowed py-3 rounded-xl text-sm font-bold shadow-[0_0_24px_rgba(34,211,238,0.35)] disabled:shadow-none transition-all"
+                className="w-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 disabled:bg-white/5 disabled:bg-none disabled:text-slate-500 border border-white/30 disabled:border-white/10 text-slate-950 disabled:cursor-not-allowed py-3 rounded-full text-sm font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] disabled:shadow-none transition-all"
               >
                 Abrir Comanda
               </button>
