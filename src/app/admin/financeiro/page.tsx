@@ -96,7 +96,7 @@ function ConfirmarPagamentoModal({
       {(close) =>
         confirmado ? (
           <div className="flex flex-col items-center justify-center gap-3 py-14 px-4">
-            <div className="success-pop flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 shadow-[0_0_28px_rgba(34,211,238,0.55)]">
+            <div className="success-pop flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 shadow-[0_0_28px_rgba(194,163,93,0.55)]">
               <Check className="w-8 h-8" strokeWidth={3} />
             </div>
             <p className="text-base font-bold text-slate-100">Pagamento confirmado!</p>
@@ -124,7 +124,7 @@ function ConfirmarPagamentoModal({
                   className="w-full flex items-center justify-between gap-2 bg-black/25 rounded-lg px-2.5 py-2 text-xs text-slate-200 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] hover:bg-black/35 transition-colors"
                 >
                   <span className="flex items-center gap-1.5">
-                    <CalendarIcon className="w-3.5 h-3.5 text-cyan-300" />
+                    <CalendarIcon className="w-3.5 h-3.5 text-gold" />
                     Vencimento: {data}
                   </span>
                   <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform duration-300 ${pickerAberto ? "rotate-180" : ""}`} />
@@ -157,7 +157,7 @@ function ConfirmarPagamentoModal({
                     setConfirmado(true);
                     setTimeout(close, 700);
                   }}
-                  className="flex-1 bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 border border-white/30 text-slate-950 py-3 rounded-full text-sm font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] transition-all"
+                  className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 border border-white/30 text-slate-950 py-3 rounded-full text-sm font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] transition-all"
                 >
                   Confirmar pagamento
                 </button>
@@ -274,7 +274,7 @@ export default function FinanceiroPage() {
             onClick={() => setPeriodo(p)}
             className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
               p === periodo
-                ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_16px_rgba(34,211,238,0.4)]"
+                ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_16px_rgba(194,163,93,0.4)]"
                 : "bg-white/5 backdrop-blur-md text-slate-200 hover:text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
             }`}
           >
@@ -418,7 +418,7 @@ export default function FinanceiroPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-sm font-semibold text-slate-100">{g.nome}</p>
-                    <span className="text-[10px] font-medium text-blue-300 bg-blue-500/15 border border-blue-400/20 rounded-full px-2 py-0.5">{g.categoria}</span>
+                    <span className="text-[10px] font-medium text-gold bg-gold/15 border border-gold/20 rounded-full px-2 py-0.5">{g.categoria}</span>
                     <span className="text-[10px] font-medium text-slate-300 bg-white/5 border border-white/10 rounded-full px-2 py-0.5">{g.recorrencia}</span>
                     {g.lembrete && <BellRing className="w-3 h-3 text-amber-400" />}
                   </div>

@@ -28,7 +28,7 @@ export default function ClientesPage() {
           <h1 className="text-2xl font-bold text-slate-100">Clientes</h1>
           <p className="text-slate-300 text-sm mt-1">{clientes.length} clientes cadastrados</p>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+        <button className="bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2">
           <UserPlus className="w-4 h-4" />
           <span className="hidden sm:inline">Novo Cliente</span>
         </button>
@@ -40,7 +40,7 @@ export default function ClientesPage() {
         <input
           type="text"
           placeholder="Buscar cliente..."
-          className="transform-gpu w-full bg-white/2 backdrop-blur-md backdrop-saturate-150 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_4px_20px_rgba(0,0,0,0.25)] rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 placeholder-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+          className="transform-gpu w-full bg-white/2 backdrop-blur-md backdrop-saturate-150 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_4px_20px_rgba(0,0,0,0.25)] rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 placeholder-slate-300 focus:outline-none focus:ring-1 focus:ring-gold/50 transition-all"
         />
       </div>
 

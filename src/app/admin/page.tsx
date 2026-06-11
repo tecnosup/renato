@@ -65,14 +65,14 @@ function FabMenu({ onAgendar }: { onAgendar: (hora: string) => void }) {
             >
               {label}
               <span className="w-8 h-8 rounded-full bg-white/8 border border-white/10 flex items-center justify-center shrink-0">
-                <Icon className="w-4 h-4 text-cyan-300" />
+                <Icon className="w-4 h-4 text-gold" />
               </span>
             </button>
           ))}
         </div>
         <button
           onClick={() => setOpen(!open)}
-          className="relative w-14 h-14 rounded-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 border border-white/30 text-slate-950 flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] animate-[fab-pop-in_0.25s_cubic-bezier(0.34,1.56,0.64,1)_both]"
+          className="relative w-14 h-14 rounded-full bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 border border-white/30 text-slate-950 flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] animate-[fab-pop-in_0.25s_cubic-bezier(0.34,1.56,0.64,1)_both]"
         >
           <Plus className={`w-6 h-6 absolute transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-135 opacity-0 scale-50" : "rotate-0 opacity-100 scale-100"}`} />
           <X className={`w-6 h-6 absolute transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-0 opacity-100 scale-100" : "-rotate-135 opacity-0 scale-50"}`} />
@@ -200,7 +200,7 @@ export default function AgendaPage() {
         <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
           <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Caixa</p>
           <p className="text-xs font-semibold text-slate-300 leading-none mt-0.5">🔒 Em aberto</p>
-          <button className="text-[9px] text-cyan-400 font-semibold mt-1 uppercase tracking-widest">Ver no Financeiro</button>
+          <button className="text-[9px] text-gold font-semibold mt-1 uppercase tracking-widest">Ver no Financeiro</button>
         </div>
       </div>
 
@@ -212,7 +212,7 @@ export default function AgendaPage() {
           </button>
           <button
             onClick={() => setExpandido(!expandido)}
-            className="flex items-center gap-1.5 text-sm font-semibold text-slate-100 hover:text-cyan-400 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-semibold text-slate-100 hover:text-gold transition-colors"
           >
             {MESES[mes]} {ano}
             <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${expandido ? "rotate-180" : ""}`} />
@@ -244,7 +244,7 @@ export default function AgendaPage() {
                   key={key}
                   onClick={() => setDiaSelecionado(key)}
                   className={`flex flex-col items-center justify-center aspect-square md:aspect-auto md:w-12 md:h-12 md:mx-auto rounded-xl transition-colors ${
-                    isSel ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : isHoje ? "border border-cyan-400/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
+                    isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isHoje ? "border border-gold/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
                   }`}
                 >
                   <span className={`text-sm font-semibold ${isDom && !isSel ? "text-red-400" : ""}`}>{d.getDate()}</span>
@@ -276,7 +276,7 @@ export default function AgendaPage() {
                     key={key}
                     onClick={() => selecionarDia(key)}
                     className={`relative flex flex-col items-center justify-center aspect-square md:aspect-auto md:w-12 md:h-12 md:mx-auto rounded-xl transition-colors ${
-                      isSel ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : isHoje ? "border border-cyan-400/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
+                      isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isHoje ? "border border-gold/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
                     }`}
                   >
                     <span className={`text-sm font-semibold ${isDom && !isSel ? "text-red-400" : ""}`}>{dia}</span>
@@ -300,7 +300,7 @@ export default function AgendaPage() {
                 <span className="text-[10px] text-slate-300">caixa aberto</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded border border-cyan-400/40" />
+                <span className="w-3 h-3 rounded border border-gold/40" />
                 <span className="text-[10px] text-slate-300">hoje</span>
               </div>
             </div>
@@ -340,16 +340,16 @@ export default function AgendaPage() {
             if (agend) {
               const isConc = agend.status === "concluido";
               return (
-                <li key={hora} className={`flex items-center gap-4 px-4 py-3 ${isConc ? "bg-emerald-400/5" : "bg-cyan-400/5"}`}>
+                <li key={hora} className={`flex items-center gap-4 px-4 py-3 ${isConc ? "bg-emerald-400/5" : "bg-gold/5"}`}>
                   <div className="w-12 shrink-0">
-                    <p className={`text-sm font-mono font-semibold ${isConc ? "text-emerald-400" : "text-cyan-400"}`}>{hora}</p>
+                    <p className={`text-sm font-mono font-semibold ${isConc ? "text-emerald-400" : "text-gold"}`}>{hora}</p>
                     <p className="text-[10px] text-slate-300">0/1</p>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-slate-100 truncate">{agend.cliente}</p>
                     <p className="text-xs text-slate-300 truncate">{agend.servico}</p>
                   </div>
-                  <span className={`text-[10px] font-semibold px-2 py-1 rounded-full ${isConc ? "bg-emerald-400/15 text-emerald-400" : "bg-cyan-400/15 text-cyan-400"}`}>
+                  <span className={`text-[10px] font-semibold px-2 py-1 rounded-full ${isConc ? "bg-emerald-400/15 text-emerald-400" : "bg-gold/15 text-gold"}`}>
                     {isConc ? "Concluído" : "Agendado"}
                   </span>
                 </li>
@@ -363,7 +363,7 @@ export default function AgendaPage() {
                   <p className="text-[10px] text-slate-400">0/1</p>
                 </div>
                 <p className="text-sm text-emerald-400 font-medium flex-1">Disponível</p>
-                <button className="flex items-center gap-1.5 bg-white/8 text-slate-100 text-xs px-3 py-1.5 rounded-lg hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors">
+                <button className="flex items-center gap-1.5 bg-white/8 text-slate-100 text-xs px-3 py-1.5 rounded-lg hover:bg-gold/15 hover:text-gold transition-colors">
                   <Calendar className="w-3 h-3" /> Agendar
                 </button>
                 <button className="text-slate-400 hover:text-red-400 transition-colors">
@@ -399,18 +399,18 @@ export default function AgendaPage() {
                 <label className="text-xs text-slate-400 mb-1 block">Nome do cliente</label>
                 <input type="text" placeholder="Ex: João Silva" value={form.cliente}
                   onChange={(e) => setForm({ ...form, cliente: e.target.value })}
-                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400/50 transition-colors" />
+                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-gold/50 transition-colors" />
               </div>
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">WhatsApp (opcional)</label>
                 <input type="tel" placeholder="11999999999" value={form.whatsapp}
                   onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400/50 transition-colors" />
+                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-gold/50 transition-colors" />
               </div>
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">Serviço</label>
                 <select value={form.servico} onChange={(e) => setForm({ ...form, servico: e.target.value })}
-                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-400/50 transition-colors">
+                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-gold/50 transition-colors">
                   {SERVICOS.map((s) => <option key={s}>{s}</option>)}
                 </select>
               </div>
@@ -418,12 +418,12 @@ export default function AgendaPage() {
                 <label className="text-xs text-slate-400 mb-1 block">Preço (R$)</label>
                 <input type="number" value={form.preco}
                   onChange={(e) => setForm({ ...form, preco: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors" />
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-gold/50 transition-colors" />
               </div>
               <div>
                 <label className="text-xs text-slate-400 mb-1 block">Barbeiro</label>
                 <select value={form.barbeiro} onChange={(e) => setForm({ ...form, barbeiro: e.target.value })}
-                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-400/50 transition-colors">
+                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-gold/50 transition-colors">
                   <option>Qualquer disponível</option>
                   <option>Renato</option>
                   <option>Franciele</option>
@@ -433,7 +433,7 @@ export default function AgendaPage() {
             </div>
             <div className="flex gap-3 pt-1">
               <button onClick={() => setModal(null)} className="transform-gpu flex-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 py-3 rounded-xl text-sm font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] transition-colors">Cancelar</button>
-              <button onClick={() => setModal(null)} className="flex-1 bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-semibold transition-all">Confirmar</button>
+              <button onClick={() => setModal(null)} className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-semibold transition-all">Confirmar</button>
             </div>
           </div>
         </div>

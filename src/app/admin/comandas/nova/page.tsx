@@ -17,7 +17,7 @@ export default function NovaComandaPage() {
       <div className="flex items-center gap-3 px-4 pt-5 pb-4 border-b border-slate-100">
         <button
           onClick={() => router.back()}
-          className="text-blue-500 hover:text-blue-600 transition-colors"
+          className="text-gold hover:opacity-75 transition-colors"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -59,7 +59,7 @@ export default function NovaComandaPage() {
             type="text"
             defaultValue={dataFormatada}
             readOnly
-            className="w-full border border-slate-300 rounded-xl px-4 py-3.5 text-sm text-slate-700 bg-white focus:outline-none focus:border-blue-500"
+            className="w-full border border-slate-300 rounded-xl px-4 py-3.5 text-sm text-slate-700 bg-white focus:outline-none focus:border-gold"
           />
         </div>
 
@@ -67,21 +67,21 @@ export default function NovaComandaPage() {
         <input
           type="text"
           placeholder={tipo === "cliente" ? "Escolha o cliente" : "Escolha o profissional"}
-          className="w-full border border-slate-300 rounded-xl px-4 py-3.5 text-sm text-slate-500 placeholder-slate-400 bg-white focus:outline-none focus:border-blue-500 transition-colors"
+          className="w-full border border-slate-300 rounded-xl px-4 py-3.5 text-sm text-slate-500 placeholder-slate-400 bg-white focus:outline-none focus:border-gold transition-colors"
         />
 
         {/* Observação */}
         <input
           type="text"
           placeholder="Observação"
-          className="w-full border border-slate-300 rounded-xl px-4 py-3.5 text-sm text-slate-500 placeholder-slate-400 bg-white focus:outline-none focus:border-blue-500 transition-colors"
+          className="w-full border border-slate-300 rounded-xl px-4 py-3.5 text-sm text-slate-500 placeholder-slate-400 bg-white focus:outline-none focus:border-gold transition-colors"
         />
 
         {/* Nº Card */}
         <input
           type="text"
           placeholder="Nº Card (opcional)"
-          className="w-full border border-slate-300 rounded-xl px-4 py-3.5 text-sm text-slate-500 placeholder-slate-400 bg-white focus:outline-none focus:border-blue-500 transition-colors"
+          className="w-full border border-slate-300 rounded-xl px-4 py-3.5 text-sm text-slate-500 placeholder-slate-400 bg-white focus:outline-none focus:border-gold transition-colors"
         />
       </div>
 

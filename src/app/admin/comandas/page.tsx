@@ -28,7 +28,7 @@ export default function ComandasPage() {
             {abertas > 0 ? `${abertas} comanda${abertas > 1 ? "s" : ""} em aberto` : "Nenhuma comanda em aberto"}
           </p>
         </div>
-        <Link href="/admin/comandas/nova" className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <Link href="/admin/comandas/nova" className="bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 px-4 py-2 rounded-lg text-sm font-bold transition-all">
           + Nova
         </Link>
       </div>
@@ -39,7 +39,7 @@ export default function ComandasPage() {
           <button
             key={f}
             className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              f === "Todas" ? "bg-blue-600 text-white" : "bg-slate-800/80 text-slate-200 hover:text-white"
+              f === "Todas" ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 font-bold" : "bg-slate-800/80 text-slate-200 hover:text-white"
             }`}
           >
             {f}

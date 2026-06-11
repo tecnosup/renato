@@ -177,7 +177,7 @@ function NovaComandaModal({
       {(close) =>
         salvo ? (
           <div className="flex flex-col items-center justify-center gap-3 py-14 px-4">
-            <div className="success-pop flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 shadow-[0_0_28px_rgba(34,211,238,0.55)]">
+            <div className="success-pop flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 shadow-[0_0_28px_rgba(194,163,93,0.55)]">
               <Check className="w-8 h-8" strokeWidth={3} />
             </div>
             <p className="text-base font-bold text-slate-100">Comanda aberta!</p>
@@ -204,7 +204,7 @@ function NovaComandaModal({
                   value={cliente}
                   onChange={(e) => setCliente(e.target.value)}
                   placeholder="Nome do cliente"
-                  className="transform-gpu w-full bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 transition-shadow"
+                  className="transform-gpu w-full bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
                 />
               </div>
 
@@ -214,7 +214,7 @@ function NovaComandaModal({
                   value={profissional}
                   onChange={(e) => setProfissional(e.target.value)}
                   placeholder="Nome do profissional"
-                  className="transform-gpu w-full bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 transition-shadow"
+                  className="transform-gpu w-full bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
                 />
               </div>
 
@@ -227,14 +227,14 @@ function NovaComandaModal({
                         value={item.descricao}
                         onChange={(e) => updateItem(idx, "descricao", e.target.value)}
                         placeholder="Descrição"
-                        className="transform-gpu flex-1 bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 transition-shadow"
+                        className="transform-gpu flex-1 bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
                       />
                       <input
                         value={item.valor || ""}
                         onChange={(e) => updateItem(idx, "valor", e.target.value)}
                         placeholder="0,00"
                         inputMode="decimal"
-                        className="transform-gpu w-24 bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-cyan-400/50 transition-shadow"
+                        className="transform-gpu w-24 bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
                       />
                       {itens.length > 1 && (
                         <button onClick={() => removeItem(idx)} className="text-slate-100 hover:text-red-400 shrink-0">
@@ -257,7 +257,7 @@ function NovaComandaModal({
               <button
                 onClick={() => salvar(close)}
                 disabled={!podeSalvar}
-                className="w-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 disabled:bg-white/5 disabled:bg-none disabled:text-slate-500 border border-white/30 disabled:border-white/10 text-slate-950 disabled:cursor-not-allowed py-3 rounded-full text-sm font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] disabled:shadow-none transition-all"
+                className="w-full bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 disabled:bg-white/5 disabled:bg-none disabled:text-slate-500 border border-white/30 disabled:border-white/10 text-slate-950 disabled:cursor-not-allowed py-3 rounded-full text-sm font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] disabled:shadow-none transition-all"
               >
                 Abrir Comanda
               </button>
@@ -312,7 +312,7 @@ function FecharComandaModal({
                       key={forma}
                       onClick={() => setFormaPagamento(forma)}
                       className={`transform-gpu flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        ativo ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : "bg-white/5 backdrop-blur-md text-slate-400 hover:bg-white/8"
+                        ativo ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : "bg-white/5 backdrop-blur-md text-slate-400 hover:bg-white/8"
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" /> {forma}
@@ -329,7 +329,7 @@ function FecharComandaModal({
 
             <button
               onClick={() => onConfirmar(formaPagamento)}
-              className="w-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all"
+              className="w-full bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all"
             >
               Confirmar Pagamento
             </button>
@@ -505,7 +505,7 @@ export default function CaixaPage() {
       {/* Header */}
       <div className="flex items-center gap-3 px-4 pt-5 pb-4">
         <div className="transform-gpu w-9 h-9 rounded-xl bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] flex items-center justify-center shrink-0">
-          <FaCashRegister className="w-4 h-4 text-cyan-400" />
+          <FaCashRegister className="w-4 h-4 text-gold" />
         </div>
         <div>
           <p className="text-base font-bold text-slate-100 leading-none">Caixa</p>
@@ -525,7 +525,7 @@ export default function CaixaPage() {
           </button>
           <button
             onClick={() => setExpandido(!expandido)}
-            className="flex items-center gap-1.5 text-sm font-semibold text-slate-100 hover:text-cyan-400 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-semibold text-slate-100 hover:text-gold transition-colors"
           >
             {MESES[mes]} {ano}
             <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${expandido ? "rotate-180" : ""}`} />
@@ -556,7 +556,7 @@ export default function CaixaPage() {
               return (
                 <button key={key} onClick={() => setDiaSelecionado(key)}
                   className={`flex flex-col items-center justify-center aspect-square rounded-xl transition-colors ${
-                    isSel ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : isToday ? "border border-cyan-400/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
+                    isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isToday ? "border border-gold/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
                   }`}
                 >
                   <span className={`text-sm font-semibold ${isDom && !isSel ? "text-red-400" : ""}`}>{d.getDate()}</span>
@@ -585,7 +585,7 @@ export default function CaixaPage() {
                 return (
                   <button key={key} onClick={() => selecionarDia(key)}
                     className={`flex flex-col items-center justify-center h-9 rounded-xl transition-colors ${
-                      isSel ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : isToday ? "border border-cyan-400/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
+                      isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isToday ? "border border-gold/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
                     }`}
                   >
                     <span className={`text-sm font-semibold ${isDom && !isSel ? "text-red-400" : ""}`}>{dia}</span>
@@ -597,7 +597,7 @@ export default function CaixaPage() {
             <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
               <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-400" /><span className="text-[10px] text-slate-300">caixa fechado</span></div>
               <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-orange-400" /><span className="text-[10px] text-slate-300">pendente</span></div>
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border border-cyan-400/40" /><span className="text-[10px] text-slate-300">hoje</span></div>
+              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border border-gold/40" /><span className="text-[10px] text-slate-300">hoje</span></div>
             </div>
           </div>
           </CalSlide>
@@ -723,7 +723,7 @@ export default function CaixaPage() {
             <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => setModalAberto("comanda")}
-                className="flex flex-col items-center gap-1 bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 hover:brightness-110 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all"
+                className="flex flex-col items-center gap-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 hover:brightness-110 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all"
               >
                 <Plus className="w-4 h-4" /> Nova Comanda
               </button>
@@ -774,7 +774,7 @@ export default function CaixaPage() {
                   <span className="text-sm font-semibold text-slate-200">{fmt(totalComanda(c))}</span>
                   <button
                     onClick={() => setComandaParaFechar(c)}
-                    className="bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 hover:brightness-110 rounded-lg px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-all"
+                    className="bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 hover:brightness-110 rounded-lg px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-all"
                   >
                     Fechar
                   </button>
@@ -827,7 +827,7 @@ export default function CaixaPage() {
                 </button>
                 <button
                   onClick={fecharCaixa}
-                  className="flex-1 bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all"
+                  className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all"
                 >
                   Fechar mesmo assim
                 </button>

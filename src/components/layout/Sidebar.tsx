@@ -18,13 +18,14 @@ import {
   Percent,
 } from "lucide-react";
 import { FaCashRegister } from "react-icons/fa";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 const navItems = [
   {
     label: "Agenda",
     href: "/admin",
     icon: Calendar,
-    accent: "group-hover:text-blue-400",
+    accent: "group-hover:text-gold",
   },
   {
     label: "Cadastros",
@@ -101,12 +102,12 @@ function NavLink({
           onClick={() => setOpen(!open)}
           className={`transform-gpu group w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
             isActive
-              ? "bg-white/10 backdrop-blur-md border border-cyan-400/20 text-white shadow-[0_0_20px_rgba(56,189,248,0.15)]"
+              ? "bg-white/10 backdrop-blur-md border border-gold/20 text-white shadow-[0_0_20px_rgba(194,163,93,0.15)]"
               : "text-slate-200 border border-transparent hover:bg-white/5 hover:text-white"
           }`}
         >
           <div className="flex items-center">
-            <Icon className={`w-5 h-5 mr-3 ${isActive ? "text-cyan-400" : "text-slate-200"} ${item.accent}`} />
+            <Icon className={`w-5 h-5 mr-3 ${isActive ? "text-gold" : "text-slate-200"} ${item.accent}`} />
             <span className="text-sm font-medium">{item.label}</span>
           </div>
           {open ? (
@@ -124,7 +125,7 @@ function NavLink({
                   onClick={onClick}
                   className={`block py-2 text-sm transition-colors ${
                     pathname === child.href
-                      ? "text-cyan-400 font-medium"
+                      ? "text-gold font-medium"
                       : "text-slate-200 hover:text-slate-100"
                   }`}
                 >
@@ -145,11 +146,11 @@ function NavLink({
         onClick={onClick}
         className={`transform-gpu group flex items-center px-3 py-2.5 rounded-xl transition-all ${
           isActive
-            ? "bg-white/10 backdrop-blur-md border border-cyan-400/20 text-white shadow-[0_0_20px_rgba(56,189,248,0.15)]"
+            ? "bg-white/10 backdrop-blur-md border border-gold/20 text-white shadow-[0_0_20px_rgba(194,163,93,0.15)]"
             : "text-slate-200 border border-transparent hover:bg-white/5 hover:text-white"
         }`}
       >
-        <Icon className={`w-5 h-5 mr-3 ${isActive ? "text-cyan-400" : "text-slate-200"} ${item.accent}`} />
+        <Icon className={`w-5 h-5 mr-3 ${isActive ? "text-gold" : "text-slate-200"} ${item.accent}`} />
         <span className="text-sm font-medium">{item.label}</span>
       </Link>
     </li>
@@ -158,6 +159,9 @@ function NavLink({
 
 // Sidebar lateral — só aparece em md+
 function DesktopSidebar() {
+  const { user, logout } = useAuth();
+  const initials = user?.email ? user.email.slice(0, 2).toUpperCase() : "??";
+
   return (
     <aside className="transform-gpu hidden md:flex w-64 bg-white/3 backdrop-blur-md backdrop-saturate-100 border-r border-white/15 flex-col h-screen sticky top-0 shadow-[inset_-1px_0_0_rgba(255,255,255,0.1)]">
       <div className="h-16 flex items-center px-6 border-b border-white/10">
@@ -177,14 +181,14 @@ function DesktopSidebar() {
 
       <div className="p-4 border-t border-white/10">
         <div className="transform-gpu flex items-center w-full px-3 py-2 bg-white/3 backdrop-blur-md backdrop-saturate-100 border border-white/15 rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
-          <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-400 to-cyan-500 flex items-center justify-center text-xs font-bold mr-3 text-slate-950 shadow-[0_0_12px_rgba(56,189,248,0.45)]">
-            RV
+          <div className="w-8 h-8 rounded-full bg-linear-to-br from-[#ece4cb] to-[#c2a35d] flex items-center justify-center text-xs font-bold mr-3 text-slate-950 shadow-[0_0_12px_rgba(194,163,93,0.45)]">
+            {initials}
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-medium text-slate-100 truncate">Renato Vilhagra</p>
+            <p className="text-sm font-medium text-slate-100 truncate">{user?.email ?? "—"}</p>
             <p className="text-xs text-slate-300 truncate">Admin</p>
           </div>
-          <button className="text-slate-200 hover:text-red-400 transition-colors">
+          <button onClick={logout} className="text-slate-200 hover:text-red-400 transition-colors" title="Sair">
             <LogOut className="w-4 h-4" />
           </button>
         </div>
@@ -217,7 +221,7 @@ function NavBottomItem({
       href={href}
       onClick={handleClick}
       className={`flex flex-col items-center justify-end gap-1 flex-1 pb-1.5 transition-colors ${
-        isActive ? "text-cyan-400" : "text-slate-100 hover:text-white"
+        isActive ? "text-gold" : "text-slate-100 hover:text-white"
       }`}
     >
       <motion.div
@@ -226,7 +230,7 @@ function NavBottomItem({
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
         className={`flex items-center justify-center w-10 h-10 rounded-full ${
           isActive
-            ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 shadow-[0_0_22px_rgba(34,211,238,0.6)]"
+            ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 shadow-[0_0_22px_rgba(194,163,93,0.6)]"
             : "text-slate-100"
         }`}
       >
@@ -278,13 +282,13 @@ function MobileBottomNav() {
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
           className={`transform-gpu flex items-center justify-center w-16 h-16 rounded-full backdrop-blur-md backdrop-saturate-100 border ${
             pathname === "/admin"
-              ? "bg-linear-to-br from-blue-400 to-cyan-400 border-white/30 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_28px_rgba(34,211,238,0.55)]"
+              ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] border-white/30 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_28px_rgba(194,163,93,0.55)]"
               : "bg-white/6 border-white/20 text-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.15),0_4px_16px_rgba(0,0,0,0.25)] hover:bg-white/12"
           }`}
         >
           <Calendar className="w-6 h-6" />
         </motion.div>
-        <span className={`text-[10px] mt-1 font-medium ${pathname === "/admin" ? "text-cyan-400" : "text-slate-100"}`}>
+        <span className={`text-[10px] mt-1 font-medium ${pathname === "/admin" ? "text-gold" : "text-slate-100"}`}>
           Agenda
         </span>
       </Link>
