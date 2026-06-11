@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   icons: {
     apple: "/logo-barbearia.png",
   },
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+  },
 };
 
 export default function RootLayout({
