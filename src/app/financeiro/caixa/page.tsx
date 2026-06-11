@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useLayoutEffect, useEffect, useRef } from "react";
+import { useState, useLayoutEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, Scissors, TrendingDown, Lock, Plus, X, ChevronDown, Banknote, CreditCard, QrCode, Trash2, Check } from "lucide-react";
 import { FaCashRegister } from "react-icons/fa";
+import { Modal } from "@/components/ui/Modal";
 
 const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const DIAS_SEMANA = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
@@ -125,43 +126,6 @@ function CalExpand({ expandido, children }: { expandido: boolean; children: Reac
       style={{ gridTemplateRows: expandido ? "1fr" : "0fr" }}
     >
       <div className="overflow-hidden">{children}</div>
-    </div>
-  );
-}
-
-// Modal genérico de fundo — sobe ao abrir, desce ao fechar
-function Modal({ children, onClose, panelClassName, overlayClassName }: { children: (close: () => void) => React.ReactNode; onClose: () => void; panelClassName?: string; overlayClassName?: string }) {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
-
-  const close = () => {
-    setVisible(false);
-    setTimeout(onClose, 300);
-  };
-
-  return (
-    <div
-      className={`transform-gpu fixed inset-0 z-50 flex items-end sm:items-center justify-center transition-opacity duration-200 ${
-        overlayClassName ?? "bg-black/10"
-      } ${
-        visible ? "opacity-100" : "opacity-0"
-      }`}
-      onClick={close}
-    >
-      <div
-        className={`transform-gpu w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl max-h-[90vh] overflow-y-auto transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          panelClassName ?? "bg-white/3 backdrop-blur-2xl backdrop-saturate-100 border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_4px_20px_rgba(0,0,0,0.35)]"
-        } ${
-          visible ? "translate-y-0 scale-100 opacity-100" : "translate-y-full sm:translate-y-24 scale-95 opacity-0"
-        }`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {children(close)}
-      </div>
     </div>
   );
 }

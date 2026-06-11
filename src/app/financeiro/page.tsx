@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, Bell, Check } from "lucide-react";
+import { AlertTriangle, Bell, Check, ChevronDown, X, Calendar as CalendarIcon } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from "recharts";
 import { Settings, Pencil, Trash2, BellRing, Plus } from "lucide-react";
+import { Modal } from "@/components/ui/Modal";
+import { DatePicker } from "@/components/ui/DatePicker";
 
 const caixasRetroativos = [
   { label: "Sex., 29 Mai." },
@@ -16,7 +18,9 @@ const vencimentosProximos = [
   { nome: "Conta de Luz", vence: "Vence em 3d · 13/06/2026", valor: 289.78 },
 ];
 
-const PERIODOS = ["Últimos 7 dias", "Últimos 30 dias", "Este mês", "Mês anterior", "Todo período"] as const;
+type Vencimento = (typeof vencimentosProximos)[number];
+
+const PERIODOS = ["Todo período", "Últimos 7 dias", "Últimos 30 dias", "Este mês", "Mês anterior"] as const;
 
 const RESUMO = {
   faturamento: 1724.8,
@@ -57,8 +61,135 @@ const GASTOS_EMPRESA = [
   { id: 3, nome: "Aluguel", categoria: "Aluguel", recorrencia: "Mensal", vence: "Vence em 14/05/2026", valor: 1000.0, alerta: false, lembrete: false },
 ];
 
+// dd/mm/aaaa <-> aaaa-mm-dd (formato esperado pelo <input type="date">)
+function brParaIso(data: string) {
+  const [d, m, y] = data.split("/");
+  return `${y}-${m}-${d}`;
+}
+function isoParaBr(data: string) {
+  const [y, m, d] = data.split("-");
+  return `${d}/${m}/${y}`;
+}
+
+// Modal de confirmação de pagamento — permite ajustar o valor final pago e a data de vencimento (boletos periódicos)
+function ConfirmarPagamentoModal({
+  vencimento,
+  onClose,
+  onConfirmar,
+}: {
+  vencimento: Vencimento;
+  onClose: () => void;
+  onConfirmar: (valorPago: number, novoVencimento: string) => void;
+}) {
+  const dataVencimento = vencimento.vence.split("·").pop()?.trim() ?? "";
+  const [valor, setValor] = useState(vencimento.valor.toFixed(2).replace(".", ","));
+  const [data, setData] = useState(dataVencimento);
+  const [pickerAberto, setPickerAberto] = useState(false);
+  const [confirmado, setConfirmado] = useState(false);
+  const [fechando, setFechando] = useState(false);
+
+  return (
+    <Modal
+      onClose={onClose}
+      panelClassName="bg-white/3 backdrop-blur-2xl backdrop-saturate-100 border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_4px_20px_rgba(0,0,0,0.35)] sm:rounded-3xl rounded-t-3xl"
+    >
+      {(close) =>
+        confirmado ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-14 px-4">
+            <div className="success-pop flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 shadow-[0_0_28px_rgba(34,211,238,0.55)]">
+              <Check className="w-8 h-8" strokeWidth={3} />
+            </div>
+            <p className="text-base font-bold text-slate-100">Pagamento confirmado!</p>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/10">
+              <h2 className="text-base font-bold text-slate-100">Confirmar pagamento</h2>
+              <button
+                onClick={() => {
+                  setFechando(true);
+                  setTimeout(close, 150);
+                }}
+                className="group text-slate-100 hover:text-white"
+              >
+                <X className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-90 ${fechando ? "rotate-180" : ""}`} />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-3">
+              <div className="relative rounded-xl bg-white/5 px-3 py-2.5">
+                <p className="text-sm font-semibold text-slate-100 mb-1.5">{vencimento.nome}</p>
+                <button
+                  onClick={() => setPickerAberto((v) => !v)}
+                  className="w-full flex items-center justify-between gap-2 bg-black/25 rounded-lg px-2.5 py-2 text-xs text-slate-200 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] hover:bg-black/35 transition-colors"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <CalendarIcon className="w-3.5 h-3.5 text-cyan-300" />
+                    Vencimento: {data}
+                  </span>
+                  <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform duration-300 ${pickerAberto ? "rotate-180" : ""}`} />
+                </button>
+                <Collapse expandido={pickerAberto}>
+                  <div className="pt-2">
+                    <DatePicker
+                      value={brParaIso(data)}
+                      onChange={(iso) => setData(isoParaBr(iso))}
+                      onClose={() => setPickerAberto(false)}
+                    />
+                  </div>
+                </Collapse>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-200 uppercase tracking-widest mb-1.5">Valor pago (R$)</label>
+                <input
+                  value={valor}
+                  onChange={(e) => setValor(e.target.value)}
+                  inputMode="decimal"
+                  className="transform-gpu w-full bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-amber-400/50 transition-shadow"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  onClick={() => {
+                    onConfirmar(Number(valor.replace(",", ".")) || 0, data);
+                    setConfirmado(true);
+                    setTimeout(close, 700);
+                  }}
+                  className="flex-1 bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 border border-white/30 text-slate-950 py-3 rounded-full text-sm font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] transition-all"
+                >
+                  Confirmar pagamento
+                </button>
+                <button onClick={close} className="px-5 py-3 rounded-full text-sm font-semibold text-slate-200 bg-white/5 hover:bg-white/10 transition-colors">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </>
+        )
+      }
+    </Modal>
+  );
+}
+
+// Recolhe/expande conteúdo com transição suave de altura
+function Collapse({ expandido, children }: { expandido: boolean; children: React.ReactNode }) {
+  return (
+    <div
+      className="grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+      style={{ gridTemplateRows: expandido ? "1fr" : "0fr" }}
+    >
+      <div className="overflow-hidden">{children}</div>
+    </div>
+  );
+}
+
 export default function FinanceiroPage() {
   const [periodo, setPeriodo] = useState<(typeof PERIODOS)[number]>("Todo período");
+  const [caixasExpandido, setCaixasExpandido] = useState(false);
+  const [vencimentosExpandido, setVencimentosExpandido] = useState(false);
+  const [pagamentoSelecionado, setPagamentoSelecionado] = useState<Vencimento | null>(null);
 
   return (
     <div className="flex-1 overflow-y-auto p-4 pb-20 md:p-8">
@@ -72,51 +203,66 @@ export default function FinanceiroPage() {
 
       {/* Alerta: caixas retroativos em aberto */}
       {caixasRetroativos.length > 0 && (
-        <div className="transform-gpu rounded-2xl overflow-hidden bg-red-500/10 backdrop-blur-md backdrop-saturate-150 border border-red-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_4px_20px_rgba(0,0,0,0.25)] px-4 py-3 mb-3">
-          <div className="flex items-center gap-2 flex-wrap">
+        <div className="transform-gpu rounded-2xl overflow-hidden bg-red-950/50 backdrop-blur-md backdrop-saturate-150 border border-red-500/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_4px_20px_rgba(0,0,0,0.25)] mb-3">
+          <button
+            onClick={() => setCaixasExpandido((v) => !v)}
+            className="w-full flex items-center gap-2 px-4 py-3"
+          >
             <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-            <span className="text-sm font-semibold text-red-300">
+            <span className="text-sm font-semibold text-red-400">
               {caixasRetroativos.length} caixa{caixasRetroativos.length > 1 ? "s" : ""} retroativo{caixasRetroativos.length > 1 ? "s" : ""} em aberto
             </span>
-            <div className="flex gap-2 flex-wrap ml-auto">
+            <ChevronDown className={`w-4 h-4 text-red-400 ml-auto shrink-0 transition-transform duration-300 ${caixasExpandido ? "rotate-180" : ""}`} />
+          </button>
+          <Collapse expandido={caixasExpandido}>
+            <div className="flex gap-2 flex-wrap px-4 pb-3">
               {caixasRetroativos.map((c) => (
                 <span
                   key={c.label}
-                  className="text-xs font-medium text-red-300 bg-red-500/10 border border-red-400/20 rounded-lg px-2.5 py-1"
+                  className="text-xs font-medium text-red-300 bg-red-500/25 border border-red-400/40 rounded-lg px-2.5 py-1"
                 >
                   {c.label}
                 </span>
               ))}
             </div>
-          </div>
+          </Collapse>
         </div>
       )}
 
       {/* Alerta: vencimentos próximos */}
       {vencimentosProximos.length > 0 && (
-        <div className="transform-gpu rounded-2xl overflow-hidden bg-amber-500/10 backdrop-blur-md backdrop-saturate-150 border border-amber-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_4px_20px_rgba(0,0,0,0.25)] px-4 py-3 mb-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Bell className="w-4 h-4 text-amber-400" />
+        <div className="transform-gpu rounded-2xl overflow-hidden bg-amber-500/10 backdrop-blur-md backdrop-saturate-150 border border-amber-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_4px_20px_rgba(0,0,0,0.25)] mb-4">
+          <button
+            onClick={() => setVencimentosExpandido((v) => !v)}
+            className="w-full flex items-center gap-2 px-4 py-3"
+          >
+            <Bell className="w-4 h-4 text-amber-400 shrink-0" />
             <span className="text-sm font-semibold text-amber-300">
               {vencimentosProximos.length} vencimento{vencimentosProximos.length > 1 ? "s" : ""} próximo{vencimentosProximos.length > 1 ? "s" : ""}
             </span>
-          </div>
-          <div className="space-y-2">
-            {vencimentosProximos.map((v) => (
-              <div key={v.nome} className="flex items-center justify-between gap-3 flex-wrap">
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-amber-200">{v.nome}</p>
-                  <p className="text-xs text-amber-300/80">
-                    {v.vence} · R$ {v.valor.toFixed(2).replace(".", ",")}
-                  </p>
+            <ChevronDown className={`w-4 h-4 text-amber-300 ml-auto shrink-0 transition-transform duration-300 ${vencimentosExpandido ? "rotate-180" : ""}`} />
+          </button>
+          <Collapse expandido={vencimentosExpandido}>
+            <div className="space-y-3 px-4 pb-3">
+              {vencimentosProximos.map((v, i) => (
+                <div key={v.nome} className={`space-y-2 ${i > 0 ? "pt-3 border-t border-amber-400/10" : ""}`}>
+                  <div>
+                    <p className="text-sm font-semibold text-amber-200">{v.nome}</p>
+                    <p className="text-xs text-amber-300/80">
+                      {v.vence} · R$ {v.valor.toFixed(2).replace(".", ",")}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setPagamentoSelecionado(v)}
+                    className="w-full flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wide bg-amber-400/15 hover:bg-amber-400/25 text-amber-300 border border-amber-400/30 rounded-lg px-3 py-1.5 transition-colors"
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    Confirmar pagamento
+                  </button>
                 </div>
-                <button className="shrink-0 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide bg-amber-400/15 hover:bg-amber-400/25 text-amber-300 border border-amber-400/30 rounded-lg px-3 py-1.5 transition-colors">
-                  <Check className="w-3.5 h-3.5" />
-                  Confirmar pagamento
-                </button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </Collapse>
         </div>
       )}
 
@@ -127,7 +273,9 @@ export default function FinanceiroPage() {
             key={p}
             onClick={() => setPeriodo(p)}
             className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              p === periodo ? "bg-blue-600 text-white" : "bg-slate-800/80 text-slate-200 hover:text-white"
+              p === periodo
+                ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_16px_rgba(34,211,238,0.4)]"
+                : "bg-white/5 backdrop-blur-md text-slate-200 hover:text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
             }`}
           >
             {p}
@@ -293,6 +441,15 @@ export default function FinanceiroPage() {
           </ul>
         </div>
       </div>
+
+      {pagamentoSelecionado && (
+        <ConfirmarPagamentoModal
+          vencimento={pagamentoSelecionado}
+          onClose={() => setPagamentoSelecionado(null)}
+          onConfirmar={() => {}}
+        />
+      )}
+
     </div>
   );
 }
