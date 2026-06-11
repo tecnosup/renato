@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -8,8 +9,15 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: "Inter", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-display: "Playfair Display", serif;
+  --font-serif: "Playfair Display", serif;
+  
+  --color-gold: #c2a35d;
+  --color-gold-light: #ece4cb;
+  --color-sleek-dark: #090a0a;
+  --color-card-dark: #121314;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,4 +31,76 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  
+  .gradient-text {
+    background: linear-gradient(135deg, #f6f5f0 30%, #c2a35d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .gold-border {
+    border: 1px solid #c2a35d;
+  }
+
+  .border-gold-subtle {
+    border-color: rgba(194, 163, 93, 0.2);
+  }
+
+  .bg-pattern {
+    background-image: radial-gradient(circle at 2px 2px, rgba(194, 163, 93, 0.04) 1px, transparent 0);
+    background-size: 40px 40px;
+  }
+
+  .depth-card {
+    box-shadow: 
+      0 30px 60px -20px rgba(0,0,0,0.9),
+      0 1px 1px rgba(255,255,255,0.03) inset;
+    border: 1px solid rgb(24, 25, 27);
+  }
+}
+
+/* Custom smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for clean UI, but allow scroll */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0c0d0e;
+}
+::-webkit-scrollbar-thumb {
+  background: #222222;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c2a35d;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
 }
