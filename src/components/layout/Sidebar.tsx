@@ -22,52 +22,52 @@ import { FaCashRegister } from "react-icons/fa";
 const navItems = [
   {
     label: "Agenda",
-    href: "/",
+    href: "/admin",
     icon: Calendar,
     accent: "group-hover:text-blue-400",
   },
   {
     label: "Cadastros",
-    href: "/cadastros",
+    href: "/admin/cadastros",
     icon: Users,
     accent: "group-hover:text-violet-400",
     children: [
-      { label: "Clientes", href: "/cadastros/clientes" },
-      { label: "Serviços", href: "/cadastros/servicos" },
-      { label: "Pacotes", href: "/cadastros/pacotes" },
-      { label: "Produtos", href: "/cadastros/produtos" },
+      { label: "Clientes", href: "/admin/cadastros/clientes" },
+      { label: "Serviços", href: "/admin/cadastros/servicos" },
+      { label: "Pacotes", href: "/admin/cadastros/pacotes" },
+      { label: "Produtos", href: "/admin/cadastros/produtos" },
     ],
   },
   {
     label: "Comandas",
-    href: "/comandas",
+    href: "/admin/comandas",
     icon: FileText,
     accent: "group-hover:text-amber-400",
     children: [
-      { label: "Abertas", href: "/comandas/abertas" },
-      { label: "Histórico", href: "/comandas/historico" },
+      { label: "Abertas", href: "/admin/comandas/abertas" },
+      { label: "Histórico", href: "/admin/comandas/historico" },
     ],
   },
   {
     label: "Financeiro",
-    href: "/financeiro",
+    href: "/admin/financeiro",
     icon: DollarSign,
     accent: "group-hover:text-emerald-400",
     children: [
-      { label: "Visão geral", href: "/financeiro" },
-      { label: "Caixa", href: "/financeiro/caixa" },
-      { label: "Histórico de Caixas", href: "/financeiro/historico" },
-      { label: "Entrada / Saída", href: "/financeiro/entrada-saida" },
-      { label: "Fluxo de Caixa", href: "/financeiro/fluxo" },
-      { label: "Comissões", href: "/financeiro/comissoes" },
-      { label: "Conta do Cliente", href: "/financeiro/conta-cliente" },
-      { label: "Conta Profissional", href: "/financeiro/conta-profissional" },
-      { label: "Caixinha", href: "/financeiro/caixinha" },
+      { label: "Visão geral", href: "/admin/financeiro" },
+      { label: "Caixa", href: "/admin/financeiro/caixa" },
+      { label: "Histórico de Caixas", href: "/admin/financeiro/historico" },
+      { label: "Entrada / Saída", href: "/admin/financeiro/entrada-saida" },
+      { label: "Fluxo de Caixa", href: "/admin/financeiro/fluxo" },
+      { label: "Comissões", href: "/admin/financeiro/comissoes" },
+      { label: "Conta do Cliente", href: "/admin/financeiro/conta-cliente" },
+      { label: "Conta Profissional", href: "/admin/financeiro/conta-profissional" },
+      { label: "Caixinha", href: "/admin/financeiro/caixinha" },
     ],
   },
   {
     label: "Config.",
-    href: "/configuracoes",
+    href: "/admin/configuracoes",
     icon: Settings,
     accent: "group-hover:text-slate-300",
   },
@@ -92,7 +92,7 @@ function NavLink({
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const Icon = item.icon;
-  const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+  const isActive = item.href === "/admin" ? pathname === "/admin" : pathname === item.href || pathname.startsWith(item.href + "/");
 
   if (item.children) {
     return (
@@ -247,10 +247,10 @@ function MobileBottomNav() {
       <div className="transform-gpu flex items-end justify-around h-16 px-2 rounded-[2rem] bg-white/3 backdrop-blur-md backdrop-saturate-100 border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_8px_32px_rgba(0,0,0,0.35)]">
 
         {/* Comissões */}
-        <NavBottomItem href="/financeiro/comissoes" icon={Percent} label="Comissões" pathname={pathname} />
+        <NavBottomItem href="/admin/financeiro/comissoes" icon={Percent} label="Comissões" pathname={pathname} />
 
         {/* Caixa */}
-        <NavBottomItem href="/financeiro/caixa" icon={FaCashRegister} label="Caixa" pathname={pathname} />
+        <NavBottomItem href="/admin/financeiro/caixa" icon={FaCashRegister} label="Caixa" pathname={pathname} />
 
         {/* Espaço reservado para o botão elevado da Agenda */}
         <div className="flex-1 flex flex-col items-center pb-2.5">
@@ -259,32 +259,32 @@ function MobileBottomNav() {
         </div>
 
         {/* Clientes */}
-        <NavBottomItem href="/cadastros/clientes" icon={Users} label="Clientes" pathname={pathname} />
+        <NavBottomItem href="/admin/cadastros/clientes" icon={Users} label="Clientes" pathname={pathname} />
 
         {/* Menu */}
-        <NavBottomItem href="/menu" icon={Menu} label="Menu" pathname={pathname} />
+        <NavBottomItem href="/admin/menu" icon={Menu} label="Menu" pathname={pathname} />
 
       </div>
 
       {/* Agenda — elevada, fora da camada de blur da pill para evitar bug de backdrop-filter */}
       <Link
-        href="/"
-        onClick={() => { if (pathname === "/") document.getElementById("agenda-scroll")?.scrollTo({ top: 0, behavior: "smooth" }); }}
+        href="/admin"
+        onClick={() => { if (pathname === "/admin") document.getElementById("agenda-scroll")?.scrollTo({ top: 0, behavior: "smooth" }); }}
         className="absolute left-1/2 -translate-x-1/2 -top-5 flex flex-col items-center"
       >
         <motion.div
           whileTap={{ scale: 0.85 }}
-          animate={{ scale: pathname === "/" ? 1 : 0.92 }}
+          animate={{ scale: pathname === "/admin" ? 1 : 0.92 }}
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
           className={`transform-gpu flex items-center justify-center w-16 h-16 rounded-full backdrop-blur-md backdrop-saturate-100 border ${
-            pathname === "/"
+            pathname === "/admin"
               ? "bg-linear-to-br from-blue-400 to-cyan-400 border-white/30 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_28px_rgba(34,211,238,0.55)]"
               : "bg-white/6 border-white/20 text-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.15),0_4px_16px_rgba(0,0,0,0.25)] hover:bg-white/12"
           }`}
         >
           <Calendar className="w-6 h-6" />
         </motion.div>
-        <span className={`text-[10px] mt-1 font-medium ${pathname === "/" ? "text-cyan-400" : "text-slate-100"}`}>
+        <span className={`text-[10px] mt-1 font-medium ${pathname === "/admin" ? "text-cyan-400" : "text-slate-100"}`}>
           Agenda
         </span>
       </Link>
