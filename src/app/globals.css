@@ -76,7 +76,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Hide scrollbar for clean UI, but allow scroll */
+/* Scrollbar customizada mesclada */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -93,14 +93,24 @@ html {
 }
 
 @keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .animate-shimmer {
   animation: shimmer 2s infinite;
 }
+
+/* Admin Animations */
+@keyframes slideFromLeft {
+  from { transform: translateX(-40px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes slideFromRight {
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+.cal-slide-left  { animation: slideFromLeft  0.22s ease; }
+.cal-slide-right { animation: slideFromRight 0.22s ease; }
