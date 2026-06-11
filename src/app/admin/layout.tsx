@@ -12,6 +12,14 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Século XXI - Gestão",
   description: "Painel de Gestão - Barbearia Século XXI",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Século XXI",
+  },
+  icons: {
+    apple: "/logo-barbearia.png",
+  },
 };
 
 export default function RootLayout({
