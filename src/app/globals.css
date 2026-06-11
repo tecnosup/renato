@@ -74,6 +74,22 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Trava scroll horizontal em qualquer tela */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Evita zoom automático do iOS ao focar campos (precisa de >=16px) */
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 /* Scrollbar escondida (liquid glass) — o overlay scrollbar azul do
    Chromium/Windows ignora scrollbar-color/::-webkit-scrollbar customizados,
    então escondemos por completo para manter o visual limpo */
