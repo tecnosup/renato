@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "motion/react";
 import {
   Calendar,
   Users,
@@ -52,6 +54,7 @@ const navItems = [
     icon: DollarSign,
     accent: "group-hover:text-emerald-400",
     children: [
+      { label: "Visão geral", href: "/financeiro" },
       { label: "Caixa", href: "/financeiro/caixa" },
       { label: "Histórico de Caixas", href: "/financeiro/historico" },
       { label: "Entrada / Saída", href: "/financeiro/entrada-saida" },
@@ -99,17 +102,17 @@ function NavLink({
           className={`transform-gpu group w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
             isActive
               ? "bg-white/10 backdrop-blur-md border border-cyan-400/20 text-white shadow-[0_0_20px_rgba(56,189,248,0.15)]"
-              : "text-slate-300 border border-transparent hover:bg-white/5 hover:text-white"
+              : "text-slate-200 border border-transparent hover:bg-white/5 hover:text-white"
           }`}
         >
           <div className="flex items-center">
-            <Icon className={`w-5 h-5 mr-3 ${isActive ? "text-cyan-400" : "text-slate-400"} ${item.accent}`} />
+            <Icon className={`w-5 h-5 mr-3 ${isActive ? "text-cyan-400" : "text-slate-200"} ${item.accent}`} />
             <span className="text-sm font-medium">{item.label}</span>
           </div>
           {open ? (
-            <ChevronDown className="w-4 h-4 text-slate-500" />
+            <ChevronDown className="w-4 h-4 text-slate-200" />
           ) : (
-            <ChevronRight className="w-4 h-4 text-slate-500" />
+            <ChevronRight className="w-4 h-4 text-slate-200" />
           )}
         </button>
         {open && (
@@ -122,7 +125,7 @@ function NavLink({
                   className={`block py-2 text-sm transition-colors ${
                     pathname === child.href
                       ? "text-cyan-400 font-medium"
-                      : "text-slate-400 hover:text-slate-100"
+                      : "text-slate-200 hover:text-slate-100"
                   }`}
                 >
                   {child.label}
@@ -143,10 +146,10 @@ function NavLink({
         className={`transform-gpu group flex items-center px-3 py-2.5 rounded-xl transition-all ${
           isActive
             ? "bg-white/10 backdrop-blur-md border border-cyan-400/20 text-white shadow-[0_0_20px_rgba(56,189,248,0.15)]"
-            : "text-slate-300 border border-transparent hover:bg-white/5 hover:text-white"
+            : "text-slate-200 border border-transparent hover:bg-white/5 hover:text-white"
         }`}
       >
-        <Icon className={`w-5 h-5 mr-3 ${isActive ? "text-cyan-400" : "text-slate-400"} ${item.accent}`} />
+        <Icon className={`w-5 h-5 mr-3 ${isActive ? "text-cyan-400" : "text-slate-200"} ${item.accent}`} />
         <span className="text-sm font-medium">{item.label}</span>
       </Link>
     </li>
@@ -156,9 +159,11 @@ function NavLink({
 // Sidebar lateral — só aparece em md+
 function DesktopSidebar() {
   return (
-    <aside className="transform-gpu hidden md:flex w-64 bg-slate-900/70 backdrop-blur-xl border-r border-white/5 flex-col h-screen sticky top-0 shadow-[inset_-1px_0_0_rgba(255,255,255,0.04)]">
-      <div className="h-16 flex items-center px-6 border-b border-white/5">
-        <div className="w-8 h-8 bg-linear-to-br from-blue-400 to-cyan-500 rounded-md mr-3 shadow-[0_0_16px_rgba(56,189,248,0.5)]" />
+    <aside className="transform-gpu hidden md:flex w-64 bg-white/3 backdrop-blur-md backdrop-saturate-100 border-r border-white/15 flex-col h-screen sticky top-0 shadow-[inset_-1px_0_0_rgba(255,255,255,0.1)]">
+      <div className="h-16 flex items-center px-6 border-b border-white/10">
+        <div className="w-8 h-8 rounded-full bg-white/8 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] flex items-center justify-center overflow-hidden mr-3">
+          <Image src="/logo-barbearia.png" alt="Barbearia Século XXI" width={32} height={32} className="w-full h-full object-cover" />
+        </div>
         <h1 className="text-xl font-bold tracking-tight text-slate-100">Século XXI</h1>
       </div>
 
@@ -170,16 +175,16 @@ function DesktopSidebar() {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-white/5">
-        <div className="transform-gpu flex items-center w-full px-3 py-2 bg-white/5 backdrop-blur-md border border-white/5 rounded-lg">
+      <div className="p-4 border-t border-white/10">
+        <div className="transform-gpu flex items-center w-full px-3 py-2 bg-white/3 backdrop-blur-md backdrop-saturate-100 border border-white/15 rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
           <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-400 to-cyan-500 flex items-center justify-center text-xs font-bold mr-3 text-slate-950 shadow-[0_0_12px_rgba(56,189,248,0.45)]">
             RV
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-medium text-slate-200 truncate">Renato Vilhagra</p>
-            <p className="text-xs text-slate-500 truncate">Admin</p>
+            <p className="text-sm font-medium text-slate-100 truncate">Renato Vilhagra</p>
+            <p className="text-xs text-slate-300 truncate">Admin</p>
           </div>
-          <button className="text-slate-400 hover:text-red-400 transition-colors">
+          <button className="text-slate-200 hover:text-red-400 transition-colors">
             <LogOut className="w-4 h-4" />
           </button>
         </div>
@@ -212,16 +217,21 @@ function NavBottomItem({
       href={href}
       onClick={handleClick}
       className={`flex flex-col items-center justify-end gap-1 flex-1 pb-1.5 transition-colors ${
-        isActive ? "text-cyan-400" : "text-slate-400 hover:text-white"
+        isActive ? "text-cyan-400" : "text-slate-100 hover:text-white"
       }`}
     >
-      <div className={`flex items-center justify-center w-10 h-10 rounded-full transition-all ${
-        isActive
-          ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 shadow-[0_0_22px_rgba(34,211,238,0.6)]"
-          : "text-slate-400"
-      }`}>
+      <motion.div
+        whileTap={{ scale: 0.85 }}
+        animate={{ scale: isActive ? 1 : 0.92 }}
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        className={`flex items-center justify-center w-10 h-10 rounded-full ${
+          isActive
+            ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 shadow-[0_0_22px_rgba(34,211,238,0.6)]"
+            : "text-slate-100"
+        }`}
+      >
         <Icon className="w-5 h-5" />
-      </div>
+      </motion.div>
       <span className="text-[10px]">{label}</span>
     </Link>
   );
@@ -262,14 +272,19 @@ function MobileBottomNav() {
         onClick={() => { if (pathname === "/") document.getElementById("agenda-scroll")?.scrollTo({ top: 0, behavior: "smooth" }); }}
         className="absolute left-1/2 -translate-x-1/2 -top-5 flex flex-col items-center"
       >
-        <div className={`transform-gpu flex items-center justify-center w-16 h-16 rounded-full backdrop-blur-md backdrop-saturate-100 border transition-all ${
-          pathname === "/"
-            ? "bg-linear-to-br from-blue-400 to-cyan-400 border-white/30 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_28px_rgba(34,211,238,0.55)]"
-            : "bg-white/6 border-white/20 text-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.15),0_4px_16px_rgba(0,0,0,0.25)] hover:bg-white/12"
-        }`}>
+        <motion.div
+          whileTap={{ scale: 0.85 }}
+          animate={{ scale: pathname === "/" ? 1 : 0.92 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className={`transform-gpu flex items-center justify-center w-16 h-16 rounded-full backdrop-blur-md backdrop-saturate-100 border ${
+            pathname === "/"
+              ? "bg-linear-to-br from-blue-400 to-cyan-400 border-white/30 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_28px_rgba(34,211,238,0.55)]"
+              : "bg-white/6 border-white/20 text-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.15),0_4px_16px_rgba(0,0,0,0.25)] hover:bg-white/12"
+          }`}
+        >
           <Calendar className="w-6 h-6" />
-        </div>
-        <span className={`text-[10px] mt-1 font-medium ${pathname === "/" ? "text-cyan-400" : "text-slate-400"}`}>
+        </motion.div>
+        <span className={`text-[10px] mt-1 font-medium ${pathname === "/" ? "text-cyan-400" : "text-slate-100"}`}>
           Agenda
         </span>
       </Link>

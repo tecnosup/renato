@@ -23,7 +23,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Scrollbar customizada */
+/* Scrollbar customizada (liquid glass) */
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -34,17 +34,18 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3b82f6;
+  background: rgba(255, 255, 255, 0.18);
   border-radius: 999px;
+  backdrop-filter: blur(8px);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #60a5fa;
+  background: rgba(255, 255, 255, 0.32);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #3b82f6 transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 }
 
 @keyframes slideFromLeft {
@@ -67,3 +68,8 @@ body {
 }
 
 .success-pop { animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+@keyframes fab-pop-in {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}

@@ -20,11 +20,11 @@ export default function ComandasPage() {
   const abertas = comandas.filter((c) => c.status === "Aberto").length;
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-950 p-4 md:p-8">
+    <div className="flex-1 overflow-y-auto p-4 pb-20 md:p-8">
       <div className="flex items-center justify-between mb-5">
         <div>
           <h1 className="text-2xl font-bold text-slate-100">Comandas</h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-300 text-sm mt-1">
             {abertas > 0 ? `${abertas} comanda${abertas > 1 ? "s" : ""} em aberto` : "Nenhuma comanda em aberto"}
           </p>
         </div>
@@ -39,7 +39,7 @@ export default function ComandasPage() {
           <button
             key={f}
             className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              f === "Todas" ? "bg-blue-600 text-white" : "bg-slate-800/80 text-slate-400 hover:text-white"
+              f === "Todas" ? "bg-blue-600 text-white" : "bg-slate-800/80 text-slate-200 hover:text-white"
             }`}
           >
             {f}
@@ -66,7 +66,7 @@ export default function ComandasPage() {
                       {s.label}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 truncate mt-0.5">
+                  <p className="text-xs text-slate-300 truncate mt-0.5">
                     #{c.id} · {c.profissional} · {c.data}
                   </p>
                 </div>
@@ -74,7 +74,7 @@ export default function ComandasPage() {
                   <span className="text-sm font-semibold text-slate-200">
                     R$ {c.valor.toFixed(2).replace(".", ",")}
                   </span>
-                  <ChevronRight className="w-4 h-4 text-slate-600" />
+                  <ChevronRight className="w-4 h-4 text-slate-200" />
                 </div>
               </li>
             );

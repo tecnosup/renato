@@ -22,11 +22,11 @@ const colors = [
 
 export default function ClientesPage() {
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-950 p-4 md:p-8">
+    <div className="flex-1 overflow-y-auto p-4 pb-20 md:p-8">
       <div className="flex items-center justify-between mb-5">
         <div>
           <h1 className="text-2xl font-bold text-slate-100">Clientes</h1>
-          <p className="text-slate-500 text-sm mt-1">{clientes.length} clientes cadastrados</p>
+          <p className="text-slate-300 text-sm mt-1">{clientes.length} clientes cadastrados</p>
         </div>
         <button className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
           <UserPlus className="w-4 h-4" />
@@ -36,25 +36,25 @@ export default function ClientesPage() {
 
       {/* Busca */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
         <input
           type="text"
           placeholder="Buscar cliente..."
-          className="w-full bg-slate-800/60 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+          className="transform-gpu w-full bg-white/2 backdrop-blur-md backdrop-saturate-150 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_4px_20px_rgba(0,0,0,0.25)] rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 placeholder-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
         />
       </div>
 
       {/* Lista */}
-      <div className="rounded-2xl overflow-hidden bg-linear-to-br from-slate-800/80 to-slate-900/60">
-        <ul className="divide-y divide-slate-800/60">
+      <div className="transform-gpu rounded-2xl overflow-hidden bg-white/2 backdrop-blur-md backdrop-saturate-150 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_4px_20px_rgba(0,0,0,0.25)]">
+        <ul className="divide-y divide-white/5">
           {clientes.map((c, i) => (
-            <li key={c.id} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800/30 transition-colors cursor-pointer">
+            <li key={c.id} className="flex items-center gap-3 px-4 py-3 hover:bg-white/8 transition-colors cursor-pointer">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 ${colors[i % colors.length]}`}>
                 {getInitials(c.nome)}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-slate-200 truncate">{c.nome}</p>
-                <p className="text-xs text-slate-500 truncate mt-0.5">{c.celular}</p>
+                <p className="text-xs text-slate-300 truncate mt-0.5">{c.celular}</p>
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 {c.pontos > 0 && (
@@ -63,7 +63,7 @@ export default function ClientesPage() {
                     <span className="text-xs font-semibold">{c.pontos}</span>
                   </div>
                 )}
-                <ChevronRight className="w-4 h-4 text-slate-600" />
+                <ChevronRight className="w-4 h-4 text-slate-200" />
               </div>
             </li>
           ))}

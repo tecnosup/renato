@@ -13,21 +13,21 @@ export default function ComissoesPage() {
   const hoje = new Date().toLocaleDateString("pt-BR");
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-950 flex flex-col">
+    <div className="flex-1 overflow-y-auto flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-5 pb-4">
         <h1 className="text-xl font-bold text-slate-100">
-          Comissões <span className="text-slate-500 font-normal text-base">· Todas</span>
+          Comissões <span className="text-slate-300 font-normal text-base">· Todas</span>
         </h1>
-        <button className="text-slate-400 hover:text-white transition-colors">
+        <button className="text-slate-200 hover:text-white transition-colors">
           <SlidersHorizontal className="w-5 h-5" />
         </button>
       </div>
 
-      <div className="flex-1 px-4 pb-8 space-y-3">
+      <div className="flex-1 px-4 pb-20 space-y-3">
         {/* Profissional */}
         <div className="rounded-xl overflow-hidden bg-linear-to-br from-slate-800/80 to-slate-900/60">
-          <label className="block text-[9px] font-semibold text-slate-500 uppercase tracking-widest px-4 pt-3 pb-1">Profissional</label>
+          <label className="block text-[9px] font-semibold text-slate-300 uppercase tracking-widest px-4 pt-3 pb-1">Profissional</label>
           <select
             value={profissional}
             onChange={(e) => setProfissional(e.target.value)}
@@ -42,11 +42,11 @@ export default function ComissoesPage() {
         {/* Datas */}
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-xl bg-linear-to-br from-slate-800/80 to-slate-900/60 px-4 pt-3 pb-3">
-            <label className="block text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Data inicial</label>
+            <label className="block text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Data inicial</label>
             <input type="text" defaultValue={hoje} className="w-full bg-transparent text-sm text-slate-200 focus:outline-none" />
           </div>
           <div className="rounded-xl bg-linear-to-br from-slate-800/80 to-slate-900/60 px-4 pt-3 pb-3">
-            <label className="block text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Data final</label>
+            <label className="block text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Data final</label>
             <input type="text" defaultValue={hoje} className="w-full bg-transparent text-sm text-slate-200 focus:outline-none" />
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function ComissoesPage() {
           <button
             onClick={() => setModo("sintetico")}
             className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
-              modo === "sintetico" ? "bg-slate-700 text-white" : "text-slate-500 hover:text-slate-300"
+              modo === "sintetico" ? "bg-slate-700 text-white" : "text-slate-300 hover:text-white"
             }`}
           >
             Sintético
@@ -64,7 +64,7 @@ export default function ComissoesPage() {
           <button
             onClick={() => setModo("analitico")}
             className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
-              modo === "analitico" ? "bg-slate-700 text-white" : "text-slate-500 hover:text-slate-300"
+              modo === "analitico" ? "bg-slate-700 text-white" : "text-slate-300 hover:text-white"
             }`}
           >
             Analítico
@@ -81,7 +81,7 @@ export default function ComissoesPage() {
 
         {/* Resultado */}
         {!buscado ? (
-          <p className="text-center text-sm text-slate-600 pt-6">
+          <p className="text-center text-sm text-slate-300 pt-6">
             Toque no botão acima para filtrar as comissões
           </p>
         ) : (
@@ -91,14 +91,14 @@ export default function ComissoesPage() {
                 <span className="text-sm text-slate-300">Corte + Barba</span>
                 <span className="text-sm font-semibold text-slate-100">R$ 17,00</span>
               </div>
-              <p className="text-xs text-slate-500">Comissão 20% · Victor Hugo</p>
+              <p className="text-xs text-slate-300">Comissão 20% · Victor Hugo</p>
             </div>
             <div className="rounded-xl p-4 bg-linear-to-br from-slate-800/80 to-slate-900/60">
               <div className="flex justify-between items-center mb-1">
                 <span className="text-sm text-slate-300">Corte</span>
                 <span className="text-sm font-semibold text-slate-100">R$ 9,00</span>
               </div>
-              <p className="text-xs text-slate-500">Comissão 20% · Pedro Alves</p>
+              <p className="text-xs text-slate-300">Comissão 20% · Pedro Alves</p>
             </div>
             <div className="rounded-xl p-4 bg-linear-to-br from-emerald-950/60 to-slate-900/60 flex justify-between items-center">
               <span className="text-sm font-semibold text-slate-300">Total</span>

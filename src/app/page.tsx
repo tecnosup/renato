@@ -1,7 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import { ChevronLeft, ChevronRight, RefreshCw, Calendar, Ban, X, Plus, Link2, FileText, ListOrdered, ChevronDown } from "lucide-react";
+
+// Componente que anima a entrada do calendário (slide + fade do lado certo)
+function CalSlide({ dir, children }: { dir: "left" | "right"; children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const from = dir === "right" ? "24px" : "-24px";
+    el.style.transition = "none";
+    el.style.opacity = "0";
+    el.style.transform = `translateX(${from})`;
+    el.getBoundingClientRect(); // força reflow
+    el.style.transition = "transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease-out";
+    el.style.opacity = "1";
+    el.style.transform = "translateX(0)";
+  }, [dir]);
+
+  return <div ref={ref}>{children}</div>;
+}
+
+// Anima a transição entre o modo semanal (recolhido) e mensal (expandido)
+function CalExpand({ expandido, children }: { expandido: boolean; children: React.ReactNode }) {
+  return (
+    <div
+      className="grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+      style={{ gridTemplateRows: expandido ? "1fr" : "0fr" }}
+    >
+      <div className="overflow-hidden">{children}</div>
+    </div>
+  );
+}
 
 const fabActions = [
   { label: "Agendar horário", icon: Calendar },
@@ -40,7 +72,7 @@ function FabMenu({ onAgendar }: { onAgendar: (hora: string) => void }) {
         </div>
         <button
           onClick={() => setOpen(!open)}
-          className="relative w-14 h-14 rounded-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 border border-white/30 text-slate-950 flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          className="relative w-14 h-14 rounded-full bg-linear-to-br from-blue-400 to-cyan-400 hover:brightness-110 border border-white/30 text-slate-950 flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] animate-[fab-pop-in_0.25s_cubic-bezier(0.34,1.56,0.64,1)_both]"
         >
           <Plus className={`w-6 h-6 absolute transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-135 opacity-0 scale-50" : "rotate-0 opacity-100 scale-100"}`} />
           <X className={`w-6 h-6 absolute transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-0 opacity-100 scale-100" : "-rotate-135 opacity-0 scale-50"}`} />
@@ -91,13 +123,26 @@ export default function AgendaPage() {
   const [ano, setAno] = useState(hoje.getFullYear());
   const [diaSelecionado, setDiaSelecionado] = useState(toKey(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()));
   const [expandido, setExpandido] = useState(false);
+  const [slideDir, setSlideDir] = useState<"left" | "right">("right");
+  const [calKey, setCalKey] = useState(0);
   const [modal, setModal] = useState<{ hora: string } | null>(null);
   const [form, setForm] = useState({ cliente: "", whatsapp: "", servico: "Corte Clássico", preco: "45", barbeiro: "Qualquer disponível" });
 
   const navMes = (dir: number) => {
-    const d = new Date(ano, mes + dir, 1);
-    setMes(d.getMonth());
-    setAno(d.getFullYear());
+    setSlideDir(dir > 0 ? "right" : "left");
+    setCalKey((k) => k + 1);
+    if (expandido) {
+      const d = new Date(ano, mes + dir, 1);
+      setMes(d.getMonth());
+      setAno(d.getFullYear());
+    } else {
+      const base = new Date(diaSelecionado + "T12:00:00");
+      base.setDate(base.getDate() + dir * 7);
+      const newKey = toKey(base.getFullYear(), base.getMonth(), base.getDate());
+      setDiaSelecionado(newKey);
+      setMes(base.getMonth());
+      setAno(base.getFullYear());
+    }
   };
 
   const selecionarDia = (key: string) => {
@@ -126,11 +171,11 @@ export default function AgendaPage() {
   const hojeKey = toKey(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
 
   return (
-    <div id="agenda-scroll" className="flex-1 overflow-y-auto bg-slate-950">
+    <div id="agenda-scroll" className="flex-1 overflow-y-auto">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-5 pb-3">
         <h1 className="text-xl font-bold text-slate-100">Agendamentos</h1>
-        <button className="flex items-center gap-1.5 text-slate-400 hover:text-white text-sm transition-colors">
+        <button className="flex items-center gap-1.5 text-slate-200 hover:text-white text-sm transition-colors">
           <RefreshCw className="w-4 h-4" /> Atualizar
         </button>
       </div>
@@ -138,22 +183,22 @@ export default function AgendaPage() {
       {/* Cards de resumo */}
       <div className="grid grid-cols-2 gap-2 px-4 pb-4">
         <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-          <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Agendamentos</p>
+          <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Agendamentos</p>
           <p className="text-2xl font-bold text-slate-100 leading-none">{totalAgend}</p>
-          <p className="text-[10px] text-slate-500 mt-1 truncate capitalize">{nomeDia}</p>
+          <p className="text-[10px] text-slate-300 mt-1 truncate capitalize">{nomeDia}</p>
         </div>
         <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-          <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Horários Livres</p>
+          <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Horários Livres</p>
           <p className="text-2xl font-bold text-slate-100 leading-none">{livres}</p>
-          <p className="text-[10px] text-slate-500 mt-1">de {HORARIOS.length} no dia</p>
+          <p className="text-[10px] text-slate-300 mt-1">de {HORARIOS.length} no dia</p>
         </div>
         <div className="transform-gpu rounded-xl p-3 bg-emerald-400/10 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
           <p className="text-[9px] font-semibold text-emerald-400 uppercase tracking-widest mb-1">Faturado</p>
           <p className="text-xl font-bold text-emerald-400 leading-none">R$ {faturado.toFixed(2).replace(".", ",")}</p>
-          <p className="text-[10px] text-slate-500 mt-1">{concluidos} concluídos</p>
+          <p className="text-[10px] text-slate-300 mt-1">{concluidos} concluídos</p>
         </div>
         <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-          <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Caixa</p>
+          <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Caixa</p>
           <p className="text-xs font-semibold text-slate-300 leading-none mt-0.5">🔒 Em aberto</p>
           <button className="text-[9px] text-cyan-400 font-semibold mt-1 uppercase tracking-widest">Ver no Financeiro</button>
         </div>
@@ -162,7 +207,7 @@ export default function AgendaPage() {
       {/* Calendário compacto / expansível */}
       <div className="transform-gpu mx-4 mb-4 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
         <div className="flex items-center justify-between px-4 pt-4 pb-3">
-          <button onClick={() => navMes(-1)} className="text-slate-400 hover:text-white transition-colors">
+          <button onClick={() => navMes(-1)} className="text-slate-200 hover:text-white transition-colors">
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
@@ -172,18 +217,21 @@ export default function AgendaPage() {
             {MESES[mes]} {ano}
             <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${expandido ? "rotate-180" : ""}`} />
           </button>
-          <button onClick={() => navMes(1)} className="text-slate-400 hover:text-white transition-colors">
+          <button onClick={() => navMes(1)} className="text-slate-200 hover:text-white transition-colors">
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
         <div className="grid grid-cols-7 px-2 mb-1">
           {DIAS_SEMANA_CURTO.map((d, i) => (
-            <p key={d} className={`text-center text-[11px] font-medium ${i === 0 ? "text-red-400" : "text-slate-500"}`}>{d}</p>
+            <p key={d} className={`text-center text-[11px] font-medium ${i === 0 ? "text-red-400" : "text-slate-300"}`}>{d}</p>
           ))}
         </div>
 
-        {!expandido && (
+        {/* Strip semanal (recolhido) */}
+        <CalExpand expandido={!expandido}>
+          <div className="overflow-hidden">
+          <CalSlide key={`week-${calKey}`} dir={slideDir}>
           <div className="grid grid-cols-7 px-2 pb-3 gap-y-1">
             {diasDaSemana.map((d) => {
               const key = toKey(d.getFullYear(), d.getMonth(), d.getDate());
@@ -195,7 +243,7 @@ export default function AgendaPage() {
                 <button
                   key={key}
                   onClick={() => setDiaSelecionado(key)}
-                  className={`flex flex-col items-center justify-center aspect-square rounded-xl transition-colors ${
+                  className={`flex flex-col items-center justify-center aspect-square md:aspect-auto md:w-12 md:h-12 md:mx-auto rounded-xl transition-colors ${
                     isSel ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : isHoje ? "border border-cyan-400/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
                   }`}
                 >
@@ -205,9 +253,14 @@ export default function AgendaPage() {
               );
             })}
           </div>
-        )}
+          </CalSlide>
+          </div>
+        </CalExpand>
 
-        {expandido && (
+        {/* Grade mensal (expandido) */}
+        <CalExpand expandido={expandido}>
+          <div className="overflow-hidden">
+          <CalSlide key={`month-${calKey}`} dir={slideDir}>
           <div className="px-2 pb-4">
             <div className="grid grid-cols-7 gap-y-1">
               {celulas.map((dia, i) => {
@@ -222,7 +275,7 @@ export default function AgendaPage() {
                   <button
                     key={key}
                     onClick={() => selecionarDia(key)}
-                    className={`relative flex flex-col items-center justify-center aspect-square rounded-xl transition-colors ${
+                    className={`relative flex flex-col items-center justify-center aspect-square md:aspect-auto md:w-12 md:h-12 md:mx-auto rounded-xl transition-colors ${
                       isSel ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950" : isHoje ? "border border-cyan-400/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
                     }`}
                   >
@@ -240,29 +293,31 @@ export default function AgendaPage() {
             <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
-                <span className="text-[10px] text-slate-400">agendamentos</span>
+                <span className="text-[10px] text-slate-300">agendamentos</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span className="text-[10px] text-slate-400">caixa aberto</span>
+                <span className="text-[10px] text-slate-300">caixa aberto</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded border border-cyan-400/40" />
-                <span className="text-[10px] text-slate-400">hoje</span>
+                <span className="text-[10px] text-slate-300">hoje</span>
               </div>
             </div>
           </div>
-        )}
+          </CalSlide>
+          </div>
+        </CalExpand>
       </div>
 
       {/* Grade de horários */}
-      <div className="transform-gpu mx-4 mb-24 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+      <div className="transform-gpu mx-4 mb-12 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
         <div className="px-4 py-3 border-b border-white/5">
           <div className="flex items-center gap-2">
-            <span className="text-slate-400 text-sm">⊞</span>
+            <span className="text-slate-200 text-sm">⊞</span>
             <p className="text-sm font-bold text-slate-100">Grade de horários</p>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5 capitalize">{nomeDia} · Clique para agendar ou bloquear</p>
+          <p className="text-xs text-slate-300 mt-0.5 capitalize">{nomeDia} · Clique para agendar ou bloquear</p>
         </div>
 
         <ul className="divide-y divide-white/5">
@@ -273,11 +328,11 @@ export default function AgendaPage() {
               return (
                 <li key={hora} className="flex items-center gap-4 px-4 py-3 bg-black/15">
                   <div className="w-12 shrink-0">
-                    <p className="text-sm font-mono font-semibold text-slate-500">{hora}</p>
-                    <p className="text-[10px] text-slate-600">bloqueado</p>
+                    <p className="text-sm font-mono font-semibold text-slate-300">{hora}</p>
+                    <p className="text-[10px] text-slate-400">bloqueado</p>
                   </div>
-                  <p className="text-sm text-slate-500 italic flex-1">Agenda bloqueada</p>
-                  <Ban className="w-4 h-4 text-slate-600" />
+                  <p className="text-sm text-slate-300 italic flex-1">Agenda bloqueada</p>
+                  <Ban className="w-4 h-4 text-slate-400" />
                 </li>
               );
             }
@@ -288,11 +343,11 @@ export default function AgendaPage() {
                 <li key={hora} className={`flex items-center gap-4 px-4 py-3 ${isConc ? "bg-emerald-400/5" : "bg-cyan-400/5"}`}>
                   <div className="w-12 shrink-0">
                     <p className={`text-sm font-mono font-semibold ${isConc ? "text-emerald-400" : "text-cyan-400"}`}>{hora}</p>
-                    <p className="text-[10px] text-slate-500">0/1</p>
+                    <p className="text-[10px] text-slate-300">0/1</p>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-200 truncate">{agend.cliente}</p>
-                    <p className="text-xs text-slate-400 truncate">{agend.servico}</p>
+                    <p className="text-sm font-medium text-slate-100 truncate">{agend.cliente}</p>
+                    <p className="text-xs text-slate-300 truncate">{agend.servico}</p>
                   </div>
                   <span className={`text-[10px] font-semibold px-2 py-1 rounded-full ${isConc ? "bg-emerald-400/15 text-emerald-400" : "bg-cyan-400/15 text-cyan-400"}`}>
                     {isConc ? "Concluído" : "Agendado"}
@@ -304,14 +359,14 @@ export default function AgendaPage() {
             return (
               <li key={hora} className="flex items-center gap-4 px-4 py-3 hover:bg-white/5 transition-colors cursor-pointer" onClick={() => setModal({ hora })}>
                 <div className="w-12 shrink-0">
-                  <p className="text-sm font-mono font-semibold text-slate-400">{hora}</p>
-                  <p className="text-[10px] text-slate-600">0/1</p>
+                  <p className="text-sm font-mono font-semibold text-slate-200">{hora}</p>
+                  <p className="text-[10px] text-slate-400">0/1</p>
                 </div>
                 <p className="text-sm text-emerald-400 font-medium flex-1">Disponível</p>
-                <button className="flex items-center gap-1.5 bg-white/8 text-slate-300 text-xs px-3 py-1.5 rounded-lg hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors">
+                <button className="flex items-center gap-1.5 bg-white/8 text-slate-100 text-xs px-3 py-1.5 rounded-lg hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors">
                   <Calendar className="w-3 h-3" /> Agendar
                 </button>
-                <button className="text-slate-600 hover:text-red-400 transition-colors">
+                <button className="text-slate-400 hover:text-red-400 transition-colors">
                   <Ban className="w-4 h-4" />
                 </button>
               </li>
@@ -324,8 +379,8 @@ export default function AgendaPage() {
 
       {modal && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
-          <div className="transform-gpu absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setModal(null)} />
-          <div className="transform-gpu relative bg-slate-900/80 backdrop-blur-2xl border border-white/10 rounded-t-3xl md:rounded-2xl w-full md:max-w-md p-6 pb-10 md:pb-6 space-y-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_40px_rgba(0,0,0,0.5)]">
+          <div className="transform-gpu absolute inset-0 bg-black/10" onClick={() => setModal(null)} />
+          <div className="transform-gpu relative bg-white/3 backdrop-blur-2xl backdrop-saturate-100 border border-white/15 rounded-t-3xl md:rounded-2xl w-full md:max-w-md p-6 pb-10 md:pb-6 space-y-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_4px_20px_rgba(0,0,0,0.35)]">
             <div className="flex items-center justify-between mb-1">
               <div>
                 <h3 className="text-base font-bold text-slate-100">Novo agendamento presencial</h3>
