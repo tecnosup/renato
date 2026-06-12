@@ -57,14 +57,14 @@ function FabMenu({ onAgendar }: { onAgendar: (hora: string) => void }) {
                 transitionDelay: open ? `${i * 30}ms` : "0ms",
                 transformOrigin: "bottom right",
               }}
-              className={`transform-gpu flex items-center gap-3 bg-white/3 hover:bg-white/8 backdrop-blur-md backdrop-saturate-100 border border-white/15 text-slate-100 pl-4 pr-3 py-2.5 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_4px_20px_rgba(0,0,0,0.35)] text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              className={`transform-gpu flex items-center gap-3 admin-glass-card admin-glass-card-hover admin-text-primary pl-4 pr-3 py-2.5 rounded-full text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 open
                   ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
                   : "opacity-0 scale-75 translate-y-2 pointer-events-none"
               }`}
             >
               {label}
-              <span className="w-8 h-8 rounded-full bg-white/8 border border-white/10 flex items-center justify-center shrink-0">
+              <span className="w-8 h-8 rounded-full admin-surface-subtle flex items-center justify-center shrink-0">
                 <Icon className="w-4 h-4 text-gold" />
               </span>
             </button>
@@ -182,49 +182,49 @@ export default function AgendaPage() {
 
       {/* Cards de resumo */}
       <div className="grid grid-cols-2 gap-2 px-4 pb-4">
-        <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-          <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Agendamentos</p>
-          <p className="text-2xl font-bold text-slate-100 leading-none">{totalAgend}</p>
-          <p className="text-[10px] text-slate-300 mt-1 truncate capitalize">{nomeDia}</p>
+        <div className="transform-gpu rounded-xl p-3 admin-glass-card">
+          <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Agendamentos</p>
+          <p className="text-2xl font-bold admin-text-primary leading-none">{totalAgend}</p>
+          <p className="text-[10px] admin-text-secondary mt-1 truncate capitalize">{nomeDia}</p>
         </div>
-        <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-          <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Horários Livres</p>
-          <p className="text-2xl font-bold text-slate-100 leading-none">{livres}</p>
-          <p className="text-[10px] text-slate-300 mt-1">de {HORARIOS.length} no dia</p>
+        <div className="transform-gpu rounded-xl p-3 admin-glass-card">
+          <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Horários Livres</p>
+          <p className="text-2xl font-bold admin-text-primary leading-none">{livres}</p>
+          <p className="text-[10px] admin-text-secondary mt-1">de {HORARIOS.length} no dia</p>
         </div>
-        <div className="transform-gpu rounded-xl p-3 bg-emerald-400/10 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+        <div className="transform-gpu rounded-xl p-3 admin-glass-card-accent-emerald">
           <p className="text-[9px] font-semibold text-emerald-400 uppercase tracking-widest mb-1">Faturado</p>
           <p className="text-xl font-bold text-emerald-400 leading-none">R$ {faturado.toFixed(2).replace(".", ",")}</p>
-          <p className="text-[10px] text-slate-300 mt-1">{concluidos} concluídos</p>
+          <p className="text-[10px] admin-text-secondary mt-1">{concluidos} concluídos</p>
         </div>
-        <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-          <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Caixa</p>
-          <p className="text-xs font-semibold text-slate-300 leading-none mt-0.5">🔒 Em aberto</p>
+        <div className="transform-gpu rounded-xl p-3 admin-glass-card">
+          <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Caixa</p>
+          <p className="text-xs font-semibold admin-text-secondary leading-none mt-0.5">🔒 Em aberto</p>
           <button className="text-[9px] text-gold font-semibold mt-1 uppercase tracking-widest">Ver no Financeiro</button>
         </div>
       </div>
 
       {/* Calendário compacto / expansível */}
-      <div className="transform-gpu mx-4 mb-4 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+      <div className="transform-gpu mx-4 mb-4 rounded-2xl overflow-hidden admin-glass-card">
         <div className="flex items-center justify-between px-4 pt-4 pb-3">
-          <button onClick={() => navMes(-1)} className="text-slate-200 hover:text-white transition-colors">
+          <button onClick={() => navMes(-1)} className="admin-text-secondary hover:opacity-80 transition-colors">
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={() => setExpandido(!expandido)}
-            className="flex items-center gap-1.5 text-sm font-semibold text-slate-100 hover:text-gold transition-colors"
+            className="flex items-center gap-1.5 text-sm font-semibold admin-text-primary hover:text-gold transition-colors"
           >
             {MESES[mes]} {ano}
             <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${expandido ? "rotate-180" : ""}`} />
           </button>
-          <button onClick={() => navMes(1)} className="text-slate-200 hover:text-white transition-colors">
+          <button onClick={() => navMes(1)} className="admin-text-secondary hover:opacity-80 transition-colors">
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
         <div className="grid grid-cols-7 px-2 mb-1">
           {DIAS_SEMANA_CURTO.map((d, i) => (
-            <p key={d} className={`text-center text-[11px] font-medium ${i === 0 ? "text-red-400" : "text-slate-300"}`}>{d}</p>
+            <p key={d} className={`text-center text-[11px] font-medium ${i === 0 ? "text-red-400" : "admin-text-secondary"}`}>{d}</p>
           ))}
         </div>
 
@@ -244,7 +244,7 @@ export default function AgendaPage() {
                   key={key}
                   onClick={() => setDiaSelecionado(key)}
                   className={`flex flex-col items-center justify-center aspect-square md:aspect-auto md:w-12 md:h-12 md:mx-auto rounded-xl transition-colors ${
-                    isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isHoje ? "border border-gold/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
+                    isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isHoje ? "border border-gold/40 admin-text-primary" : "admin-glass-card-hover admin-text-secondary"
                   }`}
                 >
                   <span className={`text-sm font-semibold ${isDom && !isSel ? "text-red-400" : ""}`}>{d.getDate()}</span>
@@ -276,7 +276,7 @@ export default function AgendaPage() {
                     key={key}
                     onClick={() => selecionarDia(key)}
                     className={`relative flex flex-col items-center justify-center aspect-square md:aspect-auto md:w-12 md:h-12 md:mx-auto rounded-xl transition-colors ${
-                      isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isHoje ? "border border-gold/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
+                      isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isHoje ? "border border-gold/40 admin-text-primary" : "admin-glass-card-hover admin-text-secondary"
                     }`}
                   >
                     <span className={`text-sm font-semibold ${isDom && !isSel ? "text-red-400" : ""}`}>{dia}</span>
@@ -290,18 +290,18 @@ export default function AgendaPage() {
                 );
               })}
             </div>
-            <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
+            <div className="flex items-center gap-4 mt-3 pt-3 admin-border-t">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
-                <span className="text-[10px] text-slate-300">agendamentos</span>
+                <span className="text-[10px] admin-text-secondary">agendamentos</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span className="text-[10px] text-slate-300">caixa aberto</span>
+                <span className="text-[10px] admin-text-secondary">caixa aberto</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded border border-gold/40" />
-                <span className="text-[10px] text-slate-300">hoje</span>
+                <span className="text-[10px] admin-text-secondary">hoje</span>
               </div>
             </div>
           </div>
@@ -311,28 +311,28 @@ export default function AgendaPage() {
       </div>
 
       {/* Grade de horários */}
-      <div className="transform-gpu mx-4 mb-12 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-        <div className="px-4 py-3 border-b border-white/5">
+      <div className="transform-gpu mx-4 mb-12 rounded-2xl overflow-hidden admin-glass-card">
+        <div className="px-4 py-3 admin-border-b">
           <div className="flex items-center gap-2">
-            <span className="text-slate-200 text-sm">⊞</span>
-            <p className="text-sm font-bold text-slate-100">Grade de horários</p>
+            <span className="admin-text-secondary text-sm">⊞</span>
+            <p className="text-sm font-bold admin-text-primary">Grade de horários</p>
           </div>
-          <p className="text-xs text-slate-300 mt-0.5 capitalize">{nomeDia} · Clique para agendar ou bloquear</p>
+          <p className="text-xs admin-text-secondary mt-0.5 capitalize">{nomeDia} · Clique para agendar ou bloquear</p>
         </div>
 
-        <ul className="divide-y divide-white/5">
+        <ul className="admin-divide">
           {HORARIOS.map((hora) => {
             const agend = agendPorHora[hora];
 
             if (agend?.status === "bloqueado") {
               return (
-                <li key={hora} className="flex items-center gap-4 px-4 py-3 bg-black/15">
+                <li key={hora} className="flex items-center gap-4 px-4 py-3 admin-surface-subtle">
                   <div className="w-12 shrink-0">
-                    <p className="text-sm font-mono font-semibold text-slate-300">{hora}</p>
-                    <p className="text-[10px] text-slate-400">bloqueado</p>
+                    <p className="text-sm font-mono font-semibold admin-text-secondary">{hora}</p>
+                    <p className="text-[10px] admin-text-secondary">bloqueado</p>
                   </div>
-                  <p className="text-sm text-slate-300 italic flex-1">Agenda bloqueada</p>
-                  <Ban className="w-4 h-4 text-slate-400" />
+                  <p className="text-sm admin-text-secondary italic flex-1">Agenda bloqueada</p>
+                  <Ban className="w-4 h-4 admin-text-secondary" />
                 </li>
               );
             }
@@ -343,11 +343,11 @@ export default function AgendaPage() {
                 <li key={hora} className={`flex items-center gap-4 px-4 py-3 ${isConc ? "bg-emerald-400/5" : "bg-gold/5"}`}>
                   <div className="w-12 shrink-0">
                     <p className={`text-sm font-mono font-semibold ${isConc ? "text-emerald-400" : "text-gold"}`}>{hora}</p>
-                    <p className="text-[10px] text-slate-300">0/1</p>
+                    <p className="text-[10px] admin-text-secondary">0/1</p>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-100 truncate">{agend.cliente}</p>
-                    <p className="text-xs text-slate-300 truncate">{agend.servico}</p>
+                    <p className="text-sm font-medium admin-text-primary truncate">{agend.cliente}</p>
+                    <p className="text-xs admin-text-secondary truncate">{agend.servico}</p>
                   </div>
                   <span className={`text-[10px] font-semibold px-2 py-1 rounded-full ${isConc ? "bg-emerald-400/15 text-emerald-400" : "bg-gold/15 text-gold"}`}>
                     {isConc ? "Concluído" : "Agendado"}
@@ -357,16 +357,16 @@ export default function AgendaPage() {
             }
 
             return (
-              <li key={hora} className="flex items-center gap-4 px-4 py-3 hover:bg-white/5 transition-colors cursor-pointer" onClick={() => setModal({ hora })}>
+              <li key={hora} className="admin-glass-card-hover flex items-center gap-4 px-4 py-3 transition-colors cursor-pointer" onClick={() => setModal({ hora })}>
                 <div className="w-12 shrink-0">
-                  <p className="text-sm font-mono font-semibold text-slate-200">{hora}</p>
-                  <p className="text-[10px] text-slate-400">0/1</p>
+                  <p className="text-sm font-mono font-semibold admin-text-primary">{hora}</p>
+                  <p className="text-[10px] admin-text-secondary">0/1</p>
                 </div>
                 <p className="text-sm text-emerald-400 font-medium flex-1">Disponível</p>
-                <button className="flex items-center gap-1.5 bg-white/8 text-slate-100 text-xs px-3 py-1.5 rounded-lg hover:bg-gold/15 hover:text-gold transition-colors">
+                <button className="flex items-center gap-1.5 admin-surface-subtle admin-text-primary text-xs px-3 py-1.5 rounded-lg hover:bg-gold/15 hover:text-gold transition-colors">
                   <Calendar className="w-3 h-3" /> Agendar
                 </button>
-                <button className="text-slate-400 hover:text-red-400 transition-colors">
+                <button className="admin-text-secondary hover:text-red-400 transition-colors">
                   <Ban className="w-4 h-4" />
                 </button>
               </li>
@@ -380,50 +380,50 @@ export default function AgendaPage() {
       {modal && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
           <div className="transform-gpu absolute inset-0 bg-black/10" onClick={() => setModal(null)} />
-          <div className="transform-gpu relative bg-white/3 backdrop-blur-2xl backdrop-saturate-100 border border-white/15 rounded-t-3xl md:rounded-2xl w-full md:max-w-md p-6 pb-10 md:pb-6 space-y-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_4px_20px_rgba(0,0,0,0.35)]">
+          <div className="transform-gpu relative admin-glass-modal rounded-t-3xl md:rounded-2xl w-full md:max-w-md p-6 pb-10 md:pb-6 space-y-4">
             <div className="flex items-center justify-between mb-1">
               <div>
-                <h3 className="text-base font-bold text-slate-100">Novo agendamento presencial</h3>
+                <h3 className="text-base font-bold admin-text-primary">Novo agendamento presencial</h3>
                 {modal.hora && (
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs admin-text-secondary mt-0.5">
                     {dataSelecionadaObj.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })} às {modal.hora}
                   </p>
                 )}
               </div>
-              <button onClick={() => setModal(null)} className="text-slate-400 hover:text-white transition-colors">
+              <button onClick={() => setModal(null)} className="admin-text-secondary hover:opacity-80 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-slate-400 mb-1 block">Nome do cliente</label>
+                <label className="text-xs admin-text-secondary mb-1 block">Nome do cliente</label>
                 <input type="text" placeholder="Ex: João Silva" value={form.cliente}
                   onChange={(e) => setForm({ ...form, cliente: e.target.value })}
-                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-gold/50 transition-colors" />
+                  className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors" />
               </div>
               <div>
-                <label className="text-xs text-slate-400 mb-1 block">WhatsApp (opcional)</label>
+                <label className="text-xs admin-text-secondary mb-1 block">WhatsApp (opcional)</label>
                 <input type="tel" placeholder="11999999999" value={form.whatsapp}
                   onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-gold/50 transition-colors" />
+                  className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors" />
               </div>
               <div>
-                <label className="text-xs text-slate-400 mb-1 block">Serviço</label>
+                <label className="text-xs admin-text-secondary mb-1 block">Serviço</label>
                 <select value={form.servico} onChange={(e) => setForm({ ...form, servico: e.target.value })}
-                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-gold/50 transition-colors">
+                  className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors">
                   {SERVICOS.map((s) => <option key={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-xs text-slate-400 mb-1 block">Preço (R$)</label>
+                <label className="text-xs admin-text-secondary mb-1 block">Preço (R$)</label>
                 <input type="number" value={form.preco}
                   onChange={(e) => setForm({ ...form, preco: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-gold/50 transition-colors" />
+                  className="w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors" />
               </div>
               <div>
-                <label className="text-xs text-slate-400 mb-1 block">Barbeiro</label>
+                <label className="text-xs admin-text-secondary mb-1 block">Barbeiro</label>
                 <select value={form.barbeiro} onChange={(e) => setForm({ ...form, barbeiro: e.target.value })}
-                  className="transform-gpu w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-gold/50 transition-colors">
+                  className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors">
                   <option>Qualquer disponível</option>
                   <option>Renato</option>
                   <option>Franciele</option>
@@ -432,7 +432,7 @@ export default function AgendaPage() {
               </div>
             </div>
             <div className="flex gap-3 pt-1">
-              <button onClick={() => setModal(null)} className="transform-gpu flex-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 py-3 rounded-xl text-sm font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] transition-colors">Cancelar</button>
+              <button onClick={() => setModal(null)} className="transform-gpu flex-1 admin-glass-card admin-glass-card-hover admin-text-secondary py-3 rounded-xl text-sm font-semibold transition-colors">Cancelar</button>
               <button onClick={() => setModal(null)} className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-semibold transition-all">Confirmar</button>
             </div>
           </div>

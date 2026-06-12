@@ -13,11 +13,114 @@
   --font-mono: "JetBrains Mono", var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
   --font-display: "Playfair Display", serif;
   --font-serif: "Playfair Display", serif;
-  
+
   --color-gold: #c2a35d;
   --color-gold-light: #ece4cb;
   --color-sleek-dark: #090a0a;
   --color-card-dark: #121314;
+}
+
+/* Tokens do tema do painel admin (Configurações > Tema).
+   Liquid Glass = visual atual (cards translúcidos com blur, texto branco).
+   Noturno      = cards sólidos escuros, texto claro, sem blur.
+   Diurno       = cards sólidos claros, texto escuro, sem blur. */
+[data-theme="liquid-glass"] {
+  --admin-text-primary: #f8fafc;
+  --admin-text-secondary: rgba(248, 250, 252, 0.7);
+  --admin-surface-subtle: rgba(255, 255, 255, 0.08);
+  --admin-toggle-active-bg: rgba(255, 255, 255, 0.18);
+  --admin-toggle-active-text: #ffffff;
+  --admin-divider: rgba(255, 255, 255, 0.05);
+  --admin-placeholder: rgba(248, 250, 252, 0.5);
+  --admin-border: rgba(255, 255, 255, 0.08);
+
+  --admin-card-bg: rgba(255, 255, 255, 0.02);
+  --admin-card-bg-hover: rgba(255, 255, 255, 0.08);
+  --admin-card-bg-active: rgba(255, 255, 255, 0.12);
+  --admin-card-border: rgba(255, 255, 255, 0.1);
+  --admin-card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 4px 20px rgba(0, 0, 0, 0.25);
+  --admin-card-blur: blur(12px) saturate(150%);
+  --admin-card-bg-accent-emerald: rgba(52, 211, 153, 0.1);
+
+  --admin-modal-bg: rgba(255, 255, 255, 0.03);
+  --admin-modal-border: rgba(255, 255, 255, 0.15);
+  --admin-modal-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 6px rgba(0, 0, 0, 0.1), 0 4px 20px rgba(0, 0, 0, 0.35);
+  --admin-modal-blur: blur(24px) saturate(100%);
+
+  --admin-nav-bg: rgba(255, 255, 255, 0.03);
+  --admin-nav-border: rgba(255, 255, 255, 0.15);
+  --admin-nav-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 6px rgba(0, 0, 0, 0.1), 0 8px 32px rgba(0, 0, 0, 0.35);
+  --admin-nav-blur: blur(12px) saturate(100%);
+  --admin-nav-text: #f1f5f9;
+  --admin-nav-center-bg: rgba(255, 255, 255, 0.06);
+  --admin-nav-center-border: rgba(255, 255, 255, 0.2);
+  --admin-nav-center-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 6px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="noturno"] {
+  --admin-text-primary: #f8fafc;
+  --admin-text-secondary: rgba(248, 250, 252, 0.7);
+  --admin-surface-subtle: rgba(255, 255, 255, 0.08);
+  --admin-toggle-active-bg: #334155;
+  --admin-toggle-active-text: #ffffff;
+  --admin-divider: rgba(255, 255, 255, 0.07);
+  --admin-placeholder: rgba(248, 250, 252, 0.5);
+  --admin-border: rgba(255, 255, 255, 0.1);
+
+  --admin-card-bg: #1e293b;
+  --admin-card-bg-hover: #273449;
+  --admin-card-bg-active: #2f3e56;
+  --admin-card-border: rgba(255, 255, 255, 0.06);
+  --admin-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --admin-card-blur: none;
+  --admin-card-bg-accent-emerald: #1e293b;
+
+  --admin-modal-bg: #1e293b;
+  --admin-modal-border: rgba(255, 255, 255, 0.08);
+  --admin-modal-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --admin-modal-blur: none;
+
+  --admin-nav-bg: #1e293b;
+  --admin-nav-border: rgba(255, 255, 255, 0.08);
+  --admin-nav-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --admin-nav-blur: none;
+  --admin-nav-text: #f1f5f9;
+  --admin-nav-center-bg: #2f3e56;
+  --admin-nav-center-border: rgba(255, 255, 255, 0.12);
+  --admin-nav-center-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="diurno"] {
+  --admin-text-primary: #0f172a;
+  --admin-text-secondary: rgba(51, 65, 85, 0.8);
+  --admin-surface-subtle: rgba(15, 23, 42, 0.06);
+  --admin-toggle-active-bg: #ffffff;
+  --admin-toggle-active-text: #0f172a;
+  --admin-divider: rgba(15, 23, 42, 0.08);
+  --admin-placeholder: rgba(51, 65, 85, 0.5);
+  --admin-border: rgba(15, 23, 42, 0.1);
+
+  --admin-card-bg: #ffffff;
+  --admin-card-bg-hover: #f8fafc;
+  --admin-card-bg-active: #f1f5f9;
+  --admin-card-border: rgba(15, 23, 42, 0.08);
+  --admin-card-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  --admin-card-blur: none;
+  --admin-card-bg-accent-emerald: #ffffff;
+
+  --admin-modal-bg: #ffffff;
+  --admin-modal-border: rgba(15, 23, 42, 0.08);
+  --admin-modal-shadow: 0 4px 20px rgba(15, 23, 42, 0.12);
+  --admin-modal-blur: none;
+
+  --admin-nav-bg: #ffffff;
+  --admin-nav-border: rgba(15, 23, 42, 0.08);
+  --admin-nav-shadow: 0 8px 32px rgba(15, 23, 42, 0.18);
+  --admin-nav-blur: none;
+  --admin-nav-text: #334155;
+  --admin-nav-center-bg: #f1f5f9;
+  --admin-nav-center-border: rgba(15, 23, 42, 0.1);
+  --admin-nav-center-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -32,6 +135,93 @@ body {
 }
 
 @layer utilities {
+  /* Cards/painéis do admin, adaptados por tema via tokens em [data-theme] */
+  .admin-glass-card {
+    background-color: var(--admin-card-bg);
+    backdrop-filter: var(--admin-card-blur);
+    border: 1px solid var(--admin-card-border);
+    box-shadow: var(--admin-card-shadow);
+  }
+
+  /* Variante com tint verde no Liquid Glass (cards de destaque "faturado"); nos demais temas cai no card padrão */
+  .admin-glass-card-accent-emerald {
+    background-color: var(--admin-card-bg-accent-emerald);
+    backdrop-filter: var(--admin-card-blur);
+    border: 1px solid var(--admin-card-border);
+    box-shadow: var(--admin-card-shadow);
+  }
+
+  .admin-glass-card-hover:hover {
+    background-color: var(--admin-card-bg-hover);
+  }
+
+  .admin-glass-card-active:active {
+    background-color: var(--admin-card-bg-active);
+  }
+
+  .admin-glass-modal {
+    background-color: var(--admin-modal-bg);
+    backdrop-filter: var(--admin-modal-blur);
+    border: 1px solid var(--admin-modal-border);
+    box-shadow: var(--admin-modal-shadow);
+  }
+
+  .admin-text-primary {
+    color: var(--admin-text-primary);
+  }
+
+  .admin-text-secondary {
+    color: var(--admin-text-secondary);
+  }
+
+  /* Superfície decorativa interna (círculo de ícone, chip neutro) */
+  .admin-surface-subtle {
+    background-color: var(--admin-surface-subtle);
+  }
+
+  /* Botão ativo de um toggle/segmented control */
+  .admin-toggle-active {
+    background-color: var(--admin-toggle-active-bg);
+    color: var(--admin-toggle-active-text);
+  }
+
+  /* Divisor entre itens de lista dentro de um card */
+  .admin-divide > * + * {
+    border-top: 1px solid var(--admin-divider);
+  }
+
+  /* Borda temática (separadores internos de seção) */
+  .admin-border-t { border-top: 1px solid var(--admin-border); }
+  .admin-border-x { border-left: 1px solid var(--admin-border); border-right: 1px solid var(--admin-border); }
+  .admin-border-b { border-bottom: 1px solid var(--admin-border); }
+
+  /* Texto + placeholder de inputs que seguem o tema */
+  .admin-input {
+    color: var(--admin-text-primary);
+  }
+  .admin-input::placeholder {
+    color: var(--admin-placeholder);
+  }
+
+  /* Navbar (pill inferior) e botão central, adaptados por tema */
+  .admin-nav-pill {
+    background-color: var(--admin-nav-bg);
+    backdrop-filter: var(--admin-nav-blur);
+    border: 1px solid var(--admin-nav-border);
+    box-shadow: var(--admin-nav-shadow);
+  }
+
+  .admin-nav-text {
+    color: var(--admin-nav-text);
+  }
+
+  .admin-nav-center {
+    background-color: var(--admin-nav-center-bg);
+    backdrop-filter: var(--admin-nav-blur);
+    border: 1px solid var(--admin-nav-center-border);
+    box-shadow: var(--admin-nav-center-shadow);
+  }
+
   .perspective-1000 {
     perspective: 1000px;
   }

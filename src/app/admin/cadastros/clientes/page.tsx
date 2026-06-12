@@ -36,25 +36,25 @@ export default function ClientesPage() {
 
       {/* Busca */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 admin-text-secondary z-10" />
         <input
           type="text"
           placeholder="Buscar cliente..."
-          className="transform-gpu w-full bg-white/2 backdrop-blur-md backdrop-saturate-150 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_4px_20px_rgba(0,0,0,0.25)] rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 placeholder-slate-300 focus:outline-none focus:ring-1 focus:ring-gold/50 transition-all"
+          className="admin-glass-card admin-input transform-gpu w-full rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gold/50 transition-all"
         />
       </div>
 
       {/* Lista */}
-      <div className="transform-gpu rounded-2xl overflow-hidden bg-white/2 backdrop-blur-md backdrop-saturate-150 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_4px_20px_rgba(0,0,0,0.25)]">
-        <ul className="divide-y divide-white/5">
+      <div className="transform-gpu rounded-2xl overflow-hidden admin-glass-card">
+        <ul className="admin-divide">
           {clientes.map((c, i) => (
-            <li key={c.id} className="flex items-center gap-3 px-4 py-3 hover:bg-white/8 transition-colors cursor-pointer">
+            <li key={c.id} className="admin-glass-card-hover flex items-center gap-3 px-4 py-3 transition-colors cursor-pointer">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 ${colors[i % colors.length]}`}>
                 {getInitials(c.nome)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-200 truncate">{c.nome}</p>
-                <p className="text-xs text-slate-300 truncate mt-0.5">{c.celular}</p>
+                <p className="text-sm font-medium admin-text-primary truncate">{c.nome}</p>
+                <p className="text-xs admin-text-secondary truncate mt-0.5">{c.celular}</p>
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 {c.pontos > 0 && (
@@ -63,7 +63,7 @@ export default function ClientesPage() {
                     <span className="text-xs font-semibold">{c.pontos}</span>
                   </div>
                 )}
-                <ChevronRight className="w-4 h-4 text-slate-200" />
+                <ChevronRight className="w-4 h-4 admin-text-secondary" />
               </div>
             </li>
           ))}

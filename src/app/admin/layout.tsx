@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { AdminBackground } from "@/components/layout/AdminBackground";
+import { AdminThemeProvider } from "@/components/layout/AdminThemeProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import "../globals.css";
 
@@ -39,20 +41,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} antialiased dark`}>
-      <body className="relative isolate min-h-screen bg-slate-950 text-slate-50 flex font-sans">
-        {/* Imagem de fundo */}
-        <div
-          className="fixed inset-0 -z-10 bg-cover bg-center"
-          style={{ backgroundImage: "url('/barbearia-bg.png')" }}
+    <html lang="pt-BR" data-theme="liquid-glass" className={`${inter.variable} antialiased dark`} suppressHydrationWarning>
+      <head>
+        <script
+          // Aplica o tema salvo antes da hidratação, evitando flash/mismatch (server sempre renderiza liquid-glass)
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("admin-theme");if(t==="noturno"||t==="diurno")document.documentElement.dataset.theme=t;}catch(e){}`,
+          }}
         />
-        <div className="fixed inset-0 -z-10 bg-slate-950/40" />
-
+      </head>
+      <body className="relative isolate min-h-screen bg-slate-950 text-slate-50 flex font-sans" suppressHydrationWarning>
         <AuthProvider>
-          <Sidebar />
-          <main id="main-scroll" className="flex-1 flex flex-col h-screen overflow-hidden pb-16 md:pb-0">
-            {children}
-          </main>
+          <AdminThemeProvider>
+            {/* Imagem de fundo */}
+            <AdminBackground />
+
+            <Sidebar />
+            <main id="main-scroll" className="flex-1 flex flex-col h-screen overflow-hidden pb-16 md:pb-0">
+              {children}
+            </main>
+          </AdminThemeProvider>
         </AuthProvider>
       </body>
     </html>

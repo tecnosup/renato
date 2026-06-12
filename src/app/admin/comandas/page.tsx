@@ -39,7 +39,7 @@ export default function ComandasPage() {
           <button
             key={f}
             className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              f === "Todas" ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 font-bold" : "bg-slate-800/80 text-slate-200 hover:text-white"
+              f === "Todas" ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 font-bold" : "admin-surface-subtle admin-text-secondary hover:opacity-80"
             }`}
           >
             {f}
@@ -48,33 +48,33 @@ export default function ComandasPage() {
       </div>
 
       {/* Lista */}
-      <div className="rounded-2xl overflow-hidden bg-linear-to-br from-slate-800/80 to-slate-900/60">
-        <ul className="divide-y divide-slate-800/60">
+      <div className="rounded-2xl overflow-hidden admin-glass-card">
+        <ul className="admin-divide">
           {comandas.map((c) => {
             const s = statusConfig[c.status];
             const StatusIcon = s.icon;
             return (
-              <li key={c.id} className="flex items-center gap-3 px-4 py-3">
-                <div className="w-9 h-9 rounded-full bg-slate-800/60 flex items-center justify-center shrink-0">
-                  <FileText className="w-4 h-4 text-slate-400" />
+              <li key={c.id} className="admin-glass-card-hover flex items-center gap-3 px-4 py-3 transition-colors">
+                <div className="w-9 h-9 rounded-full admin-surface-subtle flex items-center justify-center shrink-0">
+                  <FileText className="w-4 h-4 admin-text-secondary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-slate-200 truncate">{c.cliente}</p>
+                    <p className="text-sm font-medium admin-text-primary truncate">{c.cliente}</p>
                     <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${s.color}`}>
                       <StatusIcon className="w-3 h-3" />
                       {s.label}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-300 truncate mt-0.5">
+                  <p className="text-xs admin-text-secondary truncate mt-0.5">
                     #{c.id} · {c.profissional} · {c.data}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-sm font-semibold text-slate-200">
+                  <span className="text-sm font-semibold admin-text-primary">
                     R$ {c.valor.toFixed(2).replace(".", ",")}
                   </span>
-                  <ChevronRight className="w-4 h-4 text-slate-200" />
+                  <ChevronRight className="w-4 h-4 admin-text-secondary" />
                 </div>
               </li>
             );
