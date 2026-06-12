@@ -40,27 +40,41 @@ export default function App() {
 
   // Monitor scroll height to conditionally reveal mobile floating CTA bar
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      if (window.scrollY > 450) {
-        setShowStickyCTA(true);
-      } else {
-        setShowStickyCTA(false);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setShowStickyCTA(window.scrollY > 450);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-sleek-dark text-[#e2e2e2] antialiased overflow-x-hidden selection:bg-gold selection:text-black bg-pattern" id="main-layout">
+    <div className="relative min-h-screen bg-[#050505] text-[#e2e2e2] antialiased overflow-x-hidden selection:bg-gold selection:text-black" id="main-layout">
       
+      {/* Immersive Dark Refractive Background Layer */}
+      <div className="fixed inset-0 z-0 select-none pointer-events-none">
+        <img 
+          src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=2000&auto=format&fit=crop" 
+          alt="Aesthetic Dark Background" 
+          className="w-full h-full object-cover opacity-[0.06] grayscale"
+          referrerPolicy="no-referrer"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#020202]/95 via-[#080808]/90 to-[#020202]/98" />
+      </div>
+
       {/* Decorative Background Glows */}
-      <div className="absolute top-[-10%] right-[-15%] w-[700px] h-[700px] bg-[#c2a35d]/5 rounded-full blur-[140px] pointer-events-none" id="decorative-glow-1"></div>
-      <div className="absolute top-[35%] left-[-10%] w-[500px] h-[500px] bg-[#c2a35d]/3 rounded-full blur-[120px] pointer-events-none" id="decorative-glow-2"></div>
-      <div className="absolute bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-gold/3 rounded-full blur-[130px] pointer-events-none" id="decorative-glow-3"></div>
+      <div className="fixed top-[-10%] right-[-15%] w-[700px] h-[700px] bg-[#c2a35d]/5 rounded-full blur-[140px] pointer-events-none hidden md:block" id="decorative-glow-1"></div>
+      <div className="absolute top-[35%] left-[-10%] w-[500px] h-[500px] bg-[#c2a35d]/3 rounded-full blur-[120px] pointer-events-none hidden md:block" id="decorative-glow-2"></div>
+      <div className="fixed bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-gold/3 rounded-full blur-[130px] pointer-events-none hidden md:block" id="decorative-glow-3"></div>
       
       {/* Background Graphic Grid */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.02]" id="design-grid-overlay">
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.03]" id="design-grid-overlay">
         <div className="w-full h-full" style={{
           backgroundImage: `
             radial-gradient(circle at 1px 1px, #c2a35d 1px, transparent 0),
@@ -118,11 +132,11 @@ export default function App() {
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto animate-fade-in">
                 <button
                   onClick={() => setIsBookingOpen(true)}
-                  className="relative overflow-hidden h-12 sm:h-13 bg-[#c2a35d] text-zinc-950 font-sans text-[10.5px] sm:text-xs font-black tracking-[0.15em] px-8 rounded-xl border border-[#c2a35d] hover:bg-white hover:text-zinc-950 hover:border-white transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-gold/15 active:scale-[0.98] transform hover:scale-[1.01] group/hero-btn"
+                  className="relative overflow-hidden h-12 sm:h-13 bg-linear-to-r from-[#ece4cb] to-[#c2a35d] text-slate-950 font-sans text-[10.5px] sm:text-xs font-black tracking-[0.15em] px-8 rounded-xl border border-transparent hover:opacity-90 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(194,163,93,0.3)] active:scale-[0.98] transform hover:scale-[1.01] group/hero-btn"
                 >
                   <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover/hero-btn:animate-shimmer" />
                   AGENDAR ATENDIMENTO
-                  <Scissors className="w-3.5 h-3.5 rotate-45 text-zinc-950 group-hover/hero-btn:rotate-90 transition-transform duration-300" />
+                  <Scissors className="w-3.5 h-3.5 rotate-45 text-slate-950 group-hover/hero-btn:rotate-90 transition-transform duration-300" />
                 </button>
                 <a
                   href="#servicos"
@@ -152,7 +166,7 @@ export default function App() {
       </section>
 
       {/* SECTION 2: SOBRE NÓS (Manifesto + Filosofia de design) */}
-      <section className="w-full bg-[#0c0d0e] py-12 sm:py-20 md:py-24 px-4 md:px-8 border-t border-gold/10 relative z-10 bg-pattern scroll-mt-20 md:scroll-mt-24" id="sobre-nos">
+      <section className="w-full bg-black/40 backdrop-blur-md py-12 sm:py-20 md:py-24 px-4 md:px-8 border-t border-white/5 relative z-10 scroll-mt-20 md:scroll-mt-24" id="sobre-nos">
         <div className="max-w-7xl mx-auto space-y-24">
           
           {/* Parallax block 1: Manifesto */}
@@ -210,8 +224,8 @@ export default function App() {
               className="lg:col-span-7 flex flex-col gap-6"
             >
               <ThreeDTiltCard intensity={6} className="w-full">
-                <div className="bg-[#121314] p-8 md:p-10 border border-zinc-850 text-left relative overflow-hidden rounded-2xl depth-card">
-                  <div className="absolute right-0 top-0 w-32 h-32 border-l border-b border-zinc-900 flex items-center justify-center font-sans text-[8px] text-[#c2a35d]/40 tracking-[0.16em] uppercase select-none font-bold">FILOSOFIA</div>
+                <div className="bg-white/5 backdrop-blur-lg p-8 md:p-10 border border-white/10 text-left relative overflow-hidden rounded-3xl depth-card shadow-lg md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_40px_rgba(0,0,0,0.5)]">
+                  <div className="absolute right-0 top-0 w-32 h-32 border-l border-b border-white/5 flex items-center justify-center font-sans text-[8px] text-[#c2a35d]/40 tracking-[0.16em] uppercase select-none font-bold">FILOSOFIA</div>
                   
                   <h3 className="font-display font-light text-xl text-white tracking-wide uppercase mb-4">
                     COMPROMISSO HISTÓRICO
@@ -222,14 +236,14 @@ export default function App() {
                   </p>
  
                   <div className="flex flex-wrap gap-2 pt-4 border-t border-zinc-900 font-sans text-[8.5px] font-bold text-[#c2a35d] tracking-widest uppercase">
-                    <span className="bg-sleek-dark px-3 py-1.5 border border-zinc-800 rounded">TOALHAS AQUECIDAS &amp; ARRÔMAS</span>
-                    <span className="bg-sleek-dark px-3 py-1.5 border border-zinc-800 rounded">CORTES AUTORAIS</span>
-                    <span className="bg-sleek-dark px-3 py-1.5 border border-zinc-800 rounded">ATENDIMENTO V.I.P</span>
+                    <span className="bg-white/5 px-3 py-1.5 border border-white/5 rounded">TOALHAS AQUECIDAS &amp; ARRÔMAS</span>
+                    <span className="bg-white/5 px-3 py-1.5 border border-white/5 rounded">CORTES AUTORAIS</span>
+                    <span className="bg-white/5 px-3 py-1.5 border border-white/5 rounded">ATENDIMENTO V.I.P</span>
                   </div>
                 </div>
               </ThreeDTiltCard>
  
-              <div className="bg-[#121314]/40 p-4 border border-zinc-850 text-left font-sans text-[11px] text-zinc-400 leading-normal rounded-xl">
+              <div className="bg-black/30 backdrop-blur-sm p-4 border border-white/5 text-left font-sans text-[11px] text-zinc-400 leading-normal rounded-2xl md:shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
                 <span className="text-[#c2a35d] font-bold uppercase tracking-wider text-[10px] mr-1.5">COMPROMISSO NATURAL:</span>Trabalhamos exclusivamente com insumos orgânicos botânicos certificados de altíssimo desempenho, totalmente livres de essências sintéticas ou irritantes.
               </div>
             </motion.div>
@@ -254,7 +268,7 @@ export default function App() {
       <ShowcaseBanner />
 
       {/* SECTION 6: FOOTER (With Social Medias redes sociais and contacts) */}
-      <footer className="w-full bg-[#090909] py-16 px-4 md:px-8 border-t border-gold/10 relative z-30" id="footer">
+      <footer className="w-full bg-black/80 backdrop-blur-3xl py-16 px-4 md:px-8 border-t border-white/10 relative z-30" id="footer">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-start text-left">
           
           {/* Brand Column */}
@@ -407,11 +421,11 @@ export default function App() {
               
               <button
                 onClick={() => setIsBookingOpen(true)}
-                className="relative overflow-hidden bg-[#c2a35d] active:scale-95 text-zinc-950 font-sans text-[10px] font-black tracking-widest py-3.5 px-6 rounded-xl flex items-center gap-2.5 shadow-lg shadow-gold/25 font-bold cursor-pointer"
+                className="relative overflow-hidden bg-linear-to-r from-[#ece4cb] to-[#c2a35d] hover:opacity-90 active:scale-95 text-slate-950 font-sans text-[10px] font-black tracking-widest py-3.5 px-6 rounded-xl flex items-center gap-2.5 shadow-[0_0_20px_rgba(194,163,93,0.3)] cursor-pointer"
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full animate-shimmer" />
                 AGENDAR AGORA
-                <Scissors className="w-3.5 h-3.5 rotate-45 text-zinc-950" />
+                <Scissors className="w-3.5 h-3.5 rotate-45 text-slate-950" />
               </button>
             </div>
           </motion.div>

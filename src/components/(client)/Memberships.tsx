@@ -164,7 +164,7 @@ export default function Memberships() {
   return (
     <section 
       ref={sectionRef} 
-      className="w-full bg-sleek-dark py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-12 border-t border-gold/10 relative overflow-hidden bg-pattern scroll-mt-20 md:scroll-mt-24" 
+      className="w-full bg-transparent py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-12 border-t border-white/5 relative overflow-hidden scroll-mt-20 md:scroll-mt-24" 
       id="assinaturas"
     >
       {/* Background Graphic elements matching luxury look */}
@@ -304,10 +304,10 @@ export default function Memberships() {
                 >
                   <ThreeDTiltCard intensity={matchesSelection ? 4 : 0} className="w-full flex group/club h-full">
                     <div 
-                      className={`w-full bg-gradient-to-tr ${plan.gradient} backdrop-blur-md p-4 sm:p-5 md:p-6 flex flex-col justify-between text-left relative rounded-[20px] sm:rounded-[24px] transition-shadow duration-500 h-full overflow-hidden border ${
+                      className={`w-full bg-white/5 backdrop-blur-xl p-4 sm:p-5 md:p-6 flex flex-col justify-between text-left relative rounded-[20px] sm:rounded-[24px] transition-shadow duration-500 h-full overflow-hidden border ${
                         matchesSelection 
-                          ? 'shadow-[0_15px_40px_rgba(194,163,93,0.18)] border-gold/30' 
-                          : 'border-zinc-900 opacity-90'
+                          ? 'shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_60px_rgba(0,0,0,0.8)] border-white/20' 
+                          : 'border-white/10 opacity-90'
                       }`}
                     >
                       {/* Luxe Golden Contour Highlight for Selected card */}
@@ -368,10 +368,10 @@ export default function Memberships() {
                           {plan.benefits.map((benefit, bIdx) => (
                             <li key={bIdx} className="flex gap-1.5 items-start text-[9.5px] sm:text-[10.5px] text-zinc-350">
                               <div className={`w-3 h-3 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
-                                plan.popular 
-                                  ? 'bg-gold/10 text-gold border border-gold/15 shadow-[0_0_4px_rgba(194,163,93,0.1)]' 
-                                  : 'bg-zinc-900 text-zinc-450 border border-zinc-850'
-                              }`}>
+                                  plan.popular 
+                                    ? 'bg-[#c2a35d]/20 text-[#c2a35d]' 
+                                    : 'bg-white/10 text-slate-300'
+                                }`}>
                                 <Check className="w-1.5 h-1.5" />
                               </div>
                               <span className="font-sans leading-normal text-zinc-300 truncate max-w-[210px] sm:max-w-none">{benefit}</span>
@@ -430,7 +430,7 @@ export default function Memberships() {
         <div className="flex items-center gap-5 mt-4 sm:mt-6 relative z-25">
           <button
             onClick={() => { prevSlide(); resetAutoRotateTimer(); }}
-            className="w-9 h-9 rounded-full border border-zinc-850 bg-zinc-950/40 text-zinc-400 hover:text-gold hover:border-gold/30 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
+            className="w-10 h-10 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-slate-300 hover:text-white hover:border-white/30 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
             aria-label="Plano anterior"
           >
             <ChevronLeft className="w-4.5 h-4.5" />
@@ -454,7 +454,7 @@ export default function Memberships() {
 
           <button
             onClick={() => { nextSlide(); resetAutoRotateTimer(); }}
-            className="w-9 h-9 rounded-full border border-zinc-850 bg-zinc-950/40 text-zinc-400 hover:text-gold hover:border-gold/30 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
+            className="w-10 h-10 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-slate-300 hover:text-white hover:border-white/30 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
             aria-label="Próximo plano"
           >
             <ChevronRight className="w-4.5 h-4.5" />
@@ -467,7 +467,7 @@ export default function Memberships() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-10 sm:mt-12 md:mt-14 bg-[#121314] p-3.5 border border-gold/10 rounded-xl flex flex-col md:flex-row items-center justify-between gap-3 font-sans text-[10px] sm:text-xs text-zinc-400 w-full"
+          className="mt-10 sm:mt-12 md:mt-14 bg-white/5 backdrop-blur-xl p-4 border border-white/10 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-3 font-sans text-[10px] sm:text-xs text-slate-300 w-full md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
         >
           <div className="flex items-center gap-2 text-left">
             <div className="w-5 h-5 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center text-gold shrink-0">

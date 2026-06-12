@@ -82,7 +82,7 @@ export default function ThreeDBox() {
 
         {/* Backdrop Card Plate */}
         <div 
-          className="absolute inset-0 bg-[#0d0e10]/80 rounded-3xl border border-zinc-850 p-6 flex flex-col justify-between shadow-2xl backdrop-blur-2xl"
+          className="absolute inset-0 bg-[#0d0e10]/80 rounded-3xl border border-zinc-850 p-6 flex flex-col justify-between shadow-2xl backdrop-blur-md"
           style={{ transform: 'translateZ(-40px)' }}
           id="sculpture-backdrop"
         >

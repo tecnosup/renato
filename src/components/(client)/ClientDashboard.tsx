@@ -213,7 +213,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
       </div>
 
       {/* Tabs navigation row (Swiss Minimal Bauhaus look) */}
-      <div className="flex bg-[#0a0b0c] border border-zinc-900/80 p-1.5 rounded-xl my-5 gap-1 select-none shrink-0" id="dashboard-navbar">
+      <div className="flex bg-black/30 backdrop-blur-2xl border border-white/10 p-1.5 rounded-xl my-5 gap-1 select-none shrink-0" id="dashboard-navbar">
         {[
           { icon: TrendingUp, id: 'benefits', label: 'Benefícios' },
           { icon: Calendar, id: 'appointments', label: 'Agenda Estética' },
@@ -250,7 +250,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               className="space-y-4"
             >
               {/* Dynamic Welcome card showing subscription value details */}
-              <div className="bg-[#101112]/90 border border-zinc-850/60 p-4 rounded-xl relative overflow-hidden flex flex-col justify-between" id="benefits-masthead">
+              <div className="bg-white/5 backdrop-blur-3xl border border-white/10 p-4 rounded-xl relative overflow-hidden flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]" id="benefits-masthead">
                 <div className="absolute top-0 right-0 p-3 select-none">
                   <span className="font-mono text-[16px] text-[#c2a35d]/10 font-black tracking-widest uppercase">SECULO XXI</span>
                 </div>
@@ -272,7 +272,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 
                 {/* Visual tracker card 1: Cuts */}
-                <div className="bg-[#121314] p-3 border border-zinc-850 rounded-xl relative flex flex-col justify-between min-h-[90px]">
+                <div className="bg-white/5 backdrop-blur-md p-3 border border-white/10 rounded-xl relative flex flex-col justify-between min-h-[90px] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="flex justify-between items-start">
                     <span className="font-mono text-[7px] text-zinc-500 uppercase">Cortes Mensais</span>
                     <Scissors className="w-3 h-3 text-gold/80" />
@@ -300,7 +300,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                 </div>
 
                 {/* Visual tracker card 2: Premium Treatments or Facials */}
-                <div className="bg-[#121314] p-3 border border-zinc-850 rounded-xl relative flex flex-col justify-between min-h-[90px]">
+                <div className="bg-white/5 backdrop-blur-md p-3 border border-white/10 rounded-xl relative flex flex-col justify-between min-h-[90px] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="flex justify-between items-start">
                     <span className="font-mono text-[7px] text-zinc-500 uppercase">Rituais Premium</span>
                     <Sparkles className="w-3 h-3 text-gold/80 animate-pulse" />
@@ -328,7 +328,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                 </div>
 
                 {/* Visual tracker card 3: Beverages / Beer */}
-                <div className="bg-[#121314] p-3 border border-zinc-850 rounded-xl relative flex flex-col justify-between min-h-[90px]">
+                <div className="bg-white/5 backdrop-blur-md p-3 border border-white/10 rounded-xl relative flex flex-col justify-between min-h-[90px] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="flex justify-between items-start">
                     <span className="font-mono text-[7px] text-zinc-500 uppercase">Artisanal Drinks</span>
                     <Beer className="w-3 h-3 text-gold/80" />
@@ -358,7 +358,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               </div>
 
               {/* Extra Perks checklist */}
-              <div className="bg-[#121314]/40 p-3.5 border border-zinc-900 rounded-xl space-y-1.5">
+              <div className="bg-black/20 backdrop-blur-lg p-3.5 border border-white/5 rounded-xl space-y-1.5">
                 <span className="font-mono text-[7.5px] text-[#c2a35d] uppercase block font-bold">[BENEFÍCIOS_ATIVOS_ADICIONAIS]</span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-zinc-400 font-sans text-xs pt-1">
                   <div className="flex items-center gap-2">
@@ -412,7 +412,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               </div>
 
               {appointments.length === 0 ? (
-                <div className="bg-[#121314] p-8 border border-zinc-900 rounded-xl text-center flex flex-col items-center justify-center space-y-3">
+                <div className="bg-white/5 backdrop-blur-xl p-8 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl text-center flex flex-col items-center justify-center space-y-3">
                   <CalendarDays className="w-8 h-8 text-zinc-700 animate-pulse" />
                   <div className="space-y-1">
                     <span className="font-display font-bold text-xs text-white uppercase tracking-wider block">Nenhum agendamento futuro</span>
@@ -467,8 +467,8 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                           key={appt.id}
                           className={`p-3.5 border rounded-xl flex justify-between items-center gap-4 transition-all ${
                             isUpcoming 
-                              ? 'bg-[#181612] border-gold/30' 
-                              : 'bg-[#111213]/40 border-zinc-900 opacity-60'
+                              ? 'bg-white/5 backdrop-blur-md border-[#c2a35d]/30 shadow-[0_0_15px_rgba(194,163,93,0.1)]' 
+                              : 'bg-black/20 backdrop-blur-sm border-white/5 opacity-60'
                           }`}
                         >
                           <div className="flex flex-col text-left space-y-1">
@@ -643,7 +643,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-2">
                 
                 {/* Current card stored */}
-                <div className="bg-[#111213] p-3.5 border border-zinc-900 rounded-xl space-y-2.5 text-left relative overflow-hidden flex flex-col justify-between">
+                <div className="bg-white/5 backdrop-blur-md p-3.5 border border-white/10 rounded-xl space-y-2.5 text-left relative overflow-hidden flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="flex justify-between items-start">
                     <span className="font-mono text-[7.5px] text-zinc-550 uppercase">MÉTODO DE PAGAMENTO</span>
                     <CreditCard className="w-4 h-4 text-gold/80" />
@@ -670,7 +670,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                 </div>
 
                 {/* Next Payment Detail */}
-                <div className="bg-[#111213] p-3.5 border border-zinc-900 rounded-xl space-y-2 text-left relative overflow-hidden flex flex-col justify-between">
+                <div className="bg-white/5 backdrop-blur-md p-3.5 border border-white/10 rounded-xl space-y-2 text-left relative overflow-hidden flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="flex justify-between items-start">
                     <span className="font-mono text-[7.5px] text-zinc-550 uppercase">PRÓXIMO RECORRÊNCIA</span>
                     <Receipt className="w-4 h-4 text-gold/80" />
@@ -689,13 +689,13 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               {/* Invoices List */}
               <div className="space-y-2">
                 <span className="font-mono text-[7.5px] text-zinc-550 uppercase block pl-1 font-bold">[HISTÓRICO_INANCIADOR_DE_FATURAS]</span>
-                <div className="space-y-1.5 bg-[#121314]/40 p-2 border border-zinc-900 rounded-xl">
+                <div className="space-y-1.5 bg-black/20 backdrop-blur-lg p-2 border border-white/5 rounded-xl">
                   {[
                     { date: '01/06/2026', desc: 'Renovação Mensal Assinante - Clube', val: member.price, status: 'PAGO', method: 'MasterCard •••• 8829' },
                     { date: '01/05/2026', desc: 'Renovação Mensal Assinante - Clube', val: member.price, status: 'PAGO', method: 'MasterCard •••• 8829' },
                     { date: '01/04/2026', desc: 'Renovação Mensal Assinante - Clube', val: member.price, status: 'PAGO', method: 'MasterCard •••• 8829' }
                   ].map((invoice, iIdx) => (
-                    <div key={iIdx} className="flex justify-between items-center py-2 px-2.5 border-b border-zinc-900/50 last:border-0 font-mono text-[10px] hover:bg-[#141517]/35 rounded-lg transition-colors">
+                    <div key={iIdx} className="flex justify-between items-center py-2 px-2.5 border-b border-white/5 last:border-0 font-mono text-[10px] hover:bg-white/5 rounded-lg transition-colors">
                       <div className="flex flex-col text-left">
                         <span className="text-zinc-650 text-[8.5px]">{invoice.date}</span>
                         <span className="font-sans font-medium text-zinc-300 uppercase text-[10px] mt-0.5">{invoice.desc}</span>

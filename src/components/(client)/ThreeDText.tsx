@@ -1,9 +1,17 @@
 "use client";
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
 export default function ThreeDText() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -21,7 +29,7 @@ export default function ThreeDText() {
   return (
     <div 
       ref={containerRef}
-      className="w-full bg-[#08090a] py-20 md:py-28 border-y border-zinc-900 overflow-hidden relative select-none"
+      className="w-full bg-transparent py-20 md:py-28 border-y border-white/5 overflow-hidden relative select-none"
       style={{ perspective: '1200px' }}
       id="3d-text-section"
     >
@@ -38,10 +46,9 @@ export default function ThreeDText() {
         }}
         id="3d-text-perspective-container"
       >
-        {/* Row 1: Left to Right */}
         <motion.div 
-          className="whitespace-nowrap flex gap-6 font-display font-light text-[40px] md:text-[75px] leading-none text-[#faf9f6] select-none tracking-[0.08em] opacity-95"
-          style={{ x: smoothX1, transformStyle: 'preserve-3d' }}
+          className={`whitespace-nowrap flex gap-6 font-display font-light text-[40px] md:text-[75px] leading-none text-[#faf9f6] select-none tracking-[0.08em] opacity-95 w-max ${isMobile ? 'animate-[marqueeLeft_20s_linear_infinite]' : ''}`}
+          style={isMobile ? undefined : { x: smoothX1, transformStyle: 'preserve-3d' }}
           id="text-vortex-row-1"
         >
           <span>ARTE • </span>
@@ -49,7 +56,14 @@ export default function ThreeDText() {
           <span>CORTESIA • </span>
           <span className="text-transparent stroke-text">EXCELÊNCIA • </span>
           <span>PROPORÇÃO • </span>
-          <span className="text-zinc-700 font-serif italic">DESIGN</span>
+          <span className="text-zinc-700 font-serif italic">DESIGN • </span>
+          {/* Duplicate for infinite loop */}
+          <span>ARTE • </span>
+          <span className="text-zinc-700 font-serif italic">ESTILO • </span>
+          <span>CORTESIA • </span>
+          <span className="text-transparent stroke-text">EXCELÊNCIA • </span>
+          <span>PROPORÇÃO • </span>
+          <span className="text-zinc-700 font-serif italic">DESIGN • </span>
         </motion.div>
 
         {/* Dynamic separator grid bar */}
@@ -59,24 +73,39 @@ export default function ThreeDText() {
           <span>SÃO PAULO</span>
         </div>
 
-        {/* Row 2: Right to Left */}
         <motion.div 
-          className="whitespace-nowrap flex gap-6 font-display font-light text-[40px] md:text-[75px] leading-none text-[#c2a35d]/90 select-none tracking-[0.08em] opacity-95"
-          style={{ x: smoothX2, transformStyle: 'preserve-3d' }}
+          className={`whitespace-nowrap flex gap-6 font-display font-light text-[40px] md:text-[75px] leading-none text-[#c2a35d]/90 select-none tracking-[0.08em] opacity-95 w-max justify-end ${isMobile ? 'animate-[marqueeRight_20s_linear_infinite]' : ''}`}
+          style={isMobile ? undefined : { x: smoothX2, transformStyle: 'preserve-3d' }}
           id="text-vortex-row-2"
         >
+          {/* Duplicate for infinite loop */}
           <span className="text-transparent stroke-text">NAVALHA • </span>
           <span>TOALHA PURA • </span>
           <span className="text-zinc-700 font-serif italic">VISAGISMO • </span>
           <span>CUIDADO • </span>
           <span>DEDICAÇÃO • </span>
-          <span className="text-zinc-700 font-serif italic">CLASSE</span>
+          <span className="text-zinc-700 font-serif italic">CLASSE • </span>
+          
+          <span className="text-transparent stroke-text">NAVALHA • </span>
+          <span>TOALHA PURA • </span>
+          <span className="text-zinc-700 font-serif italic">VISAGISMO • </span>
+          <span>CUIDADO • </span>
+          <span>DEDICAÇÃO • </span>
+          <span className="text-zinc-700 font-serif italic">CLASSE • </span>
         </motion.div>
       </div>
 
       <style>{`
         .stroke-text {
           -webkit-text-stroke: 1px #c2a35d;
+        }
+        @keyframes marqueeLeft {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        @keyframes marqueeRight {
+          0% { transform: translateX(-50%); }
+          100% { transform: translateX(0); }
         }
       `}</style>
     </div>

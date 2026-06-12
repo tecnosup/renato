@@ -186,7 +186,7 @@ export default function OrbCarousel() {
 
   return (
     <section 
-      className="w-full bg-[#090a0a] py-12 sm:py-20 px-4 md:px-8 border-t border-gold/10 relative overflow-hidden bg-pattern scroll-mt-20 md:scroll-mt-24" 
+      className="w-full bg-transparent py-12 sm:py-20 px-4 md:px-8 border-t border-white/5 relative overflow-hidden scroll-mt-20 md:scroll-mt-24" 
       id="servicos"
     >
       {/* Dynamic Ambient Background Glows */}
@@ -212,30 +212,30 @@ export default function OrbCarousel() {
         <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-10" id="services-products-tabs">
           <button
             onClick={() => setActiveCategory('menu')}
-            className={`px-4 py-2 rounded-xl font-mono text-[9px] sm:text-[10px] tracking-widest uppercase border transition-all duration-300 font-bold ${
+            className={`px-4 py-2 rounded-xl font-sans text-[9px] sm:text-[10px] tracking-widest uppercase border transition-all duration-300 font-bold ${
               activeCategory === 'menu'
-                ? 'bg-[#c2a35d] text-black border-[#c2a35d] shadow-lg shadow-gold/15'
-                : 'bg-zinc-950/40 text-zinc-400 border-zinc-900 hover:text-white hover:border-gold/30'
+                ? 'bg-[#c2a35d] text-zinc-950 border-[#c2a35d] shadow-[0_0_20px_rgba(194,163,93,0.3)]'
+                : 'bg-white/5 backdrop-blur-md text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
             }`}
           >
             Início / Categorias
           </button>
           <button
             onClick={() => setActiveCategory('services')}
-            className={`px-4 py-2 rounded-xl font-mono text-[9px] sm:text-[10px] tracking-widest uppercase border transition-all duration-300 font-bold ${
+            className={`px-4 py-2 rounded-xl font-sans text-[9px] sm:text-[10px] tracking-widest uppercase border transition-all duration-300 font-bold ${
               activeCategory === 'services'
-                ? 'bg-[#c2a35d] text-black border-[#c2a35d] shadow-lg shadow-gold/15'
-                : 'bg-zinc-950/40 text-zinc-400 border-zinc-900 hover:text-white hover:border-gold/30'
+                ? 'bg-[#c2a35d] text-zinc-950 border-[#c2a35d] shadow-[0_0_20px_rgba(194,163,93,0.3)]'
+                : 'bg-white/5 backdrop-blur-md text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
             }`}
           >
             Serviços Exclusivos
           </button>
           <button
             onClick={() => setActiveCategory('products')}
-            className={`px-4 py-2 rounded-xl font-mono text-[9px] sm:text-[10px] tracking-widest uppercase border transition-all duration-300 font-bold ${
+            className={`px-4 py-2 rounded-xl font-sans text-[9px] sm:text-[10px] tracking-widest uppercase border transition-all duration-300 font-bold ${
               activeCategory === 'products'
-                ? 'bg-[#c2a35d] text-black border-[#c2a35d] shadow-lg shadow-gold/15'
-                : 'bg-zinc-950/40 text-zinc-400 border-zinc-900 hover:text-white hover:border-gold/30'
+                ? 'bg-[#c2a35d] text-zinc-950 border-[#c2a35d] shadow-[0_0_20px_rgba(194,163,93,0.3)]'
+                : 'bg-white/5 backdrop-blur-md text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
             }`}
           >
             Cosméticos & Produtos
@@ -303,7 +303,7 @@ export default function OrbCarousel() {
               id="orbs-services-inside"
             >
               {/* Back navigation header layout */}
-              <div className="flex flex-col sm:flex-row justify-between items-center bg-[#111214] p-5 rounded-2xl border border-gold/10 gap-5">
+              <div className="flex flex-col sm:flex-row justify-between items-center bg-black/40 backdrop-blur-xl p-5 rounded-3xl border border-white/10 gap-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                 <div className="flex items-center gap-4 text-left">
                   {/* Floating miniature category Orb */}
                   <div className="relative w-16 h-16 rounded-full border border-dashed border-gold/40 flex items-center justify-center shrink-0">
@@ -327,7 +327,7 @@ export default function OrbCarousel() {
                 <button
                   type="button"
                   onClick={() => setActiveCategory('menu')}
-                  className="font-mono text-[9px] uppercase tracking-widest text-[#c2a35d] hover:text-white py-3.5 px-6 border border-gold/15 rounded-xl hover:border-gold bg-zinc-950/70 transition-all flex items-center gap-2 cursor-pointer"
+                  className="font-sans text-[9px] uppercase tracking-widest font-bold text-slate-300 hover:text-white py-3.5 px-6 border border-white/10 rounded-xl hover:border-white/30 bg-white/5 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   Voltar para as Orbes
@@ -345,10 +345,10 @@ export default function OrbCarousel() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.05 }}
                       onClick={() => setSelectedServiceId(srv.id)}
-                      className={`group bg-gradient-to-tr from-zinc-950/85 via-zinc-900/40 to-zinc-950/90 backdrop-blur-xl p-6 rounded-[24px] flex flex-col justify-between text-left transition-all duration-500 relative overflow-hidden cursor-pointer select-none shadow-[inset_-8px_-8px_16px_rgba(0,0,0,0.8),_inset_8px_8px_16px_rgba(255,255,255,0.03),_0_10px_30px_rgba(0,0,0,0.6)] group-hover:shadow-[0_20px_45px_-12px_rgba(16,185,129,0.22)] ${
+                      className={`group bg-white/5 backdrop-blur-xl p-6 rounded-[24px] flex flex-col justify-between text-left transition-all duration-500 relative overflow-hidden cursor-pointer select-none shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_10px_rgba(0,0,0,0.3)] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_40px_rgba(0,0,0,0.5)] md:group-hover:shadow-[0_20px_45px_-12px_rgba(16,185,129,0.22)] ${
                         isSelected 
-                          ? 'shadow-[0_0_35px_rgba(194,163,93,0.35)] ring-2 ring-[#c2a35d]' 
-                          : 'border border-white/[0.04] hover:border-emerald-500/40'
+                          ? 'shadow-[0_0_15px_rgba(194,163,93,0.35)] ring-2 ring-[#c2a35d]' 
+                          : 'border border-white/10 hover:border-emerald-500/40'
                       }`}
                     >
                       {/* Glowing Luxe Golden Contour when Selected */}
@@ -442,7 +442,7 @@ export default function OrbCarousel() {
               id="orbs-products-inside"
             >
               {/* Back navigation header layout */}
-              <div className="flex flex-col sm:flex-row justify-between items-center bg-[#111214] p-5 rounded-2xl border border-[#c2a35d]/10 gap-5">
+              <div className="flex flex-col sm:flex-row justify-between items-center bg-black/40 backdrop-blur-xl p-5 rounded-3xl border border-white/10 gap-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                 <div className="flex items-center gap-4 text-left">
                   {/* Floating miniature category Orb */}
                   <div className="relative w-16 h-16 rounded-full border border-dashed border-[#c2a35d]/40 flex items-center justify-center shrink-0">
@@ -481,7 +481,7 @@ export default function OrbCarousel() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}
-                    className="group bg-gradient-to-tr from-zinc-950/85 via-zinc-900/40 to-zinc-950/90 backdrop-blur-xl border border-white/[0.04] hover:border-amber-500/40 p-5 rounded-[24px] flex flex-col justify-between text-left transition-all duration-500 relative overflow-hidden shadow-[inset_-8px_-8px_16px_rgba(0,0,0,0.8),_inset_8px_8px_16px_rgba(255,255,255,0.03),_0_10px_30px_rgba(0,0,0,0.6)] group-hover:shadow-[0_20px_45px_-12px_rgba(245,158,11,0.22)]"
+                    className="group bg-white/5 backdrop-blur-xl border border-white/10 hover:border-amber-500/40 p-5 rounded-[24px] flex flex-col justify-between text-left transition-all duration-500 relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_10px_rgba(0,0,0,0.3)] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_40px_rgba(0,0,0,0.5)] md:group-hover:shadow-[0_20px_45px_-12px_rgba(245,158,11,0.22)]"
                   >
                     {/* Glass Specular Gloss Highlight Reflection top bar */}
                     <div className="absolute top-0 left-0 right-0 h-[25%] bg-gradient-to-b from-white/[0.06] via-transparent to-transparent pointer-events-none" />

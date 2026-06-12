@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { Eye, Flame, Sparkles, Sliders, Scissors, Wind } from 'lucide-react';
 
@@ -15,6 +15,14 @@ interface TrendingCut {
 
 export default function ShowcaseBanner() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Parallax Scroll calculation
   const { scrollYProgress } = useScroll({
@@ -82,12 +90,24 @@ export default function ShowcaseBanner() {
   return (
     <section 
       ref={containerRef}
-      className="w-full bg-sleek-dark py-12 sm:py-20 md:py-24 border-t border-gold/10 overflow-hidden relative bg-pattern scroll-mt-20 md:scroll-mt-24" 
+      className="w-full bg-transparent py-12 sm:py-20 md:py-24 border-t border-white/5 overflow-hidden relative scroll-mt-20 md:scroll-mt-24" 
       id="portfolio"
     >
-      {/* Background overlay decorations */}
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gold/5 blur-[120px] pointer-events-none rounded-full" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gold/5 blur-[120px] pointer-events-none rounded-full" />
+      {/* Glowing atmospheric dust over the tracks */}
+      <div className="absolute top-[30%] left-[20%] w-[250px] h-[250px] bg-gold/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen hidden md:block" />
+      <div className="absolute bottom-[20%] right-[15%] w-[350px] h-[350px] bg-[#c2a35d]/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen hidden md:block" />
+
+      {/* Embed micro-scrolling keyframe inside the component for perfect portability */}
+      <style>{`
+        @keyframes marqueeImagesLeft {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        @keyframes marqueeImagesRight {
+          0% { transform: translateX(-50%); }
+          100% { transform: translateX(0); }
+        }
+      `}</style>
 
       {/* Title & Metadata Header */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 mb-16 select-none">
@@ -111,14 +131,14 @@ export default function ShowcaseBanner() {
       </div>
 
       {/* Sliding Parallax Panorama Track (Immersive Scroll Effect) */}
-      <div className="w-full relative overflow-hidden py-6 select-none bg-[#0a0b0c] border-y border-gold/5 mb-24">
+      <div className="w-full relative overflow-hidden py-6 select-none bg-black/30 backdrop-blur-md border-y border-white/5 mb-24">
         
         {/* Track 1: Moving left to right */}
         <motion.div 
-          style={{ x: smoothLeftX }}
-          className="flex gap-4 w-[200%] md:w-[150%] mb-4"
+          style={isMobile ? undefined : { x: smoothLeftX }}
+          className={`flex gap-4 w-max mb-4 ${isMobile ? 'animate-[marqueeImagesLeft_35s_linear_infinite]' : 'md:w-[150%]'}`}
         >
-          {aestheticImages.map((src, i) => (
+          {[...aestheticImages, ...aestheticImages].map((src, i) => (
             <div key={i} className="h-[200px] md:h-[260px] aspect-[4/3] overflow-hidden grayscale hover:grayscale-0 relative border border-gold/10 hover:border-gold/35 rounded-xl transition-all duration-500 flex-shrink-0">
               <img 
                 src={src} 
@@ -149,10 +169,10 @@ export default function ShowcaseBanner() {
 
         {/* Track 2: Moving right to left */}
         <motion.div 
-          style={{ x: smoothRightX }}
-          className="flex gap-4 w-[200%] md:w-[150%] justify-end"
+          style={isMobile ? undefined : { x: smoothRightX }}
+          className={`flex gap-4 w-max justify-end ${isMobile ? 'animate-[marqueeImagesRight_30s_linear_infinite]' : 'md:w-[150%]'}`}
         >
-          {[...aestheticImages].reverse().map((src, i) => (
+          {[...aestheticImages, ...aestheticImages].reverse().map((src, i) => (
             <div key={i} className="h-[140px] md:h-[180px] aspect-[4/3] overflow-hidden grayscale hover:grayscale-0 relative border border-gold/10 hover:border-gold/35 rounded-xl transition-all duration-500 flex-shrink-0">
               <img 
                 src={src} 
@@ -200,7 +220,7 @@ export default function ShowcaseBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
-              className="bg-[#121314] border border-zinc-900 group overflow-hidden flex flex-col justify-between text-left rounded-2xl md:hover:border-[#c2a35d]/30 hover:shadow-2xl hover:shadow-black/70 transition-all duration-300 relative depth-card h-full min-h-[460px]"
+              className="bg-white/5 backdrop-blur-md border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] group overflow-hidden flex flex-col justify-between text-left rounded-2xl md:hover:border-gold/40 hover:shadow-[0_10px_40px_rgba(0,0,0,0.8)] transition-all duration-300 relative depth-card h-full min-h-[460px]"
             >
               <div>
                 {/* Image Container with scale effects */}
@@ -211,7 +231,7 @@ export default function ShowcaseBanner() {
                     className="w-full h-full object-cover grayscale brightness-90 group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-500 pointer-events-none"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#16181a] via-transparent to-transparent opacity-95" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-95" />
                   
                   {/* Floating index */}
                   <span className="absolute top-4 left-4 font-mono text-[9px] bg-black/80 border border-gold/15 text-gold px-2 py-0.5 rounded">
@@ -234,9 +254,9 @@ export default function ShowcaseBanner() {
               </div>
 
               {/* Bottom Products Advice specs block */}
-              <div className="p-6 pt-0 border-t border-gold/5 mt-4">
-                <div className="bg-sleek-dark/80 p-3 border border-gold/5 rounded-xl text-left space-y-1">
-                  <span className="font-mono text-[8px] text-zinc-500 block uppercase font-bold leading-none">PRODUTO RECOMENDADO</span>
+              <div className="p-6 pt-0 border-t border-white/5 mt-4">
+                <div className="bg-black/30 backdrop-blur-sm p-3 border border-white/5 rounded-xl text-left space-y-1">
+                  <span className="font-mono text-[8px] text-slate-400 block uppercase font-bold leading-none">PRODUTO RECOMENDADO</span>
                   <div className="font-mono text-[10px] text-gold font-bold flex items-center gap-1 truncate">
                     <Wind className="w-3 h-3 shrink-0" />
                     <span>{cut.styling}</span>

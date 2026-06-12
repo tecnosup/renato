@@ -182,7 +182,7 @@ export default function Header() {
       <div className="w-full fixed top-0 left-0 right-0 z-40 flex flex-col" id="header-fixed-wrapper">
         {/* Top micro ticker (very Swiss, Clean & Architectural) - collapses elegantly on scroll */}
         <div 
-          className={`w-full bg-[#090a0a] text-zinc-455 text-[8.5px] font-mono px-4 md:px-8 flex justify-between items-center transition-all duration-300 overflow-hidden border-b border-zinc-900/50 ${
+          className={`w-full bg-black/40 backdrop-blur-md text-zinc-455 text-[8.5px] font-mono px-4 md:px-8 flex justify-between items-center transition-all duration-300 overflow-hidden border-b border-white/5 ${
             scrolled ? 'h-0 py-0 opacity-0 border-b-0' : 'h-8 py-2 opacity-100'
           }`}
           style={{ transitionProperty: 'all' }}
@@ -203,7 +203,7 @@ export default function Header() {
         <header
           className={`w-full transition-all duration-350 ${
             scrolled 
-              ? 'bg-[#090a0a]/95 backdrop-blur-md py-3 border-b border-zinc-900 shadow-2xl shadow-black/40' 
+              ? 'bg-black/60 backdrop-blur-2xl py-3 border-b border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.5)]' 
               : 'bg-transparent py-5 border-b border-transparent'
           }`}
           id="app-header"
@@ -211,7 +211,7 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
           {/* Brand Logo & Est - Classic luxury serif and sans pairing */}
           <a href="#" className="flex items-center gap-3.5 group" id="header-brand-logo">
-            <div className="w-8.5 h-8.5 rounded-lg border border-[#c2a35d]/30 group-hover:border-[#c2a35d]/70 flex items-center justify-center transition-all duration-500 bg-zinc-950/40">
+            <div className="w-8.5 h-8.5 rounded-lg border border-gold/20 group-hover:border-gold/50 flex items-center justify-center transition-all duration-500 bg-gold/10 shadow-[inset_0_0_10px_rgba(194,163,93,0.15)]">
               <Scissors className="w-3.5 h-3.5 text-[#c2a35d] transition-transform duration-500 group-hover:-rotate-12" />
             </div>
             <div className="flex flex-col text-left">
@@ -256,7 +256,7 @@ export default function Header() {
               onClick={() => {
                 window.dispatchEvent(new CustomEvent('select-service', { detail: '' }));
               }}
-              className="bg-[#c2a35d] hover:bg-white text-zinc-950 font-sans text-[9px] font-bold tracking-[0.24em] px-6 py-3 border border-[#c2a35d] hover:border-white transition-all duration-300 uppercase rounded-xl shadow-lg shadow-gold/10 hover:shadow-white/5 transform hover:scale-[1.02] cursor-pointer"
+              className="bg-linear-to-r from-[#ece4cb] to-[#c2a35d] hover:opacity-90 text-slate-950 font-sans text-[9px] font-black tracking-[0.24em] px-6 py-3 border border-transparent transition-all duration-300 uppercase rounded-xl shadow-[0_0_15px_rgba(194,163,93,0.3)] transform hover:scale-[1.02] cursor-pointer"
               id="cta-reservar-button"
             >
               Agendar Horário
@@ -282,7 +282,7 @@ export default function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="absolute top-full left-0 w-full bg-[#090a0a]/98 backdrop-blur-xl border-b border-zinc-900 shadow-2xl md:hidden overflow-hidden flex flex-col z-50"
+              className="absolute top-full left-0 w-full bg-black/80 backdrop-blur-3xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)] md:hidden overflow-hidden flex flex-col z-50"
               id="mobile-nav-panel"
             >
               <div className="px-6 py-8 flex flex-col gap-6">
@@ -361,7 +361,7 @@ export default function Header() {
               exit={{ opacity: 0, scale: 0.96, y: 15 }}
               className={`relative w-full ${
                 currentLoggedMember ? 'max-w-2xl' : 'max-w-md'
-              } bg-[#0c0d0e] border border-[#c2a35d]/25 rounded-2xl overflow-hidden shadow-3xl p-5 sm:p-7 md:p-8 text-left z-10 transition-all duration-300`}
+              } bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_40px_rgba(0,0,0,0.6)] p-5 sm:p-7 md:p-8 text-left z-10 transition-all duration-300`}
               id="client-portal-modal"
             >
               {/* Refraction ambient overlay */}
@@ -443,8 +443,8 @@ export default function Header() {
                             onClick={() => setSimulationPlan(pOpt.plan as any)}
                             className={`p-2.5 border rounded-xl text-left font-mono tracking-tight cursor-pointer transition-all flex flex-col justify-between ${
                               simulationPlan === pOpt.plan
-                                ? 'bg-[#181510] border-gold text-gold ring-1 ring-gold/20'
-                                : 'bg-[#111214] border-zinc-900 text-zinc-500 hover:border-zinc-805'
+                                ? 'bg-gold/10 border-gold shadow-[inset_0_0_15px_rgba(194,163,93,0.15)] text-gold'
+                                : 'bg-white/5 backdrop-blur-md border-white/10 text-slate-500 hover:border-gold/30 hover:bg-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]'
                             }`}
                           >
                             <span className="text-[9px] font-bold block">{pOpt.plan}</span>
@@ -468,7 +468,7 @@ export default function Header() {
                           setSimulationName(e.target.value);
                           if (portalError) setPortalError('');
                         }}
-                        className="w-full bg-[#111214] border border-zinc-850 focus:border-[#c2a35d]/50 focus:outline-none text-zinc-200 font-sans text-xs rounded-xl px-4 py-3 tracking-wider placeholder:text-zinc-700"
+                        className="w-full bg-white/5 backdrop-blur-md border border-white/10 focus:border-gold/50 focus:bg-white/10 focus:outline-none text-slate-100 font-sans text-xs rounded-xl px-4 py-3 tracking-wider placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all"
                         name="simName"
                         required
                       />
@@ -487,7 +487,7 @@ export default function Header() {
                       </button>
                       <button
                         type="submit"
-                        className="flex-1 bg-gold text-[#0c0d0e] hover:bg-white font-sans text-[9px] font-black tracking-[0.24em] uppercase py-3.5 rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-gold/10"
+                        className="flex-1 bg-linear-to-r from-[#ece4cb] to-[#c2a35d] text-slate-950 hover:opacity-90 font-sans text-[9px] font-black tracking-[0.24em] uppercase py-3.5 rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(194,163,93,0.3)]"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
                         Ativar &amp; Entrar
@@ -527,7 +527,7 @@ export default function Header() {
                           setSubscriberId(e.target.value);
                           if (portalError) setPortalError('');
                         }}
-                        className="w-full bg-[#111214] border border-zinc-850 focus:border-[#c2a35d]/50 focus:outline-none text-zinc-200 font-mono text-xs rounded-xl px-4 py-3.5 tracking-wider placeholder:text-zinc-750"
+                        className="w-full bg-white/5 backdrop-blur-md border border-white/10 focus:border-gold/50 focus:bg-white/10 focus:outline-none text-slate-100 font-mono text-xs rounded-xl px-4 py-3.5 tracking-wider placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all"
                         name="memberId"
                       />
                       {portalError && (
@@ -539,7 +539,7 @@ export default function Header() {
 
                     <button
                       type="submit"
-                      className="w-full bg-[#c2a35d] hover:bg-white text-zinc-950 font-sans text-[9px] font-black tracking-[0.24em] uppercase py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-gold/5"
+                      className="w-full bg-linear-to-r from-[#ece4cb] to-[#c2a35d] hover:opacity-90 text-slate-950 font-sans text-[9px] font-black tracking-[0.24em] uppercase py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(194,163,93,0.3)]"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
                       Entrar no Cockpit
@@ -547,10 +547,10 @@ export default function Header() {
                   </form>
 
                   {/* Preloaded credentials hint block - Classic Bauhaus architectural detail */}
-                  <div className="bg-[#111213]/60 p-3 border border-zinc-910 rounded-xl space-y-1.5">
+                  <div className="bg-black/30 p-3 border border-white/5 rounded-xl space-y-1.5">
                     <span className="font-mono text-[7px] text-[#c2a35d] uppercase block font-bold">[TESTE_SALAO_DEMO]</span>
-                    <p className="font-sans text-[10px] text-zinc-500 leading-normal">
-                      Insira <strong className="text-zinc-300">123</strong> para acessar como <strong className="text-zinc-300">Lincon Cardoso</strong> (Legend Black) ou insira qualquer CPF/ID para simular sua própria ativação VIP!
+                    <p className="font-sans text-[10px] text-zinc-400 leading-normal">
+                      Insira <strong className="text-zinc-200">123</strong> para acessar como <strong className="text-zinc-200">Lincon Cardoso</strong> (Legend Black) ou insira qualquer CPF/ID para simular sua própria ativação VIP!
                     </p>
                   </div>
 
