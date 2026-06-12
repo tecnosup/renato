@@ -89,39 +89,36 @@ function ConfirmarPagamentoModal({
   const [fechando, setFechando] = useState(false);
 
   return (
-    <Modal
-      onClose={onClose}
-      panelClassName="bg-white/3 backdrop-blur-2xl backdrop-saturate-100 border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_4px_20px_rgba(0,0,0,0.35)] sm:rounded-3xl rounded-t-3xl"
-    >
+    <Modal onClose={onClose} panelClassName="admin-glass-modal sm:rounded-3xl rounded-t-3xl">
       {(close) =>
         confirmado ? (
           <div className="flex flex-col items-center justify-center gap-3 py-14 px-4">
             <div className="success-pop flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 shadow-[0_0_28px_rgba(194,163,93,0.55)]">
               <Check className="w-8 h-8" strokeWidth={3} />
             </div>
-            <p className="text-base font-bold text-slate-100">Pagamento confirmado!</p>
+            <p className="text-base font-bold admin-text-primary">Pagamento confirmado!</p>
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/10">
-              <h2 className="text-base font-bold text-slate-100">Confirmar pagamento</h2>
+            <div className="flex items-center justify-between px-4 pt-4 pb-3 admin-border-b">
+              <h2 className="text-base font-bold admin-text-primary">Confirmar pagamento</h2>
               <button
                 onClick={() => {
                   setFechando(true);
                   setTimeout(close, 150);
                 }}
-                className="group text-slate-100 hover:text-white"
+                className="group admin-text-secondary hover:opacity-80"
               >
                 <X className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-90 ${fechando ? "rotate-180" : ""}`} />
               </button>
             </div>
 
             <div className="p-4 space-y-3">
-              <div className="relative rounded-xl bg-white/5 px-3 py-2.5">
-                <p className="text-sm font-semibold text-slate-100 mb-1.5">{vencimento.nome}</p>
+              <div className="relative rounded-xl admin-surface-subtle px-3 py-2.5">
+                <p className="text-sm font-semibold admin-text-primary mb-1.5">{vencimento.nome}</p>
                 <button
                   onClick={() => setPickerAberto((v) => !v)}
-                  className="w-full flex items-center justify-between gap-2 bg-black/25 rounded-lg px-2.5 py-2 text-xs text-slate-200 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] hover:bg-black/35 transition-colors"
+                  className="w-full flex items-center justify-between gap-2 admin-glass-card admin-text-secondary rounded-lg px-2.5 py-2 text-xs hover:opacity-80 transition-colors"
                 >
                   <span className="flex items-center gap-1.5">
                     <CalendarIcon className="w-3.5 h-3.5 text-gold" />
@@ -141,12 +138,12 @@ function ConfirmarPagamentoModal({
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-200 uppercase tracking-widest mb-1.5">Valor pago (R$)</label>
+                <label className="block text-[11px] font-bold admin-text-secondary uppercase tracking-widest mb-1.5">Valor pago (R$)</label>
                 <input
                   value={valor}
                   onChange={(e) => setValor(e.target.value)}
                   inputMode="decimal"
-                  className="transform-gpu w-full bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-amber-400/50 transition-shadow"
+                  className="transform-gpu w-full admin-glass-card admin-input rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-amber-400/50 transition-shadow"
                 />
               </div>
 
@@ -161,7 +158,7 @@ function ConfirmarPagamentoModal({
                 >
                   Confirmar pagamento
                 </button>
-                <button onClick={close} className="px-5 py-3 rounded-full text-sm font-semibold text-slate-200 bg-white/5 hover:bg-white/10 transition-colors">
+                <button onClick={close} className="px-5 py-3 rounded-full text-sm font-semibold admin-glass-card admin-glass-card-hover admin-text-secondary transition-colors">
                   Cancelar
                 </button>
               </div>
@@ -275,7 +272,7 @@ export default function FinanceiroPage() {
             className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
               p === periodo
                 ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_16px_rgba(194,163,93,0.4)]"
-                : "bg-white/5 backdrop-blur-md text-slate-200 hover:text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+                : "admin-glass-card admin-text-secondary hover:opacity-80"
             }`}
           >
             {p}
@@ -285,30 +282,30 @@ export default function FinanceiroPage() {
 
       {/* Cards de resumo */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-        <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-          <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Faturamento</p>
-          <p className="text-xl font-bold text-slate-100 leading-none">R$ {RESUMO.faturamento.toFixed(2).replace(".", ",")}</p>
+        <div className="transform-gpu rounded-xl p-3 admin-glass-card">
+          <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Faturamento</p>
+          <p className="text-xl font-bold admin-text-primary leading-none">R$ {RESUMO.faturamento.toFixed(2).replace(".", ",")}</p>
         </div>
-        <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-          <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Gastos/Mês</p>
+        <div className="transform-gpu rounded-xl p-3 admin-glass-card">
+          <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Gastos/Mês</p>
           <p className="text-xl font-bold text-red-400 leading-none">R$ {RESUMO.gastos.toFixed(2).replace(".", ",")}</p>
-          <p className="text-[10px] text-slate-300 mt-1">{RESUMO.gastosAtivos} ativos</p>
+          <p className="text-[10px] admin-text-secondary mt-1">{RESUMO.gastosAtivos} ativos</p>
         </div>
-        <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-          <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Lucro Estimado</p>
+        <div className="transform-gpu rounded-xl p-3 admin-glass-card">
+          <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Lucro Estimado</p>
           <p className="text-xl font-bold text-emerald-400 leading-none">R$ {RESUMO.lucro.toFixed(2).replace(".", ",")}</p>
         </div>
-        <div className="transform-gpu rounded-xl p-3 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-          <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Receita Total</p>
-          <p className="text-xl font-bold text-slate-100 leading-none">R$ {RESUMO.receitaTotal.toFixed(2).replace(".", ",")}</p>
+        <div className="transform-gpu rounded-xl p-3 admin-glass-card">
+          <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Receita Total</p>
+          <p className="text-xl font-bold admin-text-primary leading-none">R$ {RESUMO.receitaTotal.toFixed(2).replace(".", ",")}</p>
         </div>
       </div>
 
       {/* Gráfico: faturamento por fechamento de caixa */}
-      <div className="transform-gpu rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] p-4 mb-4">
-        <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Faturamento por fechamento de caixa</p>
+      <div className="transform-gpu rounded-2xl overflow-hidden admin-glass-card p-4 mb-4">
+        <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Faturamento por fechamento de caixa</p>
         <p className="text-[9px] font-semibold text-amber-400 uppercase tracking-widest mb-1">Receita acumulada</p>
-        <p className="text-2xl font-bold text-slate-100 leading-none mb-1">R$ {RECEITA_ACUMULADA.toFixed(2).replace(".", ",")}</p>
+        <p className="text-2xl font-bold admin-text-primary leading-none mb-1">R$ {RECEITA_ACUMULADA.toFixed(2).replace(".", ",")}</p>
         <p className="text-xs text-red-400 mb-2">Gastos registrados: R$ {GASTOS_REGISTRADOS.toFixed(2).replace(".", ",")}</p>
 
         <div className="h-56 -ml-2">
@@ -335,28 +332,28 @@ export default function FinanceiroPage() {
         </div>
 
         <div className="flex items-center gap-4 mt-2 flex-wrap">
-          <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-400" /><span className="text-xs text-slate-300">Faturamento Bruto</span></div>
-          <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-400" /><span className="text-xs text-slate-300">Faturamento Líquido</span></div>
-          <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-orange-400" /><span className="text-xs text-slate-300">Despesas</span></div>
+          <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-400" /><span className="text-xs admin-text-secondary">Faturamento Bruto</span></div>
+          <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-400" /><span className="text-xs admin-text-secondary">Faturamento Líquido</span></div>
+          <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-orange-400" /><span className="text-xs admin-text-secondary">Despesas</span></div>
         </div>
       </div>
 
       {/* Serviços no período */}
-      <div className="transform-gpu rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] p-4 mb-4">
-        <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-3">Serviços no período</p>
+      <div className="transform-gpu rounded-2xl overflow-hidden admin-glass-card p-4 mb-4">
+        <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-3">Serviços no período</p>
         <ul className="space-y-3">
           {SERVICOS_PERIODO.map((s, i) => (
             <li key={s.nome}>
               <div className="flex items-center justify-between gap-2 mb-1">
-                <p className="text-sm font-semibold text-slate-100 truncate">
-                  <span className="text-slate-400 mr-2">{i + 1}</span>
+                <p className="text-sm font-semibold admin-text-primary truncate">
+                  <span className="admin-text-secondary mr-2">{i + 1}</span>
                   {s.nome}
                 </p>
-                <span className="text-xs text-slate-300 shrink-0">
+                <span className="text-xs admin-text-secondary shrink-0">
                   {s.qtd}x · R$ {s.valor.toFixed(2).replace(".", ",")}
                 </span>
               </div>
-              <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+              <div className="h-1.5 rounded-full admin-surface-subtle overflow-hidden">
                 <div
                   className="h-full rounded-full bg-amber-400/80"
                   style={{ width: `${(s.valor / SERVICOS_MAX) * 100}%` }}
@@ -370,8 +367,8 @@ export default function FinanceiroPage() {
       {/* Gastos por categoria + Gastos da empresa */}
       <div className="grid md:grid-cols-2 gap-3 mb-4">
         {/* Donut */}
-        <div className="transform-gpu rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] p-4">
-          <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-3">Gastos por categoria</p>
+        <div className="transform-gpu rounded-2xl overflow-hidden admin-glass-card p-4">
+          <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-3">Gastos por categoria</p>
           <div className="h-44">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -392,18 +389,18 @@ export default function FinanceiroPage() {
             {GASTOS_CATEGORIA.map((g) => (
               <div key={g.nome} className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: g.cor }} />
-                <span className="text-xs text-slate-300">{g.nome}</span>
+                <span className="text-xs admin-text-secondary">{g.nome}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Gastos da empresa */}
-        <div className="transform-gpu rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] p-4">
+        <div className="transform-gpu rounded-2xl overflow-hidden admin-glass-card p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-bold text-slate-100">Gastos da empresa</p>
+            <p className="text-sm font-bold admin-text-primary">Gastos da empresa</p>
             <div className="flex items-center gap-2">
-              <button className="text-slate-200 hover:text-white transition-colors">
+              <button className="admin-text-secondary hover:opacity-80 transition-colors">
                 <Settings className="w-4 h-4" />
               </button>
               <button className="flex items-center gap-1.5 bg-amber-400/15 hover:bg-amber-400/25 text-amber-300 border border-amber-400/30 rounded-lg px-3 py-1.5 text-xs font-bold transition-colors">
@@ -417,22 +414,22 @@ export default function FinanceiroPage() {
               <li key={g.id} className="flex items-center gap-3 pl-3 border-l-2 border-amber-400/60">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-semibold text-slate-100">{g.nome}</p>
+                    <p className="text-sm font-semibold admin-text-primary">{g.nome}</p>
                     <span className="text-[10px] font-medium text-gold bg-gold/15 border border-gold/20 rounded-full px-2 py-0.5">{g.categoria}</span>
-                    <span className="text-[10px] font-medium text-slate-300 bg-white/5 border border-white/10 rounded-full px-2 py-0.5">{g.recorrencia}</span>
+                    <span className="text-[10px] font-medium admin-text-secondary admin-surface-subtle border border-transparent rounded-full px-2 py-0.5">{g.recorrencia}</span>
                     {g.lembrete && <BellRing className="w-3 h-3 text-amber-400" />}
                   </div>
-                  <p className={`text-xs mt-0.5 ${g.alerta ? "text-amber-400" : "text-slate-300"}`}>{g.vence}</p>
+                  <p className={`text-xs mt-0.5 ${g.alerta ? "text-amber-400" : "admin-text-secondary"}`}>{g.vence}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-sm font-bold text-red-400">R$ {g.valor.toFixed(2).replace(".", ",")}</span>
                   <button className="w-7 h-7 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-400 flex items-center justify-center hover:bg-emerald-500/25 transition-colors">
                     <Check className="w-3.5 h-3.5" />
                   </button>
-                  <button className="text-slate-200 hover:text-white transition-colors">
+                  <button className="admin-text-secondary hover:opacity-80 transition-colors">
                     <Pencil className="w-4 h-4" />
                   </button>
-                  <button className="text-slate-200 hover:text-red-400 transition-colors">
+                  <button className="admin-text-secondary hover:text-red-400 transition-colors">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
