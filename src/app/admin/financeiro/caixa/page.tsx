@@ -170,28 +170,25 @@ function NovaComandaModal({
   };
 
   return (
-    <Modal
-      onClose={onClose}
-      panelClassName="bg-white/3 backdrop-blur-2xl backdrop-saturate-100 border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_4px_20px_rgba(0,0,0,0.35)] sm:rounded-3xl rounded-t-3xl"
-    >
+    <Modal onClose={onClose} panelClassName="admin-glass-modal sm:rounded-3xl rounded-t-3xl">
       {(close) =>
         salvo ? (
           <div className="flex flex-col items-center justify-center gap-3 py-14 px-4">
             <div className="success-pop flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 shadow-[0_0_28px_rgba(194,163,93,0.55)]">
               <Check className="w-8 h-8" strokeWidth={3} />
             </div>
-            <p className="text-base font-bold text-slate-100">Comanda aberta!</p>
+            <p className="text-base font-bold admin-text-primary">Comanda aberta!</p>
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/10">
-              <h2 className="text-base font-bold text-slate-100">Nova Comanda</h2>
+            <div className="admin-border-b flex items-center justify-between px-4 pt-4 pb-3">
+              <h2 className="text-base font-bold admin-text-primary">Nova Comanda</h2>
               <button
                 onClick={() => {
                   setFechando(true);
                   setTimeout(close, 150);
                 }}
-                className="group text-slate-100 hover:text-white"
+                className="group admin-text-primary hover:opacity-80"
               >
                 <X className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-90 ${fechando ? "rotate-180" : ""}`} />
               </button>
@@ -199,27 +196,27 @@ function NovaComandaModal({
 
             <div className="p-4 space-y-3">
               <div>
-                <label className="block text-[11px] font-bold text-slate-200 uppercase tracking-widest mb-1.5">Cliente</label>
+                <label className="block text-[11px] font-bold admin-text-secondary uppercase tracking-widest mb-1.5">Cliente</label>
                 <input
                   value={cliente}
                   onChange={(e) => setCliente(e.target.value)}
                   placeholder="Nome do cliente"
-                  className="transform-gpu w-full bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
+                  className="admin-surface-subtle admin-input transform-gpu w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-200 uppercase tracking-widest mb-1.5">Profissional</label>
+                <label className="block text-[11px] font-bold admin-text-secondary uppercase tracking-widest mb-1.5">Profissional</label>
                 <input
                   value={profissional}
                   onChange={(e) => setProfissional(e.target.value)}
                   placeholder="Nome do profissional"
-                  className="transform-gpu w-full bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
+                  className="admin-surface-subtle admin-input transform-gpu w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-200 uppercase tracking-widest mb-1.5">Serviços / Produtos</label>
+                <label className="block text-[11px] font-bold admin-text-secondary uppercase tracking-widest mb-1.5">Serviços / Produtos</label>
                 <div className="space-y-2">
                   {itens.map((item, idx) => (
                     <div key={idx} className="flex items-center gap-2">
@@ -227,17 +224,17 @@ function NovaComandaModal({
                         value={item.descricao}
                         onChange={(e) => updateItem(idx, "descricao", e.target.value)}
                         placeholder="Descrição"
-                        className="transform-gpu flex-1 bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
+                        className="admin-surface-subtle admin-input transform-gpu flex-1 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
                       />
                       <input
                         value={item.valor || ""}
                         onChange={(e) => updateItem(idx, "valor", e.target.value)}
                         placeholder="0,00"
                         inputMode="decimal"
-                        className="transform-gpu w-24 bg-black/25 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
+                        className="admin-surface-subtle admin-input transform-gpu w-24 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
                       />
                       {itens.length > 1 && (
-                        <button onClick={() => removeItem(idx)} className="text-slate-100 hover:text-red-400 shrink-0">
+                        <button onClick={() => removeItem(idx)} className="admin-text-primary hover:text-red-400 shrink-0">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       )}
@@ -249,9 +246,9 @@ function NovaComandaModal({
                 </button>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-white/10">
-                <span className="text-sm font-semibold text-slate-100">Total</span>
-                <span className="text-lg font-bold text-slate-100">R$ {fmt(total)}</span>
+              <div className="admin-border-t flex items-center justify-between pt-2">
+                <span className="text-sm font-semibold admin-text-primary">Total</span>
+                <span className="text-lg font-bold admin-text-primary">R$ {fmt(total)}</span>
               </div>
 
               <button
@@ -286,23 +283,23 @@ function FecharComandaModal({
     <Modal onClose={onClose}>
       {(close) => (
         <>
-          <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/5">
-            <h2 className="text-base font-bold text-slate-100">Fechar Comanda</h2>
-            <button onClick={close} className="text-slate-500 hover:text-slate-300">
+          <div className="admin-border-b flex items-center justify-between px-4 pt-4 pb-3">
+            <h2 className="text-base font-bold admin-text-primary">Fechar Comanda</h2>
+            <button onClick={close} className="admin-text-secondary hover:opacity-80">
               <X className="w-5 h-5" />
             </button>
           </div>
 
           <div className="p-4 space-y-3">
-            <div className="transform-gpu rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-              <p className="text-sm font-bold text-slate-100">{comanda.cliente}</p>
-              <p className="text-xs text-slate-500">
+            <div className="admin-surface-subtle transform-gpu rounded-xl px-3 py-2.5">
+              <p className="text-sm font-bold admin-text-primary">{comanda.cliente}</p>
+              <p className="text-xs admin-text-secondary">
                 {comanda.profissional} · {comanda.itens.map((i) => i.descricao).join(", ")}
               </p>
             </div>
 
             <div>
-              <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Forma de Pagamento</label>
+              <label className="block text-[10px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Forma de Pagamento</label>
               <div className="grid grid-cols-2 gap-2">
                 {FORMAS_PAGAMENTO.map((forma) => {
                   const Icon = PAGAMENTO_ICONS[forma];
@@ -312,7 +309,7 @@ function FecharComandaModal({
                       key={forma}
                       onClick={() => setFormaPagamento(forma)}
                       className={`transform-gpu flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        ativo ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : "bg-white/5 backdrop-blur-md text-slate-400 hover:bg-white/8"
+                        ativo ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : "admin-surface-subtle admin-text-secondary hover:opacity-80"
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" /> {forma}
@@ -322,9 +319,9 @@ function FecharComandaModal({
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-white/5">
-              <span className="text-sm font-semibold text-slate-400">Total</span>
-              <span className="text-lg font-bold text-slate-100">R$ {fmt(total)}</span>
+            <div className="admin-border-t flex items-center justify-between pt-2">
+              <span className="text-sm font-semibold admin-text-secondary">Total</span>
+              <span className="text-lg font-bold admin-text-primary">R$ {fmt(total)}</span>
             </div>
 
             <button
@@ -362,31 +359,31 @@ function NovaDespesaModal({
     <Modal onClose={onClose}>
       {(close) => (
         <>
-          <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/5">
-            <h2 className="text-base font-bold text-slate-100">Nova Despesa</h2>
-            <button onClick={close} className="text-slate-500 hover:text-slate-300">
+          <div className="admin-border-b flex items-center justify-between px-4 pt-4 pb-3">
+            <h2 className="text-base font-bold admin-text-primary">Nova Despesa</h2>
+            <button onClick={close} className="admin-text-secondary hover:opacity-80">
               <X className="w-5 h-5" />
             </button>
           </div>
 
           <div className="p-4 space-y-3">
             <div>
-              <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Descrição</label>
+              <label className="block text-[10px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Descrição</label>
               <input
                 value={descricao}
                 onChange={(e) => setDescricao(e.target.value)}
                 placeholder="Ex: Material de limpeza"
-                className="transform-gpu w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-red-400/50"
+                className="admin-surface-subtle admin-input transform-gpu w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-red-400/50"
               />
             </div>
             <div>
-              <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Valor</label>
+              <label className="block text-[10px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Valor</label>
               <input
                 value={valor}
                 onChange={(e) => setValor(e.target.value)}
                 placeholder="0,00"
                 inputMode="decimal"
-                className="transform-gpu w-full bg-white/5 backdrop-blur-md rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-red-400/50"
+                className="admin-surface-subtle admin-input transform-gpu w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-red-400/50"
               />
             </div>
 
@@ -502,9 +499,9 @@ export default function CaixaPage() {
   return (
     <div className="flex-1 overflow-y-auto">
 
-      {/* Header */}
+      {/* Header — sobre o fundo, sempre branco */}
       <div className="flex items-center gap-3 px-4 pt-5 pb-4">
-        <div className="transform-gpu w-9 h-9 rounded-xl bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] flex items-center justify-center shrink-0">
+        <div className="admin-glass-card transform-gpu w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
           <FaCashRegister className="w-4 h-4 text-gold" />
         </div>
         <div>
@@ -516,21 +513,21 @@ export default function CaixaPage() {
       </div>
 
       {/* Card único: calendário + painel do dia */}
-      <div className="transform-gpu mx-4 mb-3 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+      <div className="transform-gpu mx-4 mb-3 rounded-2xl overflow-hidden admin-glass-card">
 
         {/* Header do calendário */}
         <div className="flex items-center justify-between px-4 pt-4 pb-3">
-          <button onClick={() => navMes(-1)} className="text-slate-200 hover:text-white transition-colors">
+          <button onClick={() => navMes(-1)} className="admin-text-secondary hover:opacity-80 transition-opacity">
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={() => setExpandido(!expandido)}
-            className="flex items-center gap-1.5 text-sm font-semibold text-slate-100 hover:text-gold transition-colors"
+            className="flex items-center gap-1.5 text-sm font-semibold admin-text-primary hover:text-gold transition-colors"
           >
             {MESES[mes]} {ano}
             <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${expandido ? "rotate-180" : ""}`} />
           </button>
-          <button onClick={() => navMes(1)} className="text-slate-200 hover:text-white transition-colors">
+          <button onClick={() => navMes(1)} className="admin-text-secondary hover:opacity-80 transition-opacity">
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
@@ -538,7 +535,7 @@ export default function CaixaPage() {
         {/* Cabeçalho dias da semana */}
         <div className="grid grid-cols-7 px-2 mb-1">
           {DIAS_SEMANA.map((d, i) => (
-            <p key={d} className={`text-center text-[11px] font-medium ${i === 0 ? "text-red-400" : "text-slate-300"}`}>{d}</p>
+            <p key={d} className={`text-center text-[11px] font-medium ${i === 0 ? "text-red-400" : "admin-text-secondary"}`}>{d}</p>
           ))}
         </div>
 
@@ -556,7 +553,7 @@ export default function CaixaPage() {
               return (
                 <button key={key} onClick={() => setDiaSelecionado(key)}
                   className={`flex flex-col items-center justify-center aspect-square rounded-xl transition-colors ${
-                    isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isToday ? "border border-gold/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
+                    isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isToday ? "border border-gold/40 admin-text-primary" : "admin-glass-card-hover admin-text-secondary"
                   }`}
                 >
                   <span className={`text-sm font-semibold ${isDom && !isSel ? "text-red-400" : ""}`}>{d.getDate()}</span>
@@ -585,7 +582,7 @@ export default function CaixaPage() {
                 return (
                   <button key={key} onClick={() => selecionarDia(key)}
                     className={`flex flex-col items-center justify-center h-9 rounded-xl transition-colors ${
-                      isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isToday ? "border border-gold/40 text-slate-100" : "hover:bg-white/5 text-slate-300"
+                      isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isToday ? "border border-gold/40 admin-text-primary" : "admin-glass-card-hover admin-text-secondary"
                     }`}
                   >
                     <span className={`text-sm font-semibold ${isDom && !isSel ? "text-red-400" : ""}`}>{dia}</span>
@@ -594,10 +591,10 @@ export default function CaixaPage() {
                 );
               })}
             </div>
-            <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
-              <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-400" /><span className="text-[10px] text-slate-300">caixa fechado</span></div>
-              <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-orange-400" /><span className="text-[10px] text-slate-300">pendente</span></div>
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border border-gold/40" /><span className="text-[10px] text-slate-300">hoje</span></div>
+            <div className="admin-border-t flex items-center gap-4 mt-3 pt-3">
+              <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-400" /><span className="text-[10px] admin-text-secondary">caixa fechado</span></div>
+              <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-orange-400" /><span className="text-[10px] admin-text-secondary">pendente</span></div>
+              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border border-gold/40" /><span className="text-[10px] admin-text-secondary">hoje</span></div>
             </div>
           </div>
           </CalSlide>
@@ -605,11 +602,11 @@ export default function CaixaPage() {
         </CalExpand>
 
         {/* Data + status */}
-        <div className="flex items-center justify-between px-4 pt-4 pb-3 border-t border-white/5">
+        <div className="admin-border-t flex items-center justify-between px-4 pt-4 pb-3">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-base font-bold text-slate-100">{dataFormatada}</span>
+            <span className="text-base font-bold admin-text-primary">{dataFormatada}</span>
             {caixa.status === "fechado" && (
-              <span className="transform-gpu flex items-center gap-1 text-[10px] font-bold bg-white/5 backdrop-blur-md text-slate-200 px-2 py-0.5 rounded-full uppercase tracking-widest shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+              <span className="admin-surface-subtle transform-gpu flex items-center gap-1 text-[10px] font-bold admin-text-secondary px-2 py-0.5 rounded-full uppercase tracking-widest">
                 <Lock className="w-2.5 h-2.5" /> Fechado
               </span>
             )}
@@ -632,7 +629,7 @@ export default function CaixaPage() {
                 setCalKey((k) => k + 1);
                 setDiaSelecionado(hojeKey);
               }}
-              className="text-slate-300 hover:text-white shrink-0"
+              className="admin-text-secondary hover:opacity-80 shrink-0"
             >
               <X className="w-4 h-4" />
             </button>
@@ -640,20 +637,20 @@ export default function CaixaPage() {
         </div>
 
         {/* Métricas */}
-        <div className="grid grid-cols-3 border-t border-white/5">
+        <div className="admin-border-t grid grid-cols-3">
           <div className="px-4 py-3">
-            <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Faturamento</p>
-            <p className="text-base font-bold text-slate-100">R$ {fmt(faturamento)}</p>
+            <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Faturamento</p>
+            <p className="text-base font-bold admin-text-primary">R$ {fmt(faturamento)}</p>
           </div>
-          <div className="px-4 py-3 border-x border-white/5">
-            <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Gastos</p>
-            <p className={`text-base font-bold ${gastos > 0 ? "text-red-400" : "text-slate-100"}`}>
+          <div className="admin-border-x px-4 py-3">
+            <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Gastos</p>
+            <p className={`text-base font-bold ${gastos > 0 ? "text-red-400" : "admin-text-primary"}`}>
               R$ {fmt(gastos)}
             </p>
           </div>
           <div className="px-4 py-3">
-            <p className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest mb-1">Líquido</p>
-            <p className={`text-base font-bold ${liquido > 0 ? "text-emerald-400" : liquido < 0 ? "text-red-400" : "text-slate-100"}`}>
+            <p className="text-[9px] font-semibold admin-text-secondary uppercase tracking-widest mb-1">Líquido</p>
+            <p className={`text-base font-bold ${liquido > 0 ? "text-emerald-400" : liquido < 0 ? "text-red-400" : "admin-text-primary"}`}>
               R$ {fmt(liquido)}
             </p>
           </div>
@@ -661,26 +658,26 @@ export default function CaixaPage() {
 
         {/* Comandas fechadas (já pagas, somam no faturamento) */}
         {comandasFechadas.length > 0 && (
-          <div className="border-t border-white/5 px-4 py-3 space-y-2">
+          <div className="admin-border-t px-4 py-3 space-y-2">
             {comandasFechadas.map((c) => {
               const PagIcon = PAGAMENTO_ICONS[c.formaPagamento!];
               return (
-                <div key={c.id} className="transform-gpu flex items-start justify-between gap-3 rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <div key={c.id} className="admin-surface-subtle transform-gpu flex items-start justify-between gap-3 rounded-xl px-3 py-2.5">
                   <div className="flex items-start gap-2.5 min-w-0">
                     <div className="w-7 h-7 rounded-full bg-amber-400/10 flex items-center justify-center shrink-0 mt-0.5">
                       <Scissors className="w-3.5 h-3.5 text-amber-400" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-bold text-slate-100 truncate">{c.cliente}</p>
-                      <p className="text-xs text-slate-300 truncate">
+                      <p className="text-sm font-bold admin-text-primary truncate">{c.cliente}</p>
+                      <p className="text-xs admin-text-secondary truncate">
                         {c.profissional} · {c.itens.map((i) => i.descricao).join(", ")}
                       </p>
-                      <p className="flex items-center gap-1 text-[10px] text-slate-400 mt-0.5">
+                      <p className="flex items-center gap-1 text-[10px] admin-text-secondary mt-0.5">
                         <PagIcon className="w-3 h-3" /> {c.formaPagamento}
                       </p>
                     </div>
                   </div>
-                  <span className="text-sm font-semibold text-slate-200 shrink-0">{fmt(totalComanda(c))}</span>
+                  <span className="text-sm font-semibold admin-text-primary shrink-0">{fmt(totalComanda(c))}</span>
                 </div>
               );
             })}
@@ -689,14 +686,14 @@ export default function CaixaPage() {
 
         {/* Despesas */}
         {caixa.despesas.length > 0 && (
-          <div className="border-t border-white/5 px-4 py-3 space-y-2">
+          <div className="admin-border-t px-4 py-3 space-y-2">
             {caixa.despesas.map((d) => (
-              <div key={d.id} className="transform-gpu flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+              <div key={d.id} className="admin-surface-subtle transform-gpu flex items-center justify-between gap-3 rounded-xl px-3 py-2.5">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-7 h-7 rounded-full bg-red-400/10 flex items-center justify-center shrink-0">
                     <TrendingDown className="w-3.5 h-3.5 text-red-400" />
                   </div>
-                  <p className="text-sm text-slate-200 truncate">{d.descricao}</p>
+                  <p className="text-sm admin-text-primary truncate">{d.descricao}</p>
                 </div>
                 <span className="text-sm font-semibold text-red-400 shrink-0">- {fmt(d.valor)}</span>
               </div>
@@ -705,17 +702,17 @@ export default function CaixaPage() {
         )}
 
         {comandasFechadas.length === 0 && caixa.despesas.length === 0 && (
-          <p className="px-4 pb-3 pt-1 text-sm text-slate-300 border-t border-white/5">
+          <p className="admin-border-t px-4 pb-3 pt-1 text-sm admin-text-secondary">
             Nenhuma comanda fechada neste dia.
           </p>
         )}
 
         {/* Botões */}
-        <div className="flex flex-col gap-2 px-4 pb-4 pt-3 border-t border-white/5">
+        <div className="admin-border-t flex flex-col gap-2 px-4 pb-4 pt-3">
           {caixa.status === "fechado" ? (
             <button
               onClick={reabrirCaixa}
-              className="transform-gpu flex items-center justify-center gap-2 w-full bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-colors"
+              className="admin-surface-subtle admin-text-secondary transform-gpu flex items-center justify-center gap-2 w-full hover:opacity-80 rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-opacity"
             >
               <Lock className="w-4 h-4" /> Reabrir Caixa
             </button>
@@ -736,7 +733,7 @@ export default function CaixaPage() {
               <button
                 onClick={fecharCaixa}
                 disabled={!caixaExiste && caixa.comandas.length === 0 && caixa.despesas.length === 0}
-                className="transform-gpu flex flex-col items-center gap-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] disabled:opacity-40 disabled:hover:bg-white/8 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors"
+                className="admin-surface-subtle admin-text-secondary transform-gpu flex flex-col items-center gap-1 hover:opacity-80 disabled:opacity-40 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-opacity"
               >
                 <Lock className="w-4 h-4" /> Fechar Caixa
               </button>
@@ -747,10 +744,10 @@ export default function CaixaPage() {
       </div>
 
       {/* Card: Comandas do dia (abertas) */}
-      <div className="transform-gpu mx-4 mb-12 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+      <div className="transform-gpu mx-4 mb-12 rounded-2xl overflow-hidden admin-glass-card">
         <div className="px-4 pt-4 pb-3">
-          <p className="text-sm font-bold text-slate-100">Comandas do dia</p>
-          <p className="text-[10px] font-semibold text-slate-300 uppercase tracking-widest mt-0.5">
+          <p className="text-sm font-bold admin-text-primary">Comandas do dia</p>
+          <p className="text-[10px] font-semibold admin-text-secondary uppercase tracking-widest mt-0.5">
             {comandasAbertas.length > 0 ? `${comandasAbertas.length} em aberto` : "Nenhuma comanda em aberto"}
           </p>
         </div>
@@ -758,20 +755,20 @@ export default function CaixaPage() {
         {comandasAbertas.length > 0 ? (
           <div className="px-4 pb-4 space-y-2">
             {comandasAbertas.map((c) => (
-              <div key={c.id} className="transform-gpu flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 bg-white/5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+              <div key={c.id} className="admin-surface-subtle transform-gpu flex items-center justify-between gap-3 rounded-xl px-3 py-2.5">
                 <div className="flex items-start gap-2.5 min-w-0">
                   <div className="w-7 h-7 rounded-full bg-amber-400/10 flex items-center justify-center shrink-0 mt-0.5">
                     <Scissors className="w-3.5 h-3.5 text-amber-400" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-slate-100 truncate">{c.cliente}</p>
-                    <p className="text-xs text-slate-300 truncate">
+                    <p className="text-sm font-bold admin-text-primary truncate">{c.cliente}</p>
+                    <p className="text-xs admin-text-secondary truncate">
                       {c.profissional} · {c.itens.map((i) => i.descricao).join(", ")}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-sm font-semibold text-slate-200">{fmt(totalComanda(c))}</span>
+                  <span className="text-sm font-semibold admin-text-primary">{fmt(totalComanda(c))}</span>
                   <button
                     onClick={() => setComandaParaFechar(c)}
                     className="bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 hover:brightness-110 rounded-lg px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-all"
@@ -783,7 +780,7 @@ export default function CaixaPage() {
             ))}
           </div>
         ) : (
-          <p className="px-4 pb-4 text-sm text-slate-300">
+          <p className="px-4 pb-4 text-sm admin-text-secondary">
             Comandas abertas aparecem aqui até serem pagas.
           </p>
         )}
@@ -812,8 +809,8 @@ export default function CaixaPage() {
           {(close) => (
             <div className="p-4 space-y-4">
               <div>
-                <h2 className="text-base font-bold text-slate-100">Comandas em aberto</h2>
-                <p className="text-sm text-slate-400 mt-1">
+                <h2 className="text-base font-bold admin-text-primary">Comandas em aberto</h2>
+                <p className="text-sm admin-text-secondary mt-1">
                   Ainda há {comandasAbertas.length} comanda{comandasAbertas.length > 1 ? "s" : ""} em aberto neste dia.
                   Tem certeza que deseja fechar o caixa mesmo assim?
                 </p>
@@ -821,7 +818,7 @@ export default function CaixaPage() {
               <div className="flex gap-3">
                 <button
                   onClick={close}
-                  className="transform-gpu flex-1 bg-white/8 backdrop-blur-md hover:bg-white/12 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] py-3 rounded-xl text-sm font-semibold transition-colors"
+                  className="admin-surface-subtle admin-text-secondary transform-gpu flex-1 hover:opacity-80 py-3 rounded-xl text-sm font-semibold transition-opacity"
                 >
                   Cancelar
                 </button>

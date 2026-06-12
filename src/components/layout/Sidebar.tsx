@@ -14,11 +14,10 @@ import {
   ChevronDown,
   ChevronRight,
   LogOut,
-  Menu,
-  Percent,
 } from "lucide-react";
-import { FaCashRegister } from "react-icons/fa";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useNavShortcuts } from "@/hooks/useNavShortcuts";
+import { NAV_SHORTCUTS_CENTER_INDEX, getMenuItemByHref } from "@/lib/nav-shortcuts";
 
 const navItems = [
   {
@@ -221,7 +220,7 @@ function NavBottomItem({
       href={href}
       onClick={handleClick}
       className={`flex flex-col items-center justify-end gap-1 flex-1 pb-1.5 transition-colors ${
-        isActive ? "text-gold" : "text-slate-100 hover:text-white"
+        isActive ? "text-gold" : "admin-nav-text hover:opacity-80"
       }`}
     >
       <motion.div
@@ -231,7 +230,7 @@ function NavBottomItem({
         className={`flex items-center justify-center w-10 h-10 rounded-full ${
           isActive
             ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 shadow-[0_0_22px_rgba(194,163,93,0.6)]"
-            : "text-slate-100"
+            : "admin-nav-text"
         }`}
       >
         <Icon className="w-5 h-5" />
@@ -244,52 +243,53 @@ function NavBottomItem({
 // Bottom nav — só aparece em mobile
 function MobileBottomNav() {
   const pathname = usePathname();
+  const { shortcuts } = useNavShortcuts();
+  const centerHref = shortcuts[NAV_SHORTCUTS_CENTER_INDEX];
+  const centerItem = getMenuItemByHref(centerHref);
+  const CenterIcon = centerItem?.icon ?? Calendar;
+  const isCenterActive = centerHref === "/admin" ? pathname === "/admin" : pathname === centerHref || pathname.startsWith(centerHref + "/");
 
   return (
     <nav className="fixed bottom-3 left-3 right-3 z-30 md:hidden">
       {/* Barra inferior flutuante */}
-      <div className="transform-gpu flex items-end justify-around h-16 px-2 rounded-[2rem] bg-white/3 backdrop-blur-md backdrop-saturate-100 border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_8px_32px_rgba(0,0,0,0.35)]">
+      <div className="admin-nav-pill transform-gpu flex items-end justify-around h-16 px-2 rounded-[2rem]">
+        {shortcuts.map((href, index) => {
+          if (index === NAV_SHORTCUTS_CENTER_INDEX) {
+            return (
+              <div key="center-spacer" className="flex-1 flex flex-col items-center pb-2.5">
+                <span className="w-10 h-10" />
+                <span className="text-[10px] opacity-0">.</span>
+              </div>
+            );
+          }
 
-        {/* Comissões */}
-        <NavBottomItem href="/admin/financeiro/comissoes" icon={Percent} label="Comissões" pathname={pathname} />
+          const item = getMenuItemByHref(href);
+          if (!item) return null;
 
-        {/* Caixa */}
-        <NavBottomItem href="/admin/financeiro/caixa" icon={FaCashRegister} label="Caixa" pathname={pathname} />
-
-        {/* Espaço reservado para o botão elevado da Agenda */}
-        <div className="flex-1 flex flex-col items-center pb-2.5">
-          <span className="w-10 h-10" />
-          <span className="text-[10px] opacity-0">Agenda</span>
-        </div>
-
-        {/* Clientes */}
-        <NavBottomItem href="/admin/cadastros/clientes" icon={Users} label="Clientes" pathname={pathname} />
-
-        {/* Menu */}
-        <NavBottomItem href="/admin/menu" icon={Menu} label="Menu" pathname={pathname} />
-
+          return <NavBottomItem key={href} href={item.href} icon={item.icon} label={item.label} pathname={pathname} />;
+        })}
       </div>
 
-      {/* Agenda — elevada, fora da camada de blur da pill para evitar bug de backdrop-filter */}
+      {/* Item central — elevado, fora da camada de blur da pill para evitar bug de backdrop-filter */}
       <Link
-        href="/admin"
-        onClick={() => { if (pathname === "/admin") document.getElementById("agenda-scroll")?.scrollTo({ top: 0, behavior: "smooth" }); }}
+        href={centerHref}
+        onClick={() => { if (pathname === centerHref) document.getElementById("agenda-scroll")?.scrollTo({ top: 0, behavior: "smooth" }); }}
         className="absolute left-1/2 -translate-x-1/2 -top-5 flex flex-col items-center"
       >
         <motion.div
           whileTap={{ scale: 0.85 }}
-          animate={{ scale: pathname === "/admin" ? 1 : 0.92 }}
+          animate={{ scale: isCenterActive ? 1 : 0.92 }}
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          className={`transform-gpu flex items-center justify-center w-16 h-16 rounded-full backdrop-blur-md backdrop-saturate-100 border ${
-            pathname === "/admin"
-              ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] border-white/30 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_28px_rgba(194,163,93,0.55)]"
-              : "bg-white/6 border-white/20 text-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.15),0_4px_16px_rgba(0,0,0,0.25)] hover:bg-white/12"
+          className={`transform-gpu flex items-center justify-center w-16 h-16 rounded-full ${
+            isCenterActive
+              ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] border border-white/30 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_28px_rgba(194,163,93,0.55)]"
+              : "admin-nav-center admin-nav-text"
           }`}
         >
-          <Calendar className="w-6 h-6" />
+          <CenterIcon className="w-6 h-6" />
         </motion.div>
-        <span className={`text-[10px] mt-1 font-medium ${pathname === "/admin" ? "text-gold" : "text-slate-100"}`}>
-          Agenda
+        <span className={`text-[10px] mt-1 font-medium ${isCenterActive ? "text-gold" : "admin-nav-text"}`}>
+          {centerItem?.label ?? "Agenda"}
         </span>
       </Link>
     </nav>

@@ -56,3 +56,14 @@ Como dois agentes de IA diferentes trabalham nesse repo, é importante:
 - `/financeiro/comissoes`
 - `/menu`
 - `src/components/layout/Sidebar.tsx` — navegação principal
+
+## Tema do Admin (Diurno / Noturno / Liquid Glass)
+
+O painel admin tem 3 temas escolhidos pelo usuário em `Configurações > Tema`. **Telas novas
+do admin devem nascer já tematizadas** — usar as utility classes `admin-*` em vez de cores
+fixas, e seguir a regra "texto dentro de card segue o tema (`admin-text-primary/secondary`),
+texto sobre o fundo é branco fixo (`text-slate-100`)". O dourado da marca e cores semânticas
+(verde/vermelho/amber) ficam iguais nos 3 modos.
+
+Guia completo (tokens, classes, template de tela nova, regra do restart do Turbopack):
+**`docs/admin-theme.md`**.
