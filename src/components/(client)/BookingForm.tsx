@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SERVICES, BARBERS } from '@/lib/data';
 import { BarberService, BarberSpecialist } from '@/lib/types';
+import { createAppointment, checkSlotConflict } from '@/lib/appointments';
 import { 
   Sparkles, 
   Check, 
@@ -63,6 +64,9 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
   // Confirmation Success state
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [ticketNumber, setTicketNumber] = useState<string>('');
+
+  // Submission / conflict state (persistencia no Firestore)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // Calendar navigation state (starting in June 2026 to align with meta-clock "2026-06-09")
   const [currentMonth, setCurrentMonth] = useState<number>(5); // June (0-indexed is 5)
@@ -242,9 +246,11 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
     return `${weekdayName}, ${day} de ${monthName}`;
   };
 
-  // Validation before submission
-  const validateAndSubmit = (e: React.FormEvent) => {
+  // Validation + persistencia no Firestore (com anti-conflito de horario)
+  const validateAndSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     const newErrors: { [key: string]: string } = {};
 
     if (!name.trim()) {
@@ -259,42 +265,57 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
       return;
     }
 
-    // Simulate final ticket creation
-    const randomTicket = 'BC-' + Math.floor(100000 + Math.random() * 900000);
-    setTicketNumber(randomTicket);
-    setIsSuccess(true);
+    setErrors({});
+    setIsSubmitting(true);
 
-    // Persistence engine: save this appointment to localStorage so it syncs with Cliente area cockpit
     try {
+      // Anti-conflito: so checa quando ha um barbeiro especifico escolhido
+      // (a opcao "Qualquer Disponível" nao reserva um profissional fixo).
+      if (selectedBarber.id !== ANY_BARBER.id) {
+        const taken = await checkSlotConflict(selectedDate, selectedTime, selectedBarber.id);
+        if (taken) {
+          setErrors({
+            slot: 'Este horário acabou de ser preenchido. Por favor, escolha outro horário.',
+          });
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       const finalPrice = Math.round(selectedService.price * (1 - appliedDiscount));
-      const existing = localStorage.getItem('seculo-xxi-appointments');
-      const list = existing ? JSON.parse(existing) : [];
-      list.unshift({
-        id: randomTicket,
+
+      await createAppointment({
+        serviceId: selectedService.id,
         serviceName: selectedService.name,
         servicePrice: finalPrice,
+        barberId: selectedBarber.id,
         barberName: selectedBarber.name,
         date: selectedDate,
         time: selectedTime,
         customerName: name.trim(),
         customerPhone: phone,
-        status: 'pendente'
+        origin: 'landing',
       });
-      localStorage.setItem('seculo-xxi-appointments', JSON.stringify(list));
-      // Dispatch standard storage event to update Header dashboard instances
-      window.dispatchEvent(new Event('storage'));
+
+      const randomTicket = 'BC-' + Math.floor(100000 + Math.random() * 900000);
+      setTicketNumber(randomTicket);
+      setIsSuccess(true);
+
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: {
+          title: 'RITUAL AGENDADO',
+          message: `Olá ${name.trim()}, seu agendamento de "${selectedService.name}" foi concluído para hoje ou dia selecionado (${formatSelectedShortDate(selectedDate)}) às ${selectedTime}h com ${selectedBarber.name.split(' "')[0]}. Voucher: ${randomTicket}`,
+          type: 'success'
+        }
+      }));
     } catch (err) {
       console.error('Failed to persist appointment:', err);
+      setErrors({
+        slot: 'Não foi possível concluir o agendamento agora. Tente novamente em instantes.',
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Dispatch custom show-toast event
-    window.dispatchEvent(new CustomEvent('show-toast', {
-      detail: {
-        title: 'RITUAL AGENDADO',
-        message: `Olá ${name.trim()}, seu agendamento de "${selectedService.name}" foi concluído para hoje ou dia selecionado (${formatSelectedShortDate(selectedDate)}) às ${selectedTime}h com ${selectedBarber.name.split(' "')[0]}. Voucher: ${randomTicket}`,
-        type: 'success'
-      }
-    }));
   };
 
   const handleResetAndRestart = () => {
@@ -804,13 +825,28 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
 
                         {/* Submit Action Block */}
                         <div className="pt-2 space-y-2">
+                          {errors.slot && (
+                            <p className="text-rose-400 font-sans text-[10px] text-center leading-snug px-2">
+                              {errors.slot}
+                            </p>
+                          )}
                           <button
                             type="submit"
-                            className="w-full py-3.5 bg-linear-to-r from-[#ece4cb] to-[#c2a35d] text-slate-950 hover:opacity-90 font-sans text-xs font-bold uppercase tracking-widest rounded-2xl transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 shadow-[0_0_20px_rgba(194,163,93,0.3)]"
+                            disabled={isSubmitting}
+                            className="w-full py-3.5 bg-linear-to-r from-[#ece4cb] to-[#c2a35d] text-slate-950 hover:opacity-90 font-sans text-xs font-bold uppercase tracking-widest rounded-2xl transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 shadow-[0_0_20px_rgba(194,163,93,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
                             id="submit-booking-action"
                           >
-                            <Sparkles className="w-4 h-4" />
-                            Confirmar Ritual
+                            {isSubmitting ? (
+                              <>
+                                <span className="gold-spinner w-4 h-4" />
+                                Confirmando...
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="w-4 h-4" />
+                                Confirmar Ritual
+                              </>
+                            )}
                           </button>
 
                           <button

@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useRef, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect, useEffect } from "react";
 import { ChevronLeft, ChevronRight, RefreshCw, Calendar, Ban, X, Plus, Link2, FileText, ListOrdered, ChevronDown } from "lucide-react";
+import { subscribeToDay } from "@/lib/appointments";
+import type { Appointment } from "@/lib/types";
 
 // Componente que anima a entrada do calendário (slide + fade do lado certo)
 function CalSlide({ dir, children }: { dir: "left" | "right"; children: React.ReactNode }) {
@@ -82,21 +84,17 @@ function FabMenu({ onAgendar }: { onAgendar: (hora: string) => void }) {
   );
 }
 
-const AGENDAMENTOS: Record<string, { hora: string; cliente: string; servico: string; status: "agendado" | "bloqueado" | "concluido" }[]> = {
-  "2026-06-08": [
-    { hora: "09:00", cliente: "João Silva", servico: "Corte + Barba", status: "concluido" },
-    { hora: "10:00", cliente: "Pedro Alves", servico: "Corte", status: "agendado" },
-    { hora: "11:00", cliente: "", servico: "", status: "bloqueado" },
-    { hora: "14:00", cliente: "Rafael M.", servico: "Barba", status: "agendado" },
-  ],
-  "2026-06-10": [
-    { hora: "09:00", cliente: "Lucas Costa", servico: "Corte", status: "agendado" },
-    { hora: "10:30", cliente: "Marcos P.", servico: "Corte + Barba", status: "agendado" },
-  ],
-  "2026-06-11": [
-    { hora: "13:00", cliente: "Felipe A.", servico: "Barba", status: "agendado" },
-  ],
-};
+// Item de agendamento no formato consumido pela UI da Agenda. Os dados vem do
+// Firestore (coleção `appointments`) via subscribeToDay e sao mapeados para
+// este shape. "bloqueado" e um status local (bloqueio manual de horario).
+type AgendaItem = { hora: string; cliente: string; servico: string; status: "agendado" | "bloqueado" | "concluido" };
+
+// Mapeia o status do Firestore para o status visual da Agenda.
+function toAgendaItem(a: Appointment): AgendaItem {
+  const status: AgendaItem["status"] =
+    a.status === "concluido" ? "concluido" : "agendado";
+  return { hora: a.time, cliente: a.customerName, servico: a.serviceName, status };
+}
 
 const HORARIOS = ["08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","12:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
 const SERVICOS = ["Corte Clássico", "Corte + Barba", "Barba", "Degradê", "Corte Máquina"];
@@ -128,6 +126,20 @@ export default function AgendaPage() {
   const [modal, setModal] = useState<{ hora: string } | null>(null);
   const [form, setForm] = useState({ cliente: "", whatsapp: "", servico: "Corte Clássico", preco: "45", barbeiro: "Qualquer disponível" });
 
+  // Agendamentos vindos do Firestore, acumulados por dia (key YYYY-MM-DD).
+  // O dia selecionado e escutado em tempo real (onSnapshot).
+  const [agendamentos, setAgendamentos] = useState<Record<string, AgendaItem[]>>({});
+
+  useEffect(() => {
+    const unsub = subscribeToDay(diaSelecionado, (lista) => {
+      setAgendamentos((prev) => ({
+        ...prev,
+        [diaSelecionado]: lista.map(toAgendaItem),
+      }));
+    });
+    return unsub;
+  }, [diaSelecionado]);
+
   const navMes = (dir: number) => {
     setSlideDir(dir > 0 ? "right" : "left");
     setCalKey((k) => k + 1);
@@ -150,7 +162,7 @@ export default function AgendaPage() {
     setExpandido(false);
   };
 
-  const agendDia = AGENDAMENTOS[diaSelecionado] ?? [];
+  const agendDia = agendamentos[diaSelecionado] ?? [];
   const agendPorHora: Record<string, typeof agendDia[0]> = {};
   agendDia.forEach((a) => { agendPorHora[a.hora] = a; });
 
@@ -235,7 +247,7 @@ export default function AgendaPage() {
           <div className="grid grid-cols-7 px-2 pb-3 gap-y-1">
             {diasDaSemana.map((d) => {
               const key = toKey(d.getFullYear(), d.getMonth(), d.getDate());
-              const temAgend = !!AGENDAMENTOS[key]?.some((a) => a.status !== "bloqueado");
+              const temAgend = !!agendamentos[key]?.some((a) => a.status !== "bloqueado");
               const isHoje = key === hojeKey;
               const isSel = key === diaSelecionado;
               const isDom = d.getDay() === 0;
@@ -266,8 +278,8 @@ export default function AgendaPage() {
               {celulas.map((dia, i) => {
                 if (!dia) return <div key={`e-${i}`} />;
                 const key = toKey(ano, mes, dia);
-                const temAgend = !!AGENDAMENTOS[key]?.some((a) => a.status !== "bloqueado");
-                const temCaixa = !!AGENDAMENTOS[key];
+                const temAgend = !!agendamentos[key]?.some((a) => a.status !== "bloqueado");
+                const temCaixa = !!agendamentos[key];
                 const isHoje = key === hojeKey;
                 const isSel = key === diaSelecionado;
                 const isDom = new Date(ano, mes, dia).getDay() === 0;

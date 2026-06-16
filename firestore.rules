@@ -7,5 +7,29 @@ service cloud.firestore {
     match /userPreferences/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+
+    // Agendamentos. A landing (cliente anônimo, sem login) PODE criar, mas só
+    // com os campos esperados e sempre com status "pendente" — isso limita o
+    // abuso sem exigir login do cliente. Ler/editar/cancelar só admin logado.
+    match /appointments/{id} {
+      allow create: if isValidNewAppointment();
+      allow read, update, delete: if request.auth != null;
+    }
+
+    function isValidNewAppointment() {
+      let d = request.resource.data;
+      return d.status == "pendente"
+        && d.origin in ["landing", "admin"]
+        && d.date is string
+        && d.time is string
+        && d.serviceId is string
+        && d.serviceName is string
+        && d.servicePrice is number
+        && d.barberId is string
+        && d.barberName is string
+        && d.customerName is string
+        && d.customerName.size() > 0
+        && d.customerPhone is string;
+    }
   }
 }

@@ -24,11 +24,31 @@ export interface Testimonial {
   rating: number;
 }
 
-export interface Appointment {
+export type AppointmentStatus =
+  | "pendente"
+  | "agendado"
+  | "concluido"
+  | "cancelado";
+
+export type AppointmentOrigin = "landing" | "admin";
+
+/** Dados que o formulário envia ao criar um agendamento. */
+export interface AppointmentInput {
   serviceId: string;
+  serviceName: string;
+  servicePrice: number;
   barberId: string;
-  date: string;
-  time: string;
+  barberName: string;
+  date: string; // "YYYY-MM-DD"
+  time: string; // "HH:mm"
   customerName: string;
   customerPhone: string;
+  origin: AppointmentOrigin;
+}
+
+/** Documento de agendamento como persistido no Firestore (coleção `appointments`). */
+export interface Appointment extends AppointmentInput {
+  id: string;
+  status: AppointmentStatus;
+  createdAt: number; // epoch ms (serverTimestamp resolvido no cliente)
 }
