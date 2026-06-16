@@ -129,7 +129,7 @@ function GlassOrb({ category, onClick, icon, label, sublabel }: GlassOrbProps) {
         )}
 
         {/* Central lens glowing cluster */}
-        <div className="absolute inset-10 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2),transparent_65%)] animate-pulse" style={{ animationDuration: '3s' }} />
+        <div className="absolute inset-10 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2),transparent_65%)] md:animate-pulse" style={{ animationDuration: '3s' }} />
 
         {/* 5. Curved high gloss specular highlight mimicking a professional light box source reflection */}
         <div className="absolute top-[2px] right-6 left-6 h-[44%] bg-gradient-to-b from-white/[0.6] via-white/[0.1] to-transparent rounded-[100%_100%_50%_50%] pointer-events-none filter brightness-120" />
@@ -190,7 +190,7 @@ export default function OrbCarousel() {
       id="servicos"
     >
       {/* Dynamic Ambient Background Glows */}
-      <div className="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[140px] pointer-events-none" />
+      <div className="glow-decor absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[140px] pointer-events-none" />
       
       <div className="max-w-7xl mx-auto relative z-10">
         
@@ -215,7 +215,7 @@ export default function OrbCarousel() {
             className={`px-4 py-2 rounded-xl font-sans text-[9px] sm:text-[10px] tracking-widest uppercase border transition-all duration-300 font-bold ${
               activeCategory === 'menu'
                 ? 'bg-[#c2a35d] text-zinc-950 border-[#c2a35d] shadow-[0_0_20px_rgba(194,163,93,0.3)]'
-                : 'bg-white/5 backdrop-blur-md text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
+                : 'bg-white/[0.06] md:backdrop-blur-md text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
             }`}
           >
             Início / Categorias
@@ -225,7 +225,7 @@ export default function OrbCarousel() {
             className={`px-4 py-2 rounded-xl font-sans text-[9px] sm:text-[10px] tracking-widest uppercase border transition-all duration-300 font-bold ${
               activeCategory === 'services'
                 ? 'bg-[#c2a35d] text-zinc-950 border-[#c2a35d] shadow-[0_0_20px_rgba(194,163,93,0.3)]'
-                : 'bg-white/5 backdrop-blur-md text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
+                : 'bg-white/[0.06] md:backdrop-blur-md text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
             }`}
           >
             Serviços Exclusivos
@@ -235,7 +235,7 @@ export default function OrbCarousel() {
             className={`px-4 py-2 rounded-xl font-sans text-[9px] sm:text-[10px] tracking-widest uppercase border transition-all duration-300 font-bold ${
               activeCategory === 'products'
                 ? 'bg-[#c2a35d] text-zinc-950 border-[#c2a35d] shadow-[0_0_20px_rgba(194,163,93,0.3)]'
-                : 'bg-white/5 backdrop-blur-md text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
+                : 'bg-white/[0.06] md:backdrop-blur-md text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
             }`}
           >
             Cosméticos & Produtos
@@ -303,7 +303,7 @@ export default function OrbCarousel() {
               id="orbs-services-inside"
             >
               {/* Back navigation header layout */}
-              <div className="flex flex-col sm:flex-row justify-between items-center bg-black/40 backdrop-blur-xl p-5 rounded-3xl border border-white/10 gap-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+              <div className="flex flex-col sm:flex-row justify-between items-center glass-card-strong p-5 rounded-3xl gap-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                 <div className="flex items-center gap-4 text-left">
                   {/* Floating miniature category Orb */}
                   <div className="relative w-16 h-16 rounded-full border border-dashed border-gold/40 flex items-center justify-center shrink-0">
@@ -345,7 +345,7 @@ export default function OrbCarousel() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.05 }}
                       onClick={() => setSelectedServiceId(srv.id)}
-                      className={`group bg-white/5 backdrop-blur-xl p-6 rounded-[24px] flex flex-col justify-between text-left transition-all duration-500 relative overflow-hidden cursor-pointer select-none shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_10px_rgba(0,0,0,0.3)] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_40px_rgba(0,0,0,0.5)] md:group-hover:shadow-[0_20px_45px_-12px_rgba(16,185,129,0.22)] ${
+                      className={`group glass-card p-6 rounded-[24px] flex flex-col justify-between text-left transition-all duration-500 relative overflow-hidden cursor-pointer select-none shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_10px_rgba(0,0,0,0.3)] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_40px_rgba(0,0,0,0.5)] md:group-hover:shadow-[0_20px_45px_-12px_rgba(16,185,129,0.22)] ${
                         isSelected 
                           ? 'shadow-[0_0_15px_rgba(194,163,93,0.35)] ring-2 ring-[#c2a35d]' 
                           : 'border border-white/10 hover:border-emerald-500/40'
@@ -357,11 +357,11 @@ export default function OrbCarousel() {
                       )}
 
                       {/* Glass Specular Gloss Highlight Reflection top bar */}
-                      <div className="absolute top-0 left-0 right-0 h-[25%] bg-gradient-to-b from-white/[0.06] via-transparent to-transparent pointer-events-none" />
-                      <div className="absolute inset-[1px] rounded-[23px] bg-gradient-to-tr from-transparent via-transparent to-white/[0.06] pointer-events-none" />
+                      <div className="glow-decor absolute top-0 left-0 right-0 h-[25%] bg-gradient-to-b from-white/[0.06] via-transparent to-transparent pointer-events-none" />
+                      <div className="glow-decor absolute inset-[1px] rounded-[23px] bg-gradient-to-tr from-transparent via-transparent to-white/[0.06] pointer-events-none" />
 
                       {/* Lively backdrop custom glow */}
-                      <div className={`absolute -inset-10 bg-emerald-500/[0.01] group-hover:bg-emerald-500/[0.08] blur-2xl rounded-full transition-all duration-500 pointer-events-none ${
+                      <div className={`glow-decor absolute -inset-10 bg-emerald-500/[0.01] group-hover:bg-emerald-500/[0.08] blur-2xl rounded-full transition-all duration-500 pointer-events-none ${
                         isSelected ? 'bg-amber-500/[0.05]' : ''
                       }`} />
 
@@ -442,7 +442,7 @@ export default function OrbCarousel() {
               id="orbs-products-inside"
             >
               {/* Back navigation header layout */}
-              <div className="flex flex-col sm:flex-row justify-between items-center bg-black/40 backdrop-blur-xl p-5 rounded-3xl border border-white/10 gap-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+              <div className="flex flex-col sm:flex-row justify-between items-center glass-card-strong p-5 rounded-3xl gap-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                 <div className="flex items-center gap-4 text-left">
                   {/* Floating miniature category Orb */}
                   <div className="relative w-16 h-16 rounded-full border border-dashed border-[#c2a35d]/40 flex items-center justify-center shrink-0">
@@ -481,14 +481,14 @@ export default function OrbCarousel() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}
-                    className="group bg-white/5 backdrop-blur-xl border border-white/10 hover:border-amber-500/40 p-5 rounded-[24px] flex flex-col justify-between text-left transition-all duration-500 relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_10px_rgba(0,0,0,0.3)] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_40px_rgba(0,0,0,0.5)] md:group-hover:shadow-[0_20px_45px_-12px_rgba(245,158,11,0.22)]"
+                    className="group glass-card border-white/10 hover:border-amber-500/40 p-5 rounded-[24px] flex flex-col justify-between text-left transition-all duration-500 relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_10px_rgba(0,0,0,0.3)] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_40px_rgba(0,0,0,0.5)] md:group-hover:shadow-[0_20px_45px_-12px_rgba(245,158,11,0.22)]"
                   >
                     {/* Glass Specular Gloss Highlight Reflection top bar */}
-                    <div className="absolute top-0 left-0 right-0 h-[25%] bg-gradient-to-b from-white/[0.06] via-transparent to-transparent pointer-events-none" />
-                    <div className="absolute inset-[1px] rounded-[23px] bg-gradient-to-tr from-transparent via-transparent to-white/[0.06] pointer-events-none" />
+                    <div className="glow-decor absolute top-0 left-0 right-0 h-[25%] bg-gradient-to-b from-white/[0.06] via-transparent to-transparent pointer-events-none" />
+                    <div className="glow-decor absolute inset-[1px] rounded-[23px] bg-gradient-to-tr from-transparent via-transparent to-white/[0.06] pointer-events-none" />
 
                     {/* Lively backdrop custom glow */}
-                    <div className="absolute -inset-10 bg-amber-500/[0.01] group-hover:bg-amber-500/[0.08] blur-2xl rounded-full transition-all duration-500 pointer-events-none" />
+                    <div className="glow-decor absolute -inset-10 bg-amber-500/[0.01] group-hover:bg-amber-500/[0.08] blur-2xl rounded-full transition-all duration-500 pointer-events-none" />
 
                     <div className="space-y-4 relative z-10">
                       {/* Product image frame with high luxury aesthetics */}
