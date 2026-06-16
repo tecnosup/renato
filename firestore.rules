@@ -7,5 +7,54 @@ service cloud.firestore {
     match /userPreferences/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+
+    // Funcionários (barbeiros). A landing precisa LER a lista para montar o
+    // seletor de profissional no agendamento, então leitura é pública. Só o
+    // admin logado pode criar/editar/excluir.
+    match /barbers/{id} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null;
+    }
+
+    // Agendamentos.
+    // - CREATE: landing anônima pode, com os campos esperados e status "pendente".
+    // - READ: quem pode ver a agenda de todos (owner sem claims, ou perms
+    //   .verAgendaTodos) lê qualquer um; barbeiro restrito só lê os DELE
+    //   (barberId == uid). Em queries (onSnapshot), o cliente DEVE filtrar por
+    //   barberId — a regra valida cada doc, então uma query sem filtro é negada.
+    // - UPDATE/DELETE: só quem vê todos (gestão). Barbeiro não edita agenda.
+    match /appointments/{id} {
+      allow create: if isValidNewAppointment();
+      allow read: if canSeeAllAgenda() || ownsAppointment();
+      allow update, delete: if canSeeAllAgenda();
+    }
+
+    // Owner = logado sem custom claims de perms. Demais: checa o claim.
+    function canSeeAllAgenda() {
+      return request.auth != null
+        && (!('perms' in request.auth.token) || request.auth.token.perms.verAgendaTodos == true);
+    }
+
+    function ownsAppointment() {
+      return request.auth != null
+        && 'barberId' in request.auth.token
+        && resource.data.barberId == request.auth.token.barberId;
+    }
+
+    function isValidNewAppointment() {
+      let d = request.resource.data;
+      return d.status == "pendente"
+        && d.origin in ["landing", "admin"]
+        && d.date is string
+        && d.time is string
+        && d.serviceId is string
+        && d.serviceName is string
+        && d.servicePrice is number
+        && d.barberId is string
+        && d.barberName is string
+        && d.customerName is string
+        && d.customerName.size() > 0
+        && d.customerPhone is string;
+    }
   }
 }

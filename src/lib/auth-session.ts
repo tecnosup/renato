@@ -12,6 +12,9 @@ const JWKS = createRemoteJWKSet(
 export interface SessionUser {
   uid: string;
   email?: string;
+  /** Custom claims setados via Admin SDK (role/perms). Ausente para o proprietario "raiz". */
+  role?: string;
+  perms?: Record<string, boolean>;
 }
 
 export async function verifySessionToken(token: string): Promise<SessionUser | null> {
@@ -25,8 +28,25 @@ export async function verifySessionToken(token: string): Promise<SessionUser | n
 
     if (!payload.sub) return null;
 
-    return { uid: payload.sub, email: typeof payload.email === "string" ? payload.email : undefined };
+    return {
+      uid: payload.sub,
+      email: typeof payload.email === "string" ? payload.email : undefined,
+      role: typeof payload.role === "string" ? payload.role : undefined,
+      perms:
+        payload.perms && typeof payload.perms === "object"
+          ? (payload.perms as Record<string, boolean>)
+          : undefined,
+    };
   } catch {
     return null;
   }
+}
+
+/** Le o usuario da sessao a partir do cookie httpOnly (uso em API routes/server). */
+export async function getSessionUser(): Promise<SessionUser | null> {
+  const { cookies } = await import("next/headers");
+  const store = await cookies();
+  const token = store.get(SESSION_COOKIE_NAME)?.value;
+  if (!token) return null;
+  return verifySessionToken(token);
 }

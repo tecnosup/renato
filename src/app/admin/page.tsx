@@ -1,7 +1,20 @@
 "use client";
 
-import { useState, useRef, useLayoutEffect } from "react";
-import { ChevronLeft, ChevronRight, RefreshCw, Calendar, Ban, X, Plus, Link2, FileText, ListOrdered, ChevronDown } from "lucide-react";
+import { useState, useRef, useLayoutEffect, useEffect } from "react";
+import { ChevronLeft, ChevronRight, RefreshCw, Calendar, Ban, X, Plus, Link2, FileText, ListOrdered, ChevronDown, MessageCircle, CalendarClock, Trash2, Check } from "lucide-react";
+import { subscribeToDay, cancelAppointment, rescheduleAppointment } from "@/lib/appointments";
+import { Modal } from "@/components/ui/Modal";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { can } from "@/lib/access";
+import type { Appointment } from "@/lib/types";
+
+// Monta o link de WhatsApp do cliente (assume DDI 55 quando o numero so tem DDD).
+function buildWhatsappLink(phone: string, nome: string): string {
+  const digits = phone.replace(/\D/g, "");
+  const full = digits.startsWith("55") ? digits : `55${digits}`;
+  const msg = encodeURIComponent(`Olá ${nome}, tudo bem? Aqui é da Barbearia Século XXI sobre o seu agendamento.`);
+  return `https://wa.me/${full}?text=${msg}`;
+}
 
 // Componente que anima a entrada do calendário (slide + fade do lado certo)
 function CalSlide({ dir, children }: { dir: "left" | "right"; children: React.ReactNode }) {
@@ -82,23 +95,7 @@ function FabMenu({ onAgendar }: { onAgendar: (hora: string) => void }) {
   );
 }
 
-const AGENDAMENTOS: Record<string, { hora: string; cliente: string; servico: string; status: "agendado" | "bloqueado" | "concluido" }[]> = {
-  "2026-06-08": [
-    { hora: "09:00", cliente: "João Silva", servico: "Corte + Barba", status: "concluido" },
-    { hora: "10:00", cliente: "Pedro Alves", servico: "Corte", status: "agendado" },
-    { hora: "11:00", cliente: "", servico: "", status: "bloqueado" },
-    { hora: "14:00", cliente: "Rafael M.", servico: "Barba", status: "agendado" },
-  ],
-  "2026-06-10": [
-    { hora: "09:00", cliente: "Lucas Costa", servico: "Corte", status: "agendado" },
-    { hora: "10:30", cliente: "Marcos P.", servico: "Corte + Barba", status: "agendado" },
-  ],
-  "2026-06-11": [
-    { hora: "13:00", cliente: "Felipe A.", servico: "Barba", status: "agendado" },
-  ],
-};
-
-const HORARIOS = ["08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","12:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
+const HORARIOS =["08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","12:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
 const SERVICOS = ["Corte Clássico", "Corte + Barba", "Barba", "Degradê", "Corte Máquina"];
 const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const DIAS_SEMANA_CURTO = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
@@ -128,6 +125,35 @@ export default function AgendaPage() {
   const [modal, setModal] = useState<{ hora: string } | null>(null);
   const [form, setForm] = useState({ cliente: "", whatsapp: "", servico: "Corte Clássico", preco: "45", barbeiro: "Qualquer disponível" });
 
+  // Agendamentos vindos do Firestore, acumulados por dia (key YYYY-MM-DD).
+  // Guardamos o Appointment completo (para acoes: cancelar, remarcar, WhatsApp).
+  // O dia selecionado e escutado em tempo real (onSnapshot).
+  const [agendamentos, setAgendamentos] = useState<Record<string, Appointment[]>>({});
+
+  // Acoes do agendamento: modal de detalhes/remarcar do item clicado.
+  const [acaoModal, setAcaoModal] = useState<Appointment | null>(null);
+  const [remarcando, setRemarcando] = useState(false);
+  const [novaData, setNovaData] = useState("");
+  const [novaHora, setNovaHora] = useState("");
+
+  // Escopo de dados: quem NAO pode ver a agenda de todos so ve a propria.
+  const { perms, barberId, loading: authLoading } = useAuth();
+  const verTodos = can(perms, "verAgendaTodos");
+  const filtroBarbeiro = verTodos ? undefined : barberId;
+
+  useEffect(() => {
+    // Espera o auth resolver: senao um barbeiro veria a agenda toda por um instante.
+    if (authLoading) return;
+    const unsub = subscribeToDay(
+      diaSelecionado,
+      (lista) => {
+        setAgendamentos((prev) => ({ ...prev, [diaSelecionado]: lista }));
+      },
+      filtroBarbeiro
+    );
+    return unsub;
+  }, [diaSelecionado, filtroBarbeiro, authLoading]);
+
   const navMes = (dir: number) => {
     setSlideDir(dir > 0 ? "right" : "left");
     setCalKey((k) => k + 1);
@@ -150,11 +176,36 @@ export default function AgendaPage() {
     setExpandido(false);
   };
 
-  const agendDia = AGENDAMENTOS[diaSelecionado] ?? [];
-  const agendPorHora: Record<string, typeof agendDia[0]> = {};
-  agendDia.forEach((a) => { agendPorHora[a.hora] = a; });
+  // Abre o modal de acoes de um agendamento existente.
+  const abrirAcao = (a: Appointment) => {
+    setAcaoModal(a);
+    setRemarcando(false);
+    setNovaData(a.date);
+    setNovaHora(a.time);
+  };
 
-  const totalAgend = agendDia.filter((a) => a.status !== "bloqueado").length;
+  const confirmarCancelamento = async () => {
+    if (!acaoModal) return;
+    await cancelAppointment(acaoModal.id);
+    setAcaoModal(null);
+  };
+
+  const confirmarRemarcacao = async () => {
+    if (!acaoModal || !novaData || !novaHora) return;
+    await rescheduleAppointment(acaoModal.id, novaData, novaHora);
+    setAcaoModal(null);
+    // Se remarcou para outro dia, pula para ele para o admin ver.
+    if (novaData !== diaSelecionado) {
+      setDiaSelecionado(novaData);
+    }
+  };
+
+  // So contam os agendamentos ativos (cancelados nao ocupam slot nem aparecem).
+  const agendDia = (agendamentos[diaSelecionado] ?? []).filter((a) => a.status !== "cancelado");
+  const agendPorHora: Record<string, Appointment> = {};
+  agendDia.forEach((a) => { agendPorHora[a.time] = a; });
+
+  const totalAgend = agendDia.length;
   const concluidos = agendDia.filter((a) => a.status === "concluido").length;
   const faturado = concluidos * 65;
   const livres = HORARIOS.length - agendDia.length;
@@ -235,7 +286,7 @@ export default function AgendaPage() {
           <div className="grid grid-cols-7 px-2 pb-3 gap-y-1">
             {diasDaSemana.map((d) => {
               const key = toKey(d.getFullYear(), d.getMonth(), d.getDate());
-              const temAgend = !!AGENDAMENTOS[key]?.some((a) => a.status !== "bloqueado");
+              const temAgend = !!agendamentos[key]?.some((a) => a.status !== "cancelado");
               const isHoje = key === hojeKey;
               const isSel = key === diaSelecionado;
               const isDom = d.getDay() === 0;
@@ -266,8 +317,8 @@ export default function AgendaPage() {
               {celulas.map((dia, i) => {
                 if (!dia) return <div key={`e-${i}`} />;
                 const key = toKey(ano, mes, dia);
-                const temAgend = !!AGENDAMENTOS[key]?.some((a) => a.status !== "bloqueado");
-                const temCaixa = !!AGENDAMENTOS[key];
+                const temAgend = !!agendamentos[key]?.some((a) => a.status !== "cancelado");
+                const temCaixa = !!agendamentos[key];
                 const isHoje = key === hojeKey;
                 const isSel = key === diaSelecionado;
                 const isDom = new Date(ano, mes, dia).getDay() === 0;
@@ -324,30 +375,21 @@ export default function AgendaPage() {
           {HORARIOS.map((hora) => {
             const agend = agendPorHora[hora];
 
-            if (agend?.status === "bloqueado") {
-              return (
-                <li key={hora} className="flex items-center gap-4 px-4 py-3 admin-surface-subtle">
-                  <div className="w-12 shrink-0">
-                    <p className="text-sm font-mono font-semibold admin-text-secondary">{hora}</p>
-                    <p className="text-[10px] admin-text-secondary">bloqueado</p>
-                  </div>
-                  <p className="text-sm admin-text-secondary italic flex-1">Agenda bloqueada</p>
-                  <Ban className="w-4 h-4 admin-text-secondary" />
-                </li>
-              );
-            }
-
             if (agend) {
               const isConc = agend.status === "concluido";
               return (
-                <li key={hora} className={`flex items-center gap-4 px-4 py-3 ${isConc ? "bg-emerald-400/5" : "bg-gold/5"}`}>
+                <li
+                  key={hora}
+                  onClick={() => abrirAcao(agend)}
+                  className={`flex items-center gap-4 px-4 py-3 cursor-pointer transition-colors ${isConc ? "bg-emerald-400/5 hover:bg-emerald-400/10" : "bg-gold/5 hover:bg-gold/10"}`}
+                >
                   <div className="w-12 shrink-0">
                     <p className={`text-sm font-mono font-semibold ${isConc ? "text-emerald-400" : "text-gold"}`}>{hora}</p>
                     <p className="text-[10px] admin-text-secondary">0/1</p>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium admin-text-primary truncate">{agend.cliente}</p>
-                    <p className="text-xs admin-text-secondary truncate">{agend.servico}</p>
+                    <p className="text-sm font-medium admin-text-primary truncate">{agend.customerName}</p>
+                    <p className="text-xs admin-text-secondary truncate">{agend.serviceName}</p>
                   </div>
                   <span className={`text-[10px] font-semibold px-2 py-1 rounded-full ${isConc ? "bg-emerald-400/15 text-emerald-400" : "bg-gold/15 text-gold"}`}>
                     {isConc ? "Concluído" : "Agendado"}
@@ -437,6 +479,119 @@ export default function AgendaPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal de acoes de um agendamento (WhatsApp / Remarcar / Cancelar) */}
+      {acaoModal && (
+        <Modal onClose={() => setAcaoModal(null)}>
+          {(close) => (
+            <>
+              <div className="admin-border-b flex items-center justify-between px-5 pt-5 pb-3">
+                <h2 className="text-base font-bold admin-text-primary">Agendamento</h2>
+                <button onClick={close} className="group admin-text-primary hover:opacity-80">
+                  <X className="w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-90" />
+                </button>
+              </div>
+
+              <div className="p-5 space-y-4">
+                {/* Resumo */}
+                <div className="admin-surface-subtle rounded-xl p-4 space-y-1">
+                  <p className="text-base font-bold admin-text-primary">{acaoModal.customerName}</p>
+                  <p className="text-sm admin-text-secondary">{acaoModal.serviceName}</p>
+                  <p className="text-sm admin-text-secondary">
+                    {new Date(acaoModal.date + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "long" })} · {acaoModal.time}
+                  </p>
+                  <p className="text-xs admin-text-secondary pt-1">
+                    {acaoModal.barberName} · {acaoModal.customerPhone || "sem telefone"}
+                  </p>
+                </div>
+
+                {remarcando ? (
+                  /* Form de remarcacao */
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs admin-text-secondary mb-1 block">Nova data</label>
+                      <input
+                        type="date"
+                        value={novaData}
+                        onChange={(e) => setNovaData(e.target.value)}
+                        className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs admin-text-secondary mb-1 block">Novo horário</label>
+                      <select
+                        value={novaHora}
+                        onChange={(e) => setNovaHora(e.target.value)}
+                        className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors"
+                      >
+                        {HORARIOS.map((h) => <option key={h}>{h}</option>)}
+                      </select>
+                    </div>
+                    <div className="flex gap-3 pt-1">
+                      <button
+                        onClick={() => setRemarcando(false)}
+                        className="transform-gpu flex-1 admin-glass-card admin-glass-card-hover admin-text-secondary py-3 rounded-xl text-sm font-semibold transition-colors"
+                      >
+                        Voltar
+                      </button>
+                      <button
+                        onClick={confirmarRemarcacao}
+                        className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2"
+                      >
+                        <Check className="w-4 h-4" /> Confirmar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* Acoes */
+                  <div className="space-y-2">
+                    {acaoModal.customerPhone && (
+                      <a
+                        href={buildWhatsappLink(acaoModal.customerPhone, acaoModal.customerName)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 w-full admin-surface-subtle rounded-xl px-4 py-3 hover:bg-emerald-400/10 transition-colors"
+                      >
+                        <span className="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center shrink-0">
+                          <MessageCircle className="w-4 h-4 text-emerald-400" />
+                        </span>
+                        <div className="text-left">
+                          <p className="text-sm font-semibold admin-text-primary">Falar no WhatsApp</p>
+                          <p className="text-[11px] admin-text-secondary">Abre o chat com o cliente</p>
+                        </div>
+                      </a>
+                    )}
+                    <button
+                      onClick={() => setRemarcando(true)}
+                      className="flex items-center gap-3 w-full admin-surface-subtle rounded-xl px-4 py-3 hover:bg-gold/10 transition-colors"
+                    >
+                      <span className="w-9 h-9 rounded-full bg-gold/15 flex items-center justify-center shrink-0">
+                        <CalendarClock className="w-4 h-4 text-gold" />
+                      </span>
+                      <div className="text-left">
+                        <p className="text-sm font-semibold admin-text-primary">Remarcar</p>
+                        <p className="text-[11px] admin-text-secondary">Mudar data ou horário</p>
+                      </div>
+                    </button>
+                    <button
+                      onClick={confirmarCancelamento}
+                      className="flex items-center gap-3 w-full admin-surface-subtle rounded-xl px-4 py-3 hover:bg-red-500/10 transition-colors"
+                    >
+                      <span className="w-9 h-9 rounded-full bg-red-500/15 flex items-center justify-center shrink-0">
+                        <Trash2 className="w-4 h-4 text-red-400" />
+                      </span>
+                      <div className="text-left">
+                        <p className="text-sm font-semibold admin-text-primary">Cancelar agendamento</p>
+                        <p className="text-[11px] admin-text-secondary">Libera o horário</p>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </Modal>
       )}
     </div>
   );

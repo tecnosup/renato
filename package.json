@@ -6,11 +6,14 @@
     "dev": "cross-env NODE_OPTIONS=--use-system-ca next dev",
     "build": "cross-env NODE_OPTIONS=--use-system-ca next build",
     "start": "cross-env NODE_OPTIONS=--use-system-ca next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "rules:deploy": "node scripts/deploy-rules.mjs",
+    "rules:check": "node scripts/deploy-rules.mjs --check"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1066.0",
     "firebase": "^12.14.0",
+    "firebase-admin": "^14.0.0",
     "framer-motion": "^12.40.0",
     "jose": "^6.2.3",
     "lenis": "^1.3.23",
