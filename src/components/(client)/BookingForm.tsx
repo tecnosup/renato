@@ -68,9 +68,9 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
   // Submission / conflict state (persistencia no Firestore)
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Calendar navigation state (starting in June 2026 to align with meta-clock "2026-06-09")
-  const [currentMonth, setCurrentMonth] = useState<number>(5); // June (0-indexed is 5)
-  const [currentYear, setCurrentYear] = useState<number>(2026);
+  // Calendario abre no mes/ano reais de hoje.
+  const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
 
   // Auto Scroll-to-Top on Step change inside the modal
   useEffect(() => {
@@ -179,8 +179,15 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
     calendarCells.push(d);
   }
 
+  // Nao deixa navegar para antes do mes atual (nada a agendar no passado).
+  const isAtCurrentMonth = (() => {
+    const now = new Date();
+    return currentYear === now.getFullYear() && currentMonth === now.getMonth();
+  })();
+
   // Handle Calendar Nav
   const handlePrevMonth = () => {
+    if (isAtCurrentMonth) return;
     if (currentMonth === 0) {
       setCurrentMonth(11);
       setCurrentYear(prev => prev - 1);
@@ -198,12 +205,13 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
     }
   };
 
-  // Helper to determine if date is in the past
+  // Bloqueia dias anteriores a hoje. Hoje continua agendavel (compara com as
+  // horas zeradas, senao "hoje 00:00 < agora" bloquearia o proprio dia).
   const isDatePast = (day: number) => {
-    // Current simulated date is June 9th, 2026.
-    const todaySimulated = new Date(2026, 5, 9);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const dateToCheck = new Date(currentYear, currentMonth, day);
-    return dateToCheck < todaySimulated;
+    return dateToCheck < today;
   };
 
   // Determine availability status based on day of week to look authentic
@@ -577,7 +585,8 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                               <button
                                 type="button"
                                 onClick={handlePrevMonth}
-                                className="w-7 h-7 rounded-full border border-zinc-805 hover:border-gold hover:text-gold flex items-center justify-center transition-all cursor-pointer text-zinc-500"
+                                disabled={isAtCurrentMonth}
+                                className="w-7 h-7 rounded-full border border-zinc-805 hover:border-gold hover:text-gold flex items-center justify-center transition-all cursor-pointer text-zinc-500 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-zinc-805 disabled:hover:text-zinc-500"
                               >
                                 <ChevronLeft className="w-3.5 h-3.5" />
                               </button>
