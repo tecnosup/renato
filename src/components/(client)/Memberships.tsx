@@ -168,7 +168,7 @@ export default function Memberships() {
       id="assinaturas"
     >
       {/* Background Graphic elements matching luxury look */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-gold/5 blur-[160px] rounded-full pointer-events-none" />
+      <div className="glow-decor absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-gold/5 blur-[160px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center">
         
@@ -304,7 +304,7 @@ export default function Memberships() {
                 >
                   <ThreeDTiltCard intensity={matchesSelection ? 4 : 0} className="w-full flex group/club h-full">
                     <div 
-                      className={`w-full bg-white/5 backdrop-blur-xl p-4 sm:p-5 md:p-6 flex flex-col justify-between text-left relative rounded-[20px] sm:rounded-[24px] transition-shadow duration-500 h-full overflow-hidden border ${
+                      className={`w-full bg-[#0a0a0b]/85 md:bg-white/5 md:backdrop-blur-xl p-4 sm:p-5 md:p-6 flex flex-col justify-between text-left relative rounded-[20px] sm:rounded-[24px] transition-shadow duration-500 h-full overflow-hidden border ${
                         matchesSelection 
                           ? 'shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_60px_rgba(0,0,0,0.8)] border-white/20' 
                           : 'border-white/10 opacity-90'
@@ -430,7 +430,7 @@ export default function Memberships() {
         <div className="flex items-center gap-5 mt-4 sm:mt-6 relative z-25">
           <button
             onClick={() => { prevSlide(); resetAutoRotateTimer(); }}
-            className="w-10 h-10 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-slate-300 hover:text-white hover:border-white/30 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
+            className="w-10 h-10 rounded-full border border-white/10 bg-white/5 md:backdrop-blur-md text-slate-300 hover:text-white hover:border-white/30 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
             aria-label="Plano anterior"
           >
             <ChevronLeft className="w-4.5 h-4.5" />
@@ -454,7 +454,7 @@ export default function Memberships() {
 
           <button
             onClick={() => { nextSlide(); resetAutoRotateTimer(); }}
-            className="w-10 h-10 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-slate-300 hover:text-white hover:border-white/30 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
+            className="w-10 h-10 rounded-full border border-white/10 bg-white/5 md:backdrop-blur-md text-slate-300 hover:text-white hover:border-white/30 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
             aria-label="Próximo plano"
           >
             <ChevronRight className="w-4.5 h-4.5" />
@@ -467,7 +467,7 @@ export default function Memberships() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-10 sm:mt-12 md:mt-14 bg-white/5 backdrop-blur-xl p-4 border border-white/10 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-3 font-sans text-[10px] sm:text-xs text-slate-300 w-full md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+          className="mt-10 sm:mt-12 md:mt-14 glass-card p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-3 font-sans text-[10px] sm:text-xs text-slate-300 w-full md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
         >
           <div className="flex items-center gap-2 text-left">
             <div className="w-5 h-5 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center text-gold shrink-0">

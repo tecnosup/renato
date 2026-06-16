@@ -166,7 +166,7 @@ export default function App() {
       </section>
 
       {/* SECTION 2: SOBRE NÓS (Manifesto + Filosofia de design) */}
-      <section className="w-full bg-black/40 backdrop-blur-md py-12 sm:py-20 md:py-24 px-4 md:px-8 border-t border-white/5 relative z-10 scroll-mt-20 md:scroll-mt-24" id="sobre-nos">
+      <section className="w-full bg-black/60 md:bg-black/40 md:backdrop-blur-md py-12 sm:py-20 md:py-24 px-4 md:px-8 border-t border-white/5 relative z-10 scroll-mt-20 md:scroll-mt-24" id="sobre-nos">
         <div className="max-w-7xl mx-auto space-y-24">
           
           {/* Parallax block 1: Manifesto */}
@@ -224,7 +224,7 @@ export default function App() {
               className="lg:col-span-7 flex flex-col gap-6"
             >
               <ThreeDTiltCard intensity={6} className="w-full">
-                <div className="bg-white/5 backdrop-blur-lg p-8 md:p-10 border border-white/10 text-left relative overflow-hidden rounded-3xl depth-card shadow-lg md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_40px_rgba(0,0,0,0.5)]">
+                <div className="glass-card p-8 md:p-10 text-left relative overflow-hidden rounded-3xl depth-card shadow-lg md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_40px_rgba(0,0,0,0.5)]">
                   <div className="absolute right-0 top-0 w-32 h-32 border-l border-b border-white/5 flex items-center justify-center font-sans text-[8px] text-[#c2a35d]/40 tracking-[0.16em] uppercase select-none font-bold">FILOSOFIA</div>
                   
                   <h3 className="font-display font-light text-xl text-white tracking-wide uppercase mb-4">
@@ -243,7 +243,7 @@ export default function App() {
                 </div>
               </ThreeDTiltCard>
  
-              <div className="bg-black/30 backdrop-blur-sm p-4 border border-white/5 text-left font-sans text-[11px] text-zinc-400 leading-normal rounded-2xl md:shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+              <div className="bg-black/30 md:backdrop-blur-sm p-4 border border-white/5 text-left font-sans text-[11px] text-zinc-400 leading-normal rounded-2xl md:shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
                 <span className="text-[#c2a35d] font-bold uppercase tracking-wider text-[10px] mr-1.5">COMPROMISSO NATURAL:</span>Trabalhamos exclusivamente com insumos orgânicos botânicos certificados de altíssimo desempenho, totalmente livres de essências sintéticas ou irritantes.
               </div>
             </motion.div>
@@ -268,7 +268,7 @@ export default function App() {
       <ShowcaseBanner />
 
       {/* SECTION 6: FOOTER (With Social Medias redes sociais and contacts) */}
-      <footer className="w-full bg-black/80 backdrop-blur-3xl py-16 px-4 md:px-8 border-t border-white/10 relative z-30" id="footer">
+      <footer className="w-full bg-black/90 md:bg-black/80 md:backdrop-blur-3xl py-16 px-4 md:px-8 border-t border-white/10 relative z-30" id="footer">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-start text-left">
           
           {/* Brand Column */}
@@ -406,7 +406,7 @@ export default function App() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-            className="fixed bottom-0 left-0 right-0 z-40 block md:hidden bg-black/75 backdrop-blur-2xl border-t border-white/[0.06] px-4 py-3 shadow-[0_-12px_40px_rgba(0,0,0,0.95)] max-w-full"
+            className="fixed bottom-0 left-0 right-0 z-40 block md:hidden bg-[#070708]/95 border-t border-white/[0.06] px-4 py-3 shadow-[0_-12px_40px_rgba(0,0,0,0.95)] max-w-full"
             id="mobile-sticky-cta"
           >
             <div className="flex items-center justify-between gap-3">
