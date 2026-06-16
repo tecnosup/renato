@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion, useSpring, useMotionValue, useTransform } from 'framer-motion';
 import { Scissors, Sparkles } from 'lucide-react';
 
@@ -7,16 +7,10 @@ export default function ThreeDBox() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  // No mobile o tilt por mouse nao existe (touch) e as animacoes infinitas
-  // (aneis girando, sparkles pulsando, springs) saturam a GPU de aparelhos
-  // antigos. Renderizamos o cubo estatico abaixo de 768px.
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
+  // As animacoes decorativas (aneis, listra do poste, sparkles) sao baratas e
+  // ficam ligadas tambem no mobile. O custo real era o backdrop-blur das
+  // capsulas/plate, que mantemos so no desktop (md:backdrop-blur). O tilt
+  // funciona por mouse no desktop e por toque no mobile (handlers abaixo).
 
   // Spring options for rich, organic interactive physics
   const springConfig = { damping: 25, stiffness: 120, mass: 0.6 };
@@ -52,12 +46,34 @@ export default function ThreeDBox() {
     mouseY.set(0);
   };
 
+  // Tilt por toque (mobile): arrastar o dedo sobre o cubo inclina-o, igual ao
+  // mouse no desktop. Volta ao centro ao soltar.
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = (touch.clientX - rect.left) / rect.width - 0.5;
+    const y = (touch.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const handleTouchEnd = () => {
+    setIsHovered(false);
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
   return (
     <div
       ref={containerRef}
-      onMouseMove={isMobile ? undefined : handleMouseMove}
-      onMouseEnter={isMobile ? undefined : () => setIsHovered(true)}
-      onMouseLeave={isMobile ? undefined : handleMouseLeave}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={handleMouseLeave}
+      onTouchStart={() => setIsHovered(true)}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       className="relative w-[320px] h-[320px] md:w-[410px] md:h-[410px] flex items-center justify-center select-none cursor-pointer"
       style={{ perspective: '1000px' }}
       id="elegant-barber-sculpture-container"
@@ -65,14 +81,14 @@ export default function ThreeDBox() {
       {/* Background elegant architectural rings */}
       <div className="absolute inset-0 border border-zinc-900/60 rounded-full pointer-events-none flex items-center justify-center">
         <motion.div
-          animate={isMobile ? undefined : { rotate: 360 }}
+          animate={{ rotate: 360 }}
           transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
           className="w-[94%] h-[94%] border border-dashed border-[#c2a35d]/10 rounded-full"
         />
       </div>
       <div className="absolute inset-4 border border-zinc-900/30 rounded-full pointer-events-none flex items-center justify-center">
         <motion.div
-          animate={isMobile ? undefined : { rotate: -360 }}
+          animate={{ rotate: -360 }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
           className="w-[90%] h-[90%] border border-[#c2a35d]/5 rounded-full"
         />
@@ -138,7 +154,7 @@ export default function ThreeDBox() {
           <div className="flex-1 w-[90%] mx-auto bg-black/90 border-x border-zinc-850/80 relative overflow-hidden flex items-center shadow-inner">
             {/* Inner rotating texture cylinder */}
             <div
-              className="absolute inset-y-0 w-full md:animate-[barberScroll_4s_linear_infinite]"
+              className="absolute inset-y-0 w-full animate-[barberScroll_4s_linear_infinite]"
               style={{
                 backgroundImage: 'repeating-linear-gradient(135deg, #c2a35d, #c2a35d 14px, #1a1a1c 14px, #1a1a1c 28px, #ffffff 28px, #ffffff 32px)',
                 backgroundSize: '100% 50px',
@@ -224,7 +240,7 @@ export default function ThreeDBox() {
         {/* TOP FLOATING ATMOSPHERIC SPARKS */}
         <motion.div
           className="absolute -top-4 right-16 text-[#c2a35d]/30"
-          animate={isMobile ? undefined : { y: [0, -6, 0], opacity: [0.3, 0.7, 0.3] }}
+          animate={{ y: [0, -6, 0], opacity: [0.3, 0.7, 0.3] }}
           transition={{ duration: 3, repeat: Infinity }}
           style={{ translateZ: '30px' }}
         >
@@ -233,7 +249,7 @@ export default function ThreeDBox() {
 
         <motion.div
           className="absolute bottom-8 left-12 text-[#c2a35d]/20"
-          animate={isMobile ? undefined : { y: [0, 4, 0], opacity: [0.2, 0.5, 0.2] }}
+          animate={{ y: [0, 4, 0], opacity: [0.2, 0.5, 0.2] }}
           transition={{ duration: 4, repeat: Infinity, delay: 1 }}
           style={{ translateZ: '20px' }}
         >
