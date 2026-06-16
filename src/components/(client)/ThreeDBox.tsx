@@ -1,11 +1,22 @@
 "use client";
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useSpring, useMotionValue, useTransform } from 'framer-motion';
 import { Scissors, Sparkles } from 'lucide-react';
 
 export default function ThreeDBox() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+
+  // No mobile o tilt por mouse nao existe (touch) e as animacoes infinitas
+  // (aneis girando, sparkles pulsando, springs) saturam a GPU de aparelhos
+  // antigos. Renderizamos o cubo estatico abaixo de 768px.
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   // Spring options for rich, organic interactive physics
   const springConfig = { damping: 25, stiffness: 120, mass: 0.6 };
@@ -44,24 +55,24 @@ export default function ThreeDBox() {
   return (
     <div
       ref={containerRef}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
+      onMouseMove={isMobile ? undefined : handleMouseMove}
+      onMouseEnter={isMobile ? undefined : () => setIsHovered(true)}
+      onMouseLeave={isMobile ? undefined : handleMouseLeave}
       className="relative w-[320px] h-[320px] md:w-[410px] md:h-[410px] flex items-center justify-center select-none cursor-pointer"
       style={{ perspective: '1000px' }}
       id="elegant-barber-sculpture-container"
     >
       {/* Background elegant architectural rings */}
       <div className="absolute inset-0 border border-zinc-900/60 rounded-full pointer-events-none flex items-center justify-center">
-        <motion.div 
-          animate={{ rotate: 360 }}
+        <motion.div
+          animate={isMobile ? undefined : { rotate: 360 }}
           transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
           className="w-[94%] h-[94%] border border-dashed border-[#c2a35d]/10 rounded-full"
         />
       </div>
       <div className="absolute inset-4 border border-zinc-900/30 rounded-full pointer-events-none flex items-center justify-center">
-        <motion.div 
-          animate={{ rotate: -360 }}
+        <motion.div
+          animate={isMobile ? undefined : { rotate: -360 }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
           className="w-[90%] h-[90%] border border-[#c2a35d]/5 rounded-full"
         />
@@ -82,7 +93,7 @@ export default function ThreeDBox() {
 
         {/* Backdrop Card Plate */}
         <div 
-          className="absolute inset-0 bg-[#0d0e10]/80 rounded-3xl border border-zinc-850 p-6 flex flex-col justify-between shadow-2xl backdrop-blur-md"
+          className="absolute inset-0 bg-[#0d0e10]/80 rounded-3xl border border-zinc-850 p-6 flex flex-col justify-between shadow-2xl md:backdrop-blur-md"
           style={{ transform: 'translateZ(-40px)' }}
           id="sculpture-backdrop"
         >
@@ -126,8 +137,8 @@ export default function ThreeDBox() {
           {/* Core glass cylinder containing rotating diagonal stripes */}
           <div className="flex-1 w-[90%] mx-auto bg-black/90 border-x border-zinc-850/80 relative overflow-hidden flex items-center shadow-inner">
             {/* Inner rotating texture cylinder */}
-            <div 
-              className="absolute inset-y-0 w-full animate-[barberScroll_4s_linear_infinite]"
+            <div
+              className="absolute inset-y-0 w-full md:animate-[barberScroll_4s_linear_infinite]"
               style={{
                 backgroundImage: 'repeating-linear-gradient(135deg, #c2a35d, #c2a35d 14px, #1a1a1c 14px, #1a1a1c 28px, #ffffff 28px, #ffffff 32px)',
                 backgroundSize: '100% 50px',
@@ -161,7 +172,7 @@ export default function ThreeDBox() {
           id="sculpture-scissors"
         >
           {/* Glassmorhic capsule carrying scissors */}
-          <div className="relative p-3 bg-zinc-950/40 border border-[#c2a35d]/20 rounded-2xl shadow-xl backdrop-blur-md flex items-center justify-center group">
+          <div className="relative p-3 bg-zinc-950/40 border border-[#c2a35d]/20 rounded-2xl shadow-xl md:backdrop-blur-md flex items-center justify-center group">
             {/* Scissors vector icon */}
             <motion.div 
               animate={{ 
@@ -191,7 +202,7 @@ export default function ThreeDBox() {
           id="sculpture-comb"
         >
           {/* Glassmorhic capsule carrying styling comb representation */}
-          <div className="relative py-2.5 px-4 bg-zinc-950/40 border border-zinc-800 rounded-xl shadow-xl backdrop-blur-md flex flex-col justify-between items-center w-full">
+          <div className="relative py-2.5 px-4 bg-zinc-950/40 border border-zinc-800 rounded-xl shadow-xl md:backdrop-blur-md flex flex-col justify-between items-center w-full">
             {/* Aesthetic representation of gold styling comb teeth */}
             <div className="w-full flex justify-between space-x-[2px] h-6 items-start">
               {Array.from({ length: 14 }).map((_, idx) => (
@@ -213,16 +224,16 @@ export default function ThreeDBox() {
         {/* TOP FLOATING ATMOSPHERIC SPARKS */}
         <motion.div
           className="absolute -top-4 right-16 text-[#c2a35d]/30"
-          animate={{ y: [0, -6, 0], opacity: [0.3, 0.7, 0.3] }}
+          animate={isMobile ? undefined : { y: [0, -6, 0], opacity: [0.3, 0.7, 0.3] }}
           transition={{ duration: 3, repeat: Infinity }}
           style={{ translateZ: '30px' }}
         >
           <Sparkles className="w-4 h-4" />
         </motion.div>
-        
+
         <motion.div
           className="absolute bottom-8 left-12 text-[#c2a35d]/20"
-          animate={{ y: [0, 4, 0], opacity: [0.2, 0.5, 0.2] }}
+          animate={isMobile ? undefined : { y: [0, 4, 0], opacity: [0.2, 0.5, 0.2] }}
           transition={{ duration: 4, repeat: Infinity, delay: 1 }}
           style={{ translateZ: '20px' }}
         >
