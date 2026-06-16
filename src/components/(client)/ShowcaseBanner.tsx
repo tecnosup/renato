@@ -145,6 +145,8 @@ export default function ShowcaseBanner() {
                 className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 pointer-events-none" 
                 alt="Aesthetic Barbershop Capture" 
                 referrerPolicy="no-referrer"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
                 <span className="font-mono text-[9px] text-gold/60 uppercase">CENA_{i + 1}_PREMIUM</span>
@@ -159,6 +161,8 @@ export default function ShowcaseBanner() {
                 className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 pointer-events-none" 
                 alt="Aesthetic Barbershop Capture duplication" 
                 referrerPolicy="no-referrer"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
                 <span className="font-mono text-[9px] text-gold/60 uppercase">CENA_{i + 11}_PREMIUM</span>
@@ -179,6 +183,8 @@ export default function ShowcaseBanner() {
                 className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 pointer-events-none" 
                 alt="Aesthetic Detail Shot" 
                 referrerPolicy="no-referrer"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
                 <span className="font-mono text-[9px] text-gold/60 uppercase">DECOR_{i + 1}_VINTAGE</span>
@@ -193,6 +199,8 @@ export default function ShowcaseBanner() {
                 className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 pointer-events-none" 
                 alt="Aesthetic Detail Shot duplication" 
                 referrerPolicy="no-referrer"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
                 <span className="font-mono text-[9px] text-gold/60 uppercase">DECOR_{i + 11}_VINTAGE</span>
@@ -230,6 +238,8 @@ export default function ShowcaseBanner() {
                     alt={cut.name} 
                     className="w-full h-full object-cover grayscale brightness-90 group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-500 pointer-events-none"
                     referrerPolicy="no-referrer"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-95" />
                   

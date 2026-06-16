@@ -313,6 +313,8 @@ export default function OrbCarousel() {
                         alt="Ritual orb"
                         className="w-full h-full object-cover rounded-full grayscale opacity-60"
                         referrerPolicy="no-referrer"
+                        loading="lazy"
+                        decoding="async"
                       />
                     </div>
                     <Compass className="w-5 h-5 text-gold relative z-10 animate-spin-slow" />
@@ -452,6 +454,8 @@ export default function OrbCarousel() {
                         alt="Product orb"
                         className="w-full h-full object-cover rounded-full grayscale opacity-60"
                         referrerPolicy="no-referrer"
+                        loading="lazy"
+                        decoding="async"
                       />
                     </div>
                     <ShoppingBag className="w-5 h-5 text-[#c2a35d] relative z-10" />
@@ -498,6 +502,8 @@ export default function OrbCarousel() {
                           alt={prod.name} 
                           className="w-full h-full object-cover grayscale brightness-95 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-500 pointer-events-none"
                           referrerPolicy="no-referrer"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <div className="absolute top-2.5 left-2.5 font-mono text-[8px] text-white bg-black/75 px-2 py-0.5 rounded border border-white/5 uppercase">
                           {prod.volume}

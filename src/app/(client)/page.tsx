@@ -59,11 +59,13 @@ export default function App() {
       
       {/* Immersive Dark Refractive Background Layer */}
       <div className="fixed inset-0 z-0 select-none pointer-events-none">
-        <img 
-          src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=2000&auto=format&fit=crop" 
-          alt="Aesthetic Dark Background" 
+        <img
+          src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=1000&auto=format&fit=crop"
+          alt="Aesthetic Dark Background"
           className="w-full h-full object-cover opacity-[0.06] grayscale"
           referrerPolicy="no-referrer"
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-[#020202]/95 via-[#080808]/90 to-[#020202]/98" />
       </div>
