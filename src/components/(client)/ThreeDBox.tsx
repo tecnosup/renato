@@ -7,6 +7,11 @@ export default function ThreeDBox() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
+  // As animacoes decorativas (aneis, listra do poste, sparkles) sao baratas e
+  // ficam ligadas tambem no mobile. O custo real era o backdrop-blur das
+  // capsulas/plate, que mantemos so no desktop (md:backdrop-blur). O tilt
+  // funciona por mouse no desktop e por toque no mobile (handlers abaixo).
+
   // Spring options for rich, organic interactive physics
   const springConfig = { damping: 25, stiffness: 120, mass: 0.6 };
   
@@ -41,26 +46,48 @@ export default function ThreeDBox() {
     mouseY.set(0);
   };
 
+  // Tilt por toque (mobile): arrastar o dedo sobre o cubo inclina-o, igual ao
+  // mouse no desktop. Volta ao centro ao soltar.
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = (touch.clientX - rect.left) / rect.width - 0.5;
+    const y = (touch.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const handleTouchEnd = () => {
+    setIsHovered(false);
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
   return (
     <div
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={() => setIsHovered(true)}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       className="relative w-[320px] h-[320px] md:w-[410px] md:h-[410px] flex items-center justify-center select-none cursor-pointer"
       style={{ perspective: '1000px' }}
       id="elegant-barber-sculpture-container"
     >
       {/* Background elegant architectural rings */}
       <div className="absolute inset-0 border border-zinc-900/60 rounded-full pointer-events-none flex items-center justify-center">
-        <motion.div 
+        <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
           className="w-[94%] h-[94%] border border-dashed border-[#c2a35d]/10 rounded-full"
         />
       </div>
       <div className="absolute inset-4 border border-zinc-900/30 rounded-full pointer-events-none flex items-center justify-center">
-        <motion.div 
+        <motion.div
           animate={{ rotate: -360 }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
           className="w-[90%] h-[90%] border border-[#c2a35d]/5 rounded-full"
@@ -82,7 +109,7 @@ export default function ThreeDBox() {
 
         {/* Backdrop Card Plate */}
         <div 
-          className="absolute inset-0 bg-[#0d0e10]/80 rounded-3xl border border-zinc-850 p-6 flex flex-col justify-between shadow-2xl backdrop-blur-md"
+          className="absolute inset-0 bg-[#0d0e10]/80 rounded-3xl border border-zinc-850 p-6 flex flex-col justify-between shadow-2xl md:backdrop-blur-md"
           style={{ transform: 'translateZ(-40px)' }}
           id="sculpture-backdrop"
         >
@@ -126,7 +153,7 @@ export default function ThreeDBox() {
           {/* Core glass cylinder containing rotating diagonal stripes */}
           <div className="flex-1 w-[90%] mx-auto bg-black/90 border-x border-zinc-850/80 relative overflow-hidden flex items-center shadow-inner">
             {/* Inner rotating texture cylinder */}
-            <div 
+            <div
               className="absolute inset-y-0 w-full animate-[barberScroll_4s_linear_infinite]"
               style={{
                 backgroundImage: 'repeating-linear-gradient(135deg, #c2a35d, #c2a35d 14px, #1a1a1c 14px, #1a1a1c 28px, #ffffff 28px, #ffffff 32px)',
@@ -161,7 +188,7 @@ export default function ThreeDBox() {
           id="sculpture-scissors"
         >
           {/* Glassmorhic capsule carrying scissors */}
-          <div className="relative p-3 bg-zinc-950/40 border border-[#c2a35d]/20 rounded-2xl shadow-xl backdrop-blur-md flex items-center justify-center group">
+          <div className="relative p-3 bg-zinc-950/40 border border-[#c2a35d]/20 rounded-2xl shadow-xl md:backdrop-blur-md flex items-center justify-center group">
             {/* Scissors vector icon */}
             <motion.div 
               animate={{ 
@@ -191,7 +218,7 @@ export default function ThreeDBox() {
           id="sculpture-comb"
         >
           {/* Glassmorhic capsule carrying styling comb representation */}
-          <div className="relative py-2.5 px-4 bg-zinc-950/40 border border-zinc-800 rounded-xl shadow-xl backdrop-blur-md flex flex-col justify-between items-center w-full">
+          <div className="relative py-2.5 px-4 bg-zinc-950/40 border border-zinc-800 rounded-xl shadow-xl md:backdrop-blur-md flex flex-col justify-between items-center w-full">
             {/* Aesthetic representation of gold styling comb teeth */}
             <div className="w-full flex justify-between space-x-[2px] h-6 items-start">
               {Array.from({ length: 14 }).map((_, idx) => (
@@ -219,7 +246,7 @@ export default function ThreeDBox() {
         >
           <Sparkles className="w-4 h-4" />
         </motion.div>
-        
+
         <motion.div
           className="absolute bottom-8 left-12 text-[#c2a35d]/20"
           animate={{ y: [0, 4, 0], opacity: [0.2, 0.5, 0.2] }}

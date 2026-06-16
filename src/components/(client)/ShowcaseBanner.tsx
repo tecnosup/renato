@@ -131,7 +131,7 @@ export default function ShowcaseBanner() {
       </div>
 
       {/* Sliding Parallax Panorama Track (Immersive Scroll Effect) */}
-      <div className="w-full relative overflow-hidden py-6 select-none bg-black/30 backdrop-blur-md border-y border-white/5 mb-24">
+      <div className="w-full relative overflow-hidden py-6 select-none bg-black/30 md:backdrop-blur-md border-y border-white/5 mb-24">
         
         {/* Track 1: Moving left to right */}
         <motion.div 
@@ -145,6 +145,8 @@ export default function ShowcaseBanner() {
                 className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 pointer-events-none" 
                 alt="Aesthetic Barbershop Capture" 
                 referrerPolicy="no-referrer"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
                 <span className="font-mono text-[9px] text-gold/60 uppercase">CENA_{i + 1}_PREMIUM</span>
@@ -159,6 +161,8 @@ export default function ShowcaseBanner() {
                 className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 pointer-events-none" 
                 alt="Aesthetic Barbershop Capture duplication" 
                 referrerPolicy="no-referrer"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
                 <span className="font-mono text-[9px] text-gold/60 uppercase">CENA_{i + 11}_PREMIUM</span>
@@ -179,6 +183,8 @@ export default function ShowcaseBanner() {
                 className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 pointer-events-none" 
                 alt="Aesthetic Detail Shot" 
                 referrerPolicy="no-referrer"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
                 <span className="font-mono text-[9px] text-gold/60 uppercase">DECOR_{i + 1}_VINTAGE</span>
@@ -193,6 +199,8 @@ export default function ShowcaseBanner() {
                 className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 pointer-events-none" 
                 alt="Aesthetic Detail Shot duplication" 
                 referrerPolicy="no-referrer"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
                 <span className="font-mono text-[9px] text-gold/60 uppercase">DECOR_{i + 11}_VINTAGE</span>
@@ -220,7 +228,7 @@ export default function ShowcaseBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
-              className="bg-white/5 backdrop-blur-md border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] group overflow-hidden flex flex-col justify-between text-left rounded-2xl md:hover:border-gold/40 hover:shadow-[0_10px_40px_rgba(0,0,0,0.8)] transition-all duration-300 relative depth-card h-full min-h-[460px]"
+              className="bg-[#0a0a0b]/85 md:bg-white/5 md:backdrop-blur-md border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] group overflow-hidden flex flex-col justify-between text-left rounded-2xl md:hover:border-gold/40 hover:shadow-[0_10px_40px_rgba(0,0,0,0.8)] transition-all duration-300 relative depth-card h-full min-h-[460px]"
             >
               <div>
                 {/* Image Container with scale effects */}
@@ -230,6 +238,8 @@ export default function ShowcaseBanner() {
                     alt={cut.name} 
                     className="w-full h-full object-cover grayscale brightness-90 group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-500 pointer-events-none"
                     referrerPolicy="no-referrer"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-95" />
                   
@@ -239,7 +249,7 @@ export default function ShowcaseBanner() {
                   </span>
 
                   {/* Rating or popularity stats tag bottom right */}
-                  <div className="absolute bottom-4 right-4 bg-gold/10 backdrop-blur-sm border border-gold/30 text-gold px-2.5 py-1 text-[9px] font-mono font-bold uppercase rounded flex items-center gap-1">
+                  <div className="absolute bottom-4 right-4 bg-gold/10 md:backdrop-blur-sm border border-gold/30 text-gold px-2.5 py-1 text-[9px] font-mono font-bold uppercase rounded flex items-center gap-1">
                     <Flame className="w-3 h-3 fill-current" />
                     <span>EM ALTA: {cut.popularity}</span>
                   </div>
@@ -255,7 +265,7 @@ export default function ShowcaseBanner() {
 
               {/* Bottom Products Advice specs block */}
               <div className="p-6 pt-0 border-t border-white/5 mt-4">
-                <div className="bg-black/30 backdrop-blur-sm p-3 border border-white/5 rounded-xl text-left space-y-1">
+                <div className="bg-black/30 md:backdrop-blur-sm p-3 border border-white/5 rounded-xl text-left space-y-1">
                   <span className="font-mono text-[8px] text-slate-400 block uppercase font-bold leading-none">PRODUTO RECOMENDADO</span>
                   <div className="font-mono text-[10px] text-gold font-bold flex items-center gap-1 truncate">
                     <Wind className="w-3 h-3 shrink-0" />

@@ -497,6 +497,8 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                                     alt={barb.name} 
                                     className="w-full h-full object-cover grayscale brightness-95 group-hover:grayscale-0 transition-all duration-300"
                                     referrerPolicy="no-referrer"
+                                    loading="lazy"
+                                    decoding="async"
                                   />
                                 </div>
                                 {selectedBarber?.id === barb.id && (

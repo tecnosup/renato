@@ -257,6 +257,38 @@ body {
       0 1px 1px rgba(255,255,255,0.03) inset;
     border: 1px solid rgb(24, 25, 27);
   }
+
+  /* ===== Landing (client) — performance mobile =====
+     Cards "liquid glass" da landing. No mobile usamos fundo sólido (sem
+     backdrop-filter) porque o blur empilhado satura a GPU de aparelhos
+     antigos (ex.: iPhone 8) e trava a página. A partir de 768px volta o
+     vidro translúcido com blur. Use estas classes em vez de
+     "bg-white/5 backdrop-blur-*" nos componentes de (client). */
+  .glass-card {
+    background-color: rgba(10, 10, 11, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .glass-card-strong {
+    background-color: rgba(7, 7, 8, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  @media (min-width: 768px) {
+    .glass-card {
+      background-color: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+    }
+    .glass-card-strong {
+      background-color: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px);
+    }
+  }
+
+  /* Glow decorativo borrado (blur-2xl/3xl atrás de cards/orbs). Caro no
+     mobile e puramente estético — escondido abaixo de 768px. */
+  .glow-decor { display: none; }
+  @media (min-width: 768px) {
+    .glow-decor { display: block; }
+  }
 }
 
 /* Custom smooth scroll */
