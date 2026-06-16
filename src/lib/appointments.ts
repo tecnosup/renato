@@ -1,11 +1,13 @@
 import {
   addDoc,
   collection,
+  doc,
   getDocs,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -45,6 +47,23 @@ export async function checkSlotConflict(
 }
 
 /**
+ * Conta quantos agendamentos ativos existem num mesmo dia/horario (qualquer
+ * barbeiro). Usado para a opcao "Qualquer Disponível": o slot so esta cheio
+ * quando o numero de agendamentos ativos atinge o numero de barbeiros ativos.
+ */
+export async function countSlotBookings(date: string, time: string): Promise<number> {
+  const q = query(
+    collection(db, COLLECTION),
+    where("date", "==", date),
+    where("time", "==", time)
+  );
+  const snap = await getDocs(q);
+  return snap.docs.filter((d) =>
+    ACTIVE_STATUSES.includes((d.data().status as AppointmentStatus) ?? "pendente")
+  ).length;
+}
+
+/**
  * Cria um agendamento na colecao `appointments`. Sempre nasce com status
  * "pendente". Retorna o id gerado.
  */
@@ -57,19 +76,42 @@ export async function createAppointment(input: AppointmentInput): Promise<string
   return ref.id;
 }
 
+/** Cancela um agendamento (status "cancelado" libera o slot). */
+export async function cancelAppointment(id: string): Promise<void> {
+  await updateDoc(doc(db, COLLECTION, id), { status: "cancelado" as AppointmentStatus });
+}
+
+/** Remarca um agendamento para nova data/horario. */
+export async function rescheduleAppointment(
+  id: string,
+  date: string,
+  time: string
+): Promise<void> {
+  await updateDoc(doc(db, COLLECTION, id), { date, time });
+}
+
 /**
  * Escuta em tempo real os agendamentos de um dia (YYYY-MM-DD), ordenados por
  * horario. Retorna a funcao de unsubscribe. Usado pela Agenda do admin.
+ *
+ * Quando `barberId` e informado, traz APENAS os agendamentos daquele barbeiro
+ * (usado para o barbeiro que so pode ver a propria agenda). Sem ele, traz todos.
  */
 export function subscribeToDay(
   date: string,
-  callback: (appointments: Appointment[]) => void
+  callback: (appointments: Appointment[]) => void,
+  barberId?: string
 ): () => void {
-  const q = query(
+  const base = [
     collection(db, COLLECTION),
     where("date", "==", date),
-    orderBy("time", "asc")
-  );
+  ] as const;
+  // Filtra por barbeiro quando aplicavel. orderBy("time") exige indice composto
+  // junto do where extra; mantemos ordenacao no cliente quando ha barberId para
+  // nao depender de novo indice.
+  const q = barberId
+    ? query(collection(db, COLLECTION), where("date", "==", date), where("barberId", "==", barberId))
+    : query(...base, orderBy("time", "asc"));
 
   return onSnapshot(q, (snap) => {
     const list: Appointment[] = snap.docs.map((d) => {
@@ -91,6 +133,9 @@ export function subscribeToDay(
         createdAt: data.createdAt?.toMillis?.() ?? Date.now(),
       };
     });
+    // Quando filtramos por barbeiro nao usamos orderBy (evita indice composto),
+    // entao ordenamos por horario aqui.
+    if (barberId) list.sort((a, b) => a.time.localeCompare(b.time));
     callback(list);
   });
 }

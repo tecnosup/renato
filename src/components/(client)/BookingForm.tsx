@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SERVICES, BARBERS } from '@/lib/data';
-import { BarberService, BarberSpecialist } from '@/lib/types';
-import { createAppointment, checkSlotConflict } from '@/lib/appointments';
+import { SERVICES } from '@/lib/data';
+import { BarberService, BarberSpecialist, Employee } from '@/lib/types';
+import { subscribeToEmployees } from '@/lib/employees';
 import { 
   Sparkles, 
   Check, 
@@ -67,6 +67,17 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
 
   // Submission / conflict state (persistencia no Firestore)
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  // Barbeiros reais (Firestore, coleção `barbers`), apenas os ativos. Enquanto
+  // nenhum estiver cadastrado, o seletor mostra só "Qualquer Disponível".
+  const [barbers, setBarbers] = useState<BarberSpecialist[]>([]);
+
+  useEffect(() => {
+    const unsub = subscribeToEmployees((lista) => {
+      setBarbers(lista.filter((e) => e.active).map(employeeToSpecialist));
+    });
+    return unsub;
+  }, []);
 
   // Calendario abre no mes/ano reais de hoje.
   const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth());
@@ -227,19 +238,28 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
   // Active time-slots based on chosen day
   const getTimeSlotsForDate = () => {
     if (!selectedDate) return [];
-    
+
     // If Saturday, show limited premium slots to match "Poucos horários"
     const parsedDate = new Date(selectedDate + 'T00:00:00');
     const isSaturday = parsedDate.getDay() === 6;
 
-    if (isSaturday) {
-      return ['10:00', '11:00', '15:00', '18:00'];
+    const slots = isSaturday
+      ? ['10:00', '11:00', '15:00', '18:00']
+      : ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
+
+    // Se a data escolhida e hoje, remove horarios que ja passaram (com 30 min
+    // de folga minima para nao agendar "em cima da hora").
+    const now = new Date();
+    const todayStamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    if (selectedDate === todayStamp) {
+      const limite = now.getHours() * 60 + now.getMinutes() + 30;
+      return slots.filter((s) => {
+        const [h, m] = s.split(':').map(Number);
+        return h * 60 + m >= limite;
+      });
     }
 
-    // Standard business hours slots
-    return [
-      '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'
-    ];
+    return slots;
   };
 
   // Parse Date string into visual text: e.g. "Quinta-Feira, 11 De Junho"
@@ -277,33 +297,35 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
     setIsSubmitting(true);
 
     try {
-      // Anti-conflito: so checa quando ha um barbeiro especifico escolhido
-      // (a opcao "Qualquer Disponível" nao reserva um profissional fixo).
-      if (selectedBarber.id !== ANY_BARBER.id) {
-        const taken = await checkSlotConflict(selectedDate, selectedTime, selectedBarber.id);
-        if (taken) {
-          setErrors({
-            slot: 'Este horário acabou de ser preenchido. Por favor, escolha outro horário.',
-          });
-          setIsSubmitting(false);
-          return;
-        }
-      }
-
       const finalPrice = Math.round(selectedService.price * (1 - appliedDiscount));
 
-      await createAppointment({
-        serviceId: selectedService.id,
-        serviceName: selectedService.name,
-        servicePrice: finalPrice,
-        barberId: selectedBarber.id,
-        barberName: selectedBarber.name,
-        date: selectedDate,
-        time: selectedTime,
-        customerName: name.trim(),
-        customerPhone: phone,
-        origin: 'landing',
+      // Anti-conflito + criacao acontecem NO SERVIDOR (a landing anonima nao le
+      // a colecao appointments — dados de clientes ficam privados nas rules).
+      const res = await fetch('/api/appointments/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          serviceId: selectedService.id,
+          serviceName: selectedService.name,
+          servicePrice: finalPrice,
+          barberId: selectedBarber.id,
+          barberName: selectedBarber.name,
+          date: selectedDate,
+          time: selectedTime,
+          customerName: name.trim(),
+          customerPhone: phone,
+          origin: 'landing',
+        }),
       });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setErrors({
+          slot: data.error ?? 'Não foi possível concluir o agendamento agora. Tente novamente em instantes.',
+        });
+        setIsSubmitting(false);
+        return;
+      }
 
       const randomTicket = 'BC-' + Math.floor(100000 + Math.random() * 900000);
       setTicketNumber(randomTicket);
@@ -507,28 +529,21 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                             </div>
                           </button>
 
-                          {/* BARBERS Cards */}
-                          {BARBERS.map((barb) => (
+                          {/* BARBERS Cards (vindos do Firestore) */}
+                          {barbers.map((barb) => (
                             <button
                               key={barb.id}
                               type="button"
                               onClick={() => handleSelectBarber(barb)}
-                              className={`p-3 text-left rounded-xl border transition-all duration-200 cursor-pointer flex flex-col justify-between h-[95px] group relative overflow-hidden animate-pulse ${
+                              className={`p-3 text-left rounded-xl border transition-all duration-200 cursor-pointer flex flex-col justify-between h-[95px] group relative overflow-hidden ${
                                 selectedBarber?.id === barb.id
                                   ? 'bg-gold/10 border-gold shadow-[inset_0_0_15px_rgba(194,163,93,0.15)]'
                                   : 'bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 hover:border-gold/30'
                               }`}
                             >
                               <div className="flex justify-between items-start w-full">
-                                <div className="w-7 h-7 rounded-lg bg-zinc-950 overflow-hidden border border-gold/10 relative">
-                                  <img 
-                                    src={barb.avatar} 
-                                    alt={barb.name} 
-                                    className="w-full h-full object-cover grayscale brightness-95 group-hover:grayscale-0 transition-all duration-300"
-                                    referrerPolicy="no-referrer"
-                                    loading="lazy"
-                                    decoding="async"
-                                  />
+                                <div className="w-7 h-7 rounded-lg bg-gold/10 border border-gold/25 flex items-center justify-center text-gold text-[9px] font-bold uppercase">
+                                  {barb.name.trim().split(' ').slice(0, 2).map((n) => n[0] ?? '').join('')}
                                 </div>
                                 {selectedBarber?.id === barb.id && (
                                   <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block animate-pulse" />
@@ -536,7 +551,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                               </div>
                               <div>
                                 <h4 className="font-sans font-bold text-[10px] uppercase tracking-wider text-zinc-150 group-hover:text-gold leading-tight truncate">
-                                  {barb.name.split(' "')[0]}
+                                  {barb.name}
                                 </h4>
                                 <p className="font-sans text-[8px] text-[#c2a35d] font-bold uppercase mt-0.5">
                                   {barb.role}
@@ -695,6 +710,12 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
 
                             <div className="bg-[#121315] p-3 border border-zinc-900 rounded-xl">
                               <span className="font-mono text-[8px] text-[#c2a35d] uppercase block font-bold text-left mb-2.5">HORÁRIOS DISPONÍVEIS:</span>
+                              {getTimeSlotsForDate().length === 0 ? (
+                                <p className="font-sans text-[10.5px] text-zinc-400 text-center py-4 leading-snug">
+                                  Não há mais horários disponíveis hoje.<br />
+                                  <span className="text-zinc-500">Selecione outra data.</span>
+                                </p>
+                              ) : (
                               <div className="grid grid-cols-4 gap-2" id="available-slots-grid">
                                 {getTimeSlotsForDate().map((sh) => (
                                   <button
@@ -714,6 +735,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                                   </button>
                                 ))}
                               </div>
+                              )}
                             </div>
                           </div>
                         )}
@@ -1005,6 +1027,19 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
       </div>
     </div>
   );
+}
+
+// Converte o funcionário (Firestore) no shape que os cards de barbeiro já
+// consomem. Avatar fica vazio (placeholder com iniciais é tratado no card).
+function employeeToSpecialist(e: Employee): BarberSpecialist {
+  return {
+    id: e.id,
+    name: e.name,
+    role: e.role === 'barbeiro' ? 'Barbeiro' : e.role === 'gerente' ? 'Gerente' : 'Recepcionista',
+    avatar: '',
+    bio: '',
+    specialties: [],
+  };
 }
 
 // Utility to format Selected Date stamp as Short standard, e.g. "Sex, 12 de Jun"

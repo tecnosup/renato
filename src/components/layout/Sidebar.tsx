@@ -18,6 +18,21 @@ import {
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useNavShortcuts } from "@/hooks/useNavShortcuts";
 import { NAV_SHORTCUTS_CENTER_INDEX, getMenuItemByHref } from "@/lib/nav-shortcuts";
+import { canAccessPath } from "@/lib/access";
+import type { Permissions } from "@/lib/types";
+
+// Filtra a arvore de navegacao pelas permissoes: remove itens-pai/filhos cujas
+// rotas o usuario nao pode acessar; descarta um pai que ficou sem filhos.
+function filterNav(items: typeof navItems, perms: Permissions | undefined) {
+  return items
+    .map((item) => {
+      if (!item.children) return canAccessPath(perms, item.href) ? item : null;
+      const children = item.children.filter((c) => canAccessPath(perms, c.href));
+      if (children.length === 0 && !canAccessPath(perms, item.href)) return null;
+      return { ...item, children };
+    })
+    .filter((x): x is (typeof navItems)[number] => x !== null);
+}
 
 const navItems = [
   {
@@ -158,8 +173,9 @@ function NavLink({
 
 // Sidebar lateral — só aparece em md+
 function DesktopSidebar() {
-  const { user, logout } = useAuth();
+  const { user, perms, logout } = useAuth();
   const initials = user?.email ? user.email.slice(0, 2).toUpperCase() : "??";
+  const visibleItems = filterNav(navItems, perms);
 
   return (
     <aside className="transform-gpu hidden md:flex w-64 bg-white/3 backdrop-blur-md backdrop-saturate-100 border-r border-white/15 flex-col h-screen sticky top-0 shadow-[inset_-1px_0_0_rgba(255,255,255,0.1)]">
@@ -172,7 +188,7 @@ function DesktopSidebar() {
 
       <nav className="flex-1 overflow-y-auto py-4">
         <ul className="space-y-1 px-3">
-          {navItems.map((item) => (
+          {visibleItems.map((item) => (
             <NavLink key={item.href} item={item} />
           ))}
         </ul>

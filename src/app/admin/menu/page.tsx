@@ -1,9 +1,16 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Bell, BellRing, LogOut, ChevronRight } from "lucide-react";
 import { menuItems } from "@/lib/menu-items";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { canAccessPath } from "@/lib/access";
 
 export default function MenuPage() {
+  const { perms, logout } = useAuth();
+  const visibleItems = menuItems.filter((item) => canAccessPath(perms, item.href));
+
   return (
     <div className="flex-1 overflow-y-auto">
       {/* Header com logo */}
@@ -16,7 +23,7 @@ export default function MenuPage() {
 
       {/* Itens principais */}
       <div className="transform-gpu mx-4 mb-3 rounded-2xl overflow-hidden admin-glass-card p-1">
-        {menuItems.map(({ label, desc, href, icon: Icon, color, badge, badgeColor }) => (
+        {visibleItems.map(({ label, desc, href, icon: Icon, color, badge, badgeColor }) => (
           <Link
             key={href + label}
             href={href}
@@ -67,7 +74,7 @@ export default function MenuPage() {
 
       {/* Sair */}
       <div className="transform-gpu mx-4 mb-12 rounded-2xl overflow-hidden admin-glass-card p-1">
-        <button className="flex items-center gap-4 w-full hover:bg-red-500/10 rounded-xl px-3 py-3.5 transition-colors group">
+        <button onClick={logout} className="flex items-center gap-4 w-full hover:bg-red-500/10 rounded-xl px-3 py-3.5 transition-colors group">
           <div className="w-10 h-10 rounded-xl admin-surface-subtle flex items-center justify-center shrink-0 group-hover:bg-red-500/20">
             <LogOut className="w-5 h-5 admin-text-primary group-hover:text-red-400" />
           </div>
