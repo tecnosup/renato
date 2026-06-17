@@ -1,26 +1,51 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FileText, Clock, CheckCircle, XCircle, ChevronRight } from "lucide-react";
+import { FileText, Clock, CheckCircle, XCircle, ChevronRight, Plus } from "lucide-react";
+import { subscribeToComandas } from "@/lib/comandas";
+import type { Comanda } from "@/lib/types";
 
-const comandas = [
-  { id: "2310621", cliente: "Victor Hugo", profissional: "Franciele Lemos", valor: 80.0, status: "Pago", data: "05/06/2026" },
-  { id: "2310620", cliente: "Leandro Lopes", profissional: "Xavier", valor: 40.0, status: "Pago", data: "05/06/2026" },
-  { id: "2310619", cliente: "Victor Nunes", profissional: "Matheux + 1", valor: 40.0, status: "Pago", data: "05/06/2026" },
-  { id: "2310618", cliente: "Cléberson", profissional: "Franciele Lemos", valor: 40.0, status: "Pago", data: "05/06/2026" },
-  { id: "2310617", cliente: "Rafael Mendes", profissional: "Renato", valor: 85.0, status: "Aberto", data: "05/06/2026" },
-  { id: "2310616", cliente: "Ana Souza", profissional: "Franciele Lemos", valor: 60.0, status: "Cancelado", data: "04/06/2026" },
-];
+function brl(v: number) {
+  return `R$ ${v.toFixed(2).replace(".", ",")}`;
+}
 
-const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-  Pago: { label: "Pago", color: "text-emerald-400 bg-emerald-500/10", icon: CheckCircle },
-  Aberto: { label: "Aberto", color: "text-amber-400 bg-amber-500/10", icon: Clock },
-  Cancelado: { label: "Cancelado", color: "text-red-400 bg-red-500/10", icon: XCircle },
+const STATUS: Record<Comanda["status"], { label: string; cls: string; icon: React.ElementType }> = {
+  aberta: { label: "Aberta", cls: "text-gold bg-gold/10", icon: Clock },
+  paga: { label: "Paga", cls: "text-emerald-400 bg-emerald-500/10", icon: CheckCircle },
+  cancelada: { label: "Cancelada", cls: "text-red-400 bg-red-500/10", icon: XCircle },
+};
+
+const FILTROS = ["Todas", "Abertas", "Pagas", "Canceladas"] as const;
+type Filtro = (typeof FILTROS)[number];
+
+const FILTRO_STATUS: Record<Filtro, Comanda["status"] | null> = {
+  Todas: null,
+  Abertas: "aberta",
+  Pagas: "paga",
+  Canceladas: "cancelada",
 };
 
 export default function ComandasPage() {
-  const abertas = comandas.filter((c) => c.status === "Aberto").length;
+  const [comandas, setComandas] = useState<Comanda[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  const [filtro, setFiltro] = useState<Filtro>("Todas");
+
+  useEffect(() => {
+    const unsub = subscribeToComandas((list) => {
+      setComandas(list);
+      setCarregando(false);
+    });
+    return unsub;
+  }, []);
+
+  const alvo = FILTRO_STATUS[filtro];
+  const visiveis = alvo ? comandas.filter((c) => c.status === alvo) : comandas;
+  const abertas = comandas.filter((c) => c.status === "aberta").length;
 
   return (
     <div className="flex-1 overflow-y-auto p-4 pb-20 md:p-8">
+      {/* Header (sobre o fundo) */}
       <div className="flex items-center justify-between mb-5">
         <div>
           <h1 className="text-2xl font-bold text-slate-100">Comandas</h1>
@@ -28,18 +53,24 @@ export default function ComandasPage() {
             {abertas > 0 ? `${abertas} comanda${abertas > 1 ? "s" : ""} em aberto` : "Nenhuma comanda em aberto"}
           </p>
         </div>
-        <Link href="/admin/comandas/nova" className="bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 px-4 py-2 rounded-lg text-sm font-bold transition-all">
-          + Nova
+        <Link
+          href="/admin/comandas/nova"
+          className="bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-1.5"
+        >
+          <Plus className="w-4 h-4" /> Nova
         </Link>
       </div>
 
       {/* Filtros */}
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
-        {["Todas", "Abertas", "Pagas", "Canceladas"].map((f) => (
+        {FILTROS.map((f) => (
           <button
             key={f}
+            onClick={() => setFiltro(f)}
             className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              f === "Todas" ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 font-bold" : "admin-surface-subtle admin-text-secondary hover:opacity-80"
+              f === filtro
+                ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950"
+                : "admin-glass-card admin-text-secondary hover:opacity-80"
             }`}
           >
             {f}
@@ -48,39 +79,40 @@ export default function ComandasPage() {
       </div>
 
       {/* Lista */}
-      <div className="rounded-2xl overflow-hidden admin-glass-card">
-        <ul className="admin-divide">
-          {comandas.map((c) => {
-            const s = statusConfig[c.status];
-            const StatusIcon = s.icon;
-            return (
-              <li key={c.id} className="admin-glass-card-hover flex items-center gap-3 px-4 py-3 transition-colors">
-                <div className="w-9 h-9 rounded-full admin-surface-subtle flex items-center justify-center shrink-0">
-                  <FileText className="w-4 h-4 admin-text-secondary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium admin-text-primary truncate">{c.cliente}</p>
-                    <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${s.color}`}>
-                      <StatusIcon className="w-3 h-3" />
-                      {s.label}
+      {carregando ? (
+        <p className="text-sm text-slate-300 text-center py-12">Carregando comandas…</p>
+      ) : visiveis.length === 0 ? (
+        <div className="transform-gpu rounded-2xl admin-glass-card flex flex-col items-center justify-center gap-2 py-14 px-6 text-center">
+          <FileText className="w-9 h-9 admin-text-secondary" />
+          <p className="text-sm admin-text-secondary">Nenhuma comanda {filtro !== "Todas" ? filtro.toLowerCase() : "ainda"}.</p>
+        </div>
+      ) : (
+        <div className="transform-gpu rounded-2xl overflow-hidden admin-glass-card">
+          <ul className="admin-divide">
+            {visiveis.map((c) => {
+              const st = STATUS[c.status];
+              const Icon = st.icon;
+              return (
+                <li key={c.id}>
+                  <Link href={`/admin/comandas/${c.id}`} className="admin-glass-card-hover flex items-center gap-3 px-4 py-3.5 transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold admin-text-primary truncate">{c.customerName}</p>
+                      <p className="text-xs admin-text-secondary truncate">
+                        {c.barberName} · {new Date(c.createdAt).toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}
+                      </p>
+                    </div>
+                    <span className="text-sm font-bold admin-text-primary shrink-0">{brl(c.total)}</span>
+                    <span className={`text-[10px] font-semibold px-2 py-1 rounded-full flex items-center gap-1 shrink-0 ${st.cls}`}>
+                      <Icon className="w-3 h-3" /> {st.label}
                     </span>
-                  </div>
-                  <p className="text-xs admin-text-secondary truncate mt-0.5">
-                    #{c.id} · {c.profissional} · {c.data}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-sm font-semibold admin-text-primary">
-                    R$ {c.valor.toFixed(2).replace(".", ",")}
-                  </span>
-                  <ChevronRight className="w-4 h-4 admin-text-secondary" />
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+                    <ChevronRight className="w-4 h-4 admin-text-secondary shrink-0" />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

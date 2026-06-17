@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useLayoutEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Scissors, TrendingDown, Lock, Plus, X, ChevronDown, Banknote, CreditCard, QrCode, Trash2, Check } from "lucide-react";
 import { FaCashRegister } from "react-icons/fa";
 import { Modal } from "@/components/ui/Modal";
@@ -127,142 +128,6 @@ function CalExpand({ expandido, children }: { expandido: boolean; children: Reac
     >
       <div className="overflow-hidden">{children}</div>
     </div>
-  );
-}
-
-// Modal de Nova Comanda
-function NovaComandaModal({
-  onClose,
-  onSalvar,
-}: {
-  onClose: () => void;
-  onSalvar: (c: Comanda) => void;
-}) {
-  const [cliente, setCliente] = useState("");
-  const [profissional, setProfissional] = useState("");
-  const [itens, setItens] = useState<ItemComanda[]>([{ descricao: "", valor: 0 }]);
-  const [salvo, setSalvo] = useState(false);
-  const [fechando, setFechando] = useState(false);
-
-  const total = itens.reduce((s, i) => s + (i.valor || 0), 0);
-  const podeSalvar = cliente.trim() && profissional.trim() && itens.some((i) => i.descricao.trim() && i.valor > 0);
-
-  const addItem = () => setItens((arr) => [...arr, { descricao: "", valor: 0 }]);
-  const removeItem = (idx: number) => setItens((arr) => arr.filter((_, i) => i !== idx));
-  const updateItem = (idx: number, campo: keyof ItemComanda, valor: string) => {
-    setItens((arr) =>
-      arr.map((it, i) =>
-        i === idx ? { ...it, [campo]: campo === "valor" ? Number(valor.replace(",", ".")) || 0 : valor } : it
-      )
-    );
-  };
-
-  const salvar = (close: () => void) => {
-    onSalvar({
-      id: `c-${Date.now()}`,
-      cliente: cliente.trim(),
-      profissional: profissional.trim(),
-      status: "aberta",
-      itens: itens.filter((i) => i.descricao.trim() && i.valor > 0),
-    });
-    setSalvo(true);
-    setTimeout(close, 700);
-  };
-
-  return (
-    <Modal onClose={onClose} panelClassName="admin-glass-modal sm:rounded-3xl rounded-t-3xl">
-      {(close) =>
-        salvo ? (
-          <div className="flex flex-col items-center justify-center gap-3 py-14 px-4">
-            <div className="success-pop flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 shadow-[0_0_28px_rgba(194,163,93,0.55)]">
-              <Check className="w-8 h-8" strokeWidth={3} />
-            </div>
-            <p className="text-base font-bold admin-text-primary">Comanda aberta!</p>
-          </div>
-        ) : (
-          <>
-            <div className="admin-border-b flex items-center justify-between px-4 pt-4 pb-3">
-              <h2 className="text-base font-bold admin-text-primary">Nova Comanda</h2>
-              <button
-                onClick={() => {
-                  setFechando(true);
-                  setTimeout(close, 150);
-                }}
-                className="group admin-text-primary hover:opacity-80"
-              >
-                <X className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-90 ${fechando ? "rotate-180" : ""}`} />
-              </button>
-            </div>
-
-            <div className="p-4 space-y-3">
-              <div>
-                <label className="block text-[11px] font-bold admin-text-secondary uppercase tracking-widest mb-1.5">Cliente</label>
-                <input
-                  value={cliente}
-                  onChange={(e) => setCliente(e.target.value)}
-                  placeholder="Nome do cliente"
-                  className="admin-surface-subtle admin-input transform-gpu w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold admin-text-secondary uppercase tracking-widest mb-1.5">Profissional</label>
-                <input
-                  value={profissional}
-                  onChange={(e) => setProfissional(e.target.value)}
-                  placeholder="Nome do profissional"
-                  className="admin-surface-subtle admin-input transform-gpu w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold admin-text-secondary uppercase tracking-widest mb-1.5">Serviços / Produtos</label>
-                <div className="space-y-2">
-                  {itens.map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <input
-                        value={item.descricao}
-                        onChange={(e) => updateItem(idx, "descricao", e.target.value)}
-                        placeholder="Descrição"
-                        className="admin-surface-subtle admin-input transform-gpu flex-1 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
-                      />
-                      <input
-                        value={item.valor || ""}
-                        onChange={(e) => updateItem(idx, "valor", e.target.value)}
-                        placeholder="0,00"
-                        inputMode="decimal"
-                        className="admin-surface-subtle admin-input transform-gpu w-24 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gold/50 transition-shadow"
-                      />
-                      {itens.length > 1 && (
-                        <button onClick={() => removeItem(idx)} className="admin-text-primary hover:text-red-400 shrink-0">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <button onClick={addItem} className="mt-2 flex items-center gap-1 text-xs font-semibold text-blue-300 hover:text-blue-200">
-                  <Plus className="w-3.5 h-3.5" /> Adicionar item
-                </button>
-              </div>
-
-              <div className="admin-border-t flex items-center justify-between pt-2">
-                <span className="text-sm font-semibold admin-text-primary">Total</span>
-                <span className="text-lg font-bold admin-text-primary">R$ {fmt(total)}</span>
-              </div>
-
-              <button
-                onClick={() => salvar(close)}
-                disabled={!podeSalvar}
-                className="w-full bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 disabled:bg-white/5 disabled:bg-none disabled:text-slate-500 border border-white/30 disabled:border-white/10 text-slate-950 disabled:cursor-not-allowed py-3 rounded-full text-sm font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] disabled:shadow-none transition-all"
-              >
-                Abrir Comanda
-              </button>
-            </div>
-          </>
-        )
-      }
-    </Modal>
   );
 }
 
@@ -468,9 +333,7 @@ export default function CaixaPage() {
     });
   };
 
-  const adicionarComanda = (c: Comanda) => {
-    atualizarDia(diaSelecionado, (dia) => ({ ...dia, comandas: [...dia.comandas, c] }));
-  };
+  const router = useRouter();
 
   const adicionarDespesa = (d: Despesa) => {
     atualizarDia(diaSelecionado, (dia) => ({ ...dia, despesas: [...dia.despesas, d] }));
@@ -719,7 +582,7 @@ export default function CaixaPage() {
           ) : (
             <div className="grid grid-cols-3 gap-2">
               <button
-                onClick={() => setModalAberto("comanda")}
+                onClick={() => router.push("/admin/comandas/nova")}
                 className="flex flex-col items-center gap-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 hover:brightness-110 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all"
               >
                 <Plus className="w-4 h-4" /> Nova Comanda
@@ -786,9 +649,6 @@ export default function CaixaPage() {
         )}
       </div>
 
-      {modalAberto === "comanda" && (
-        <NovaComandaModal onClose={() => setModalAberto(null)} onSalvar={adicionarComanda} />
-      )}
       {modalAberto === "despesa" && (
         <NovaDespesaModal onClose={() => setModalAberto(null)} onSalvar={adicionarDespesa} />
       )}

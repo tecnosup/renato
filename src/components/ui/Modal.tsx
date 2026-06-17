@@ -40,15 +40,19 @@ export function Modal({ children, onClose, panelClassName, overlayClassName }: {
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // Monta primeiro (portal/SSR); só depois — quando o estado inicial já foi
+  // pintado — dispara a animação de entrada. Garante que ela anime de fato
+  // (sem "pular"), igual à de saída.
+  useEffect(() => setMounted(true), []);
   useEffect(() => {
-    setMounted(true);
+    if (!mounted) return;
     const id = requestAnimationFrame(() => setVisible(true));
     return () => cancelAnimationFrame(id);
-  }, []);
+  }, [mounted]);
 
   const close = () => {
     setVisible(false);
-    setTimeout(onClose, 300);
+    setTimeout(onClose, 360); // igual à duração da transição
   };
 
   // Portal no body: escapa de ancestrais com transform/filter, onde `fixed`
@@ -57,7 +61,7 @@ export function Modal({ children, onClose, panelClassName, overlayClassName }: {
 
   return createPortal(
     <div
-      className={`fixed inset-0 z-50 flex items-end sm:items-center justify-center transition-opacity duration-200 ${
+      className={`fixed inset-0 z-50 flex items-end sm:items-center justify-center transition-opacity duration-300 ${
         overlayClassName ?? "bg-black/10"
       } ${
         visible ? "opacity-100" : "opacity-0"
@@ -65,7 +69,7 @@ export function Modal({ children, onClose, panelClassName, overlayClassName }: {
       onClick={close}
     >
       <div
-        className={`transform-gpu w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl max-h-[90vh] overflow-y-auto transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`transform-gpu w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl max-h-[90vh] overflow-y-auto transition-all duration-[360ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
           panelClassName ?? "admin-glass-modal"
         } ${
           visible ? "translate-y-0 scale-100 opacity-100" : "translate-y-full sm:translate-y-24 scale-95 opacity-0"

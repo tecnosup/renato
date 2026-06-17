@@ -256,3 +256,41 @@ export interface Appointment extends AppointmentInput {
   status: AppointmentStatus;
   createdAt: number; // epoch ms (serverTimestamp resolvido no cliente)
 }
+
+// ─── Comandas ─────────────────────────────────────────────────────────────────
+
+export type ComandaStatus = "aberta" | "paga" | "cancelada";
+export type ComandaItemTipo = "servico" | "produto";
+/** De onde a comanda nasceu: junto de um agendamento, ou avulsa (walk-in). */
+export type ComandaOrigem = "agendamento" | "avulsa";
+
+/** Item de uma comanda (serviço ou produto). Preço congelado no momento da adição. */
+export interface ComandaItem {
+  id: string; // id local do item (para remover/editar dentro da comanda)
+  tipo: ComandaItemTipo;
+  refId: string; // id do serviço/produto no catálogo
+  nome: string;
+  preco: number; // preço unitário
+  qtd: number;
+}
+
+/** Dados que o formulário/automação envia ao criar uma comanda. */
+export interface ComandaInput {
+  customerName: string;
+  customerPhone?: string;
+  barberId: string;
+  barberName: string;
+  origem: ComandaOrigem;
+  appointmentId?: string; // vínculo com o agendamento que a gerou
+  items: ComandaItem[];
+}
+
+/** Documento de comanda no Firestore (coleção `comandas`). */
+export interface Comanda extends ComandaInput {
+  id: string;
+  status: ComandaStatus;
+  total: number;
+  createdAt: number; // epoch ms
+  closedAt?: number; // epoch ms (quando paga/cancelada)
+  formaPagamento?: string;
+}

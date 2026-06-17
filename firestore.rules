@@ -93,6 +93,13 @@ service cloud.firestore {
       allow read, create, delete: if request.auth != null;
     }
 
+    // Comandas. Operação interna — só admin logado lê/escreve.
+    // (Criação automática a partir do agendamento da landing é feita server-side
+    // com o Admin SDK, que ignora estas regras.)
+    match /comandas/{id} {
+      allow read, create, update, delete: if request.auth != null;
+    }
+
     function canManageSchedule(targetBarberId) {
       return request.auth != null
         && (!('perms' in request.auth.token)
