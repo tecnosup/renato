@@ -68,6 +68,10 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
   // Submission / conflict state (persistencia no Firestore)
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
+  // Slots disponíveis carregados do servidor (data + barbeiro selecionado)
+  const [availableSlots, setAvailableSlots] = useState<string[] | null>(null);
+  const [loadingSlots, setLoadingSlots] = useState<boolean>(false);
+
   // Barbeiros reais (Firestore, coleção `barbers`), apenas os ativos. Enquanto
   // nenhum estiver cadastrado, o seletor mostra só "Qualquer Disponível".
   const [barbers, setBarbers] = useState<BarberSpecialist[]>([]);
@@ -82,6 +86,29 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
   // Calendario abre no mes/ano reais de hoje.
   const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
+
+  // Busca slots disponíveis do servidor sempre que data ou barbeiro muda.
+  useEffect(() => {
+    if (!selectedDate) {
+      setAvailableSlots(null);
+      return;
+    }
+    let cancelled = false;
+    setLoadingSlots(true);
+    setAvailableSlots(null);
+    fetch(`/api/appointments/slots?date=${selectedDate}&barberId=${selectedBarber.id}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (!cancelled) setAvailableSlots(data.slots ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setAvailableSlots([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingSlots(false);
+      });
+    return () => { cancelled = true; };
+  }, [selectedDate, selectedBarber.id]);
 
   // Auto Scroll-to-Top on Step change inside the modal
   useEffect(() => {
@@ -235,31 +262,23 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
     return 'disponivel'; // Weekdays are good
   };
 
-  // Active time-slots based on chosen day
-  const getTimeSlotsForDate = () => {
-    if (!selectedDate) return [];
+  // Slots disponíveis: vêm do servidor (já filtrados por grade, bloqueios e agendamentos).
+  // Para hoje, remove também os horários que já passaram (30 min de folga mínima).
+  const getTimeSlotsForDate = (): string[] => {
+    if (!selectedDate || !availableSlots) return [];
 
-    // If Saturday, show limited premium slots to match "Poucos horários"
-    const parsedDate = new Date(selectedDate + 'T00:00:00');
-    const isSaturday = parsedDate.getDay() === 6;
-
-    const slots = isSaturday
-      ? ['10:00', '11:00', '15:00', '18:00']
-      : ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
-
-    // Se a data escolhida e hoje, remove horarios que ja passaram (com 30 min
-    // de folga minima para nao agendar "em cima da hora").
     const now = new Date();
     const todayStamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
     if (selectedDate === todayStamp) {
       const limite = now.getHours() * 60 + now.getMinutes() + 30;
-      return slots.filter((s) => {
+      return availableSlots.filter((s) => {
         const [h, m] = s.split(':').map(Number);
         return h * 60 + m >= limite;
       });
     }
 
-    return slots;
+    return availableSlots;
   };
 
   // Parse Date string into visual text: e.g. "Quinta-Feira, 11 De Junho"
@@ -354,6 +373,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
     setSelectedBarber(ANY_BARBER);
     setSelectedDate('');
     setSelectedTime('');
+    setAvailableSlots(null);
     setName('');
     setPhone('');
     setCoupon('');
@@ -710,7 +730,13 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
 
                             <div className="bg-[#121315] p-3 border border-zinc-900 rounded-xl">
                               <span className="font-mono text-[8px] text-[#c2a35d] uppercase block font-bold text-left mb-2.5">HORÁRIOS DISPONÍVEIS:</span>
-                              {getTimeSlotsForDate().length === 0 ? (
+                              {loadingSlots ? (
+                                <div className="grid grid-cols-4 gap-2">
+                                  {Array.from({ length: 8 }).map((_, i) => (
+                                    <div key={i} className="py-2 rounded-lg bg-white/5 animate-pulse h-8" />
+                                  ))}
+                                </div>
+                              ) : getTimeSlotsForDate().length === 0 ? (
                                 <p className="font-sans text-[10.5px] text-zinc-400 text-center py-4 leading-snug">
                                   Não há mais horários disponíveis hoje.<br />
                                   <span className="text-zinc-500">Selecione outra data.</span>

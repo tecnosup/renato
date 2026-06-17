@@ -40,6 +40,30 @@ export interface Permissions {
   verFinanceiroGeral: boolean;
   gerenciarFuncionarios: boolean;
   gerenciarCadastros: boolean;
+  gerenciarGrade: boolean;
+}
+
+/** Configuração de um dia da semana na grade do barbeiro. */
+export interface DaySchedule {
+  open: boolean;
+  start: string;   // "HH:mm"
+  end: string;     // "HH:mm"
+  breakStart?: string; // "HH:mm" — início da pausa
+  breakEnd?: string;   // "HH:mm" — fim da pausa
+}
+
+/**
+ * Grade semanal de um barbeiro (documento `schedules/{barberId}`).
+ * Chave: 0=Dom, 1=Seg, ..., 6=Sáb.
+ */
+export type WeeklySchedule = Record<number, DaySchedule>;
+
+/** Bloqueio pontual de slot (coleção `blockedSlots`). */
+export interface BlockedSlot {
+  id: string;
+  barberId: string;
+  date: string; // "YYYY-MM-DD"
+  time: string; // "HH:mm"
 }
 
 /** Preset de permissoes aplicado ao escolher um cargo (editavel depois). */
@@ -52,6 +76,7 @@ export const ROLE_PRESETS: Record<EmployeeRole, Permissions> = {
     verFinanceiroGeral: true,
     gerenciarFuncionarios: true,
     gerenciarCadastros: true,
+    gerenciarGrade: true,
   },
   recepcionista: {
     verAgendaPropria: true,
@@ -61,6 +86,7 @@ export const ROLE_PRESETS: Record<EmployeeRole, Permissions> = {
     verFinanceiroGeral: false,
     gerenciarFuncionarios: false,
     gerenciarCadastros: true,
+    gerenciarGrade: true,
   },
   barbeiro: {
     verAgendaPropria: true,
@@ -70,6 +96,7 @@ export const ROLE_PRESETS: Record<EmployeeRole, Permissions> = {
     verFinanceiroGeral: false,
     gerenciarFuncionarios: false,
     gerenciarCadastros: false,
+    gerenciarGrade: true,
   },
 };
 

@@ -1,6 +1,38 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
+
+/**
+ * Cabeçalho padrão de modal: título (+ subtítulo opcional) e botão X que gira
+ * no hover. Use junto do componente Modal para manter todos os modais iguais.
+ */
+export function ModalHeader({
+  title,
+  subtitle,
+  onClose,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  onClose: () => void;
+  children?: React.ReactNode; // conteúdo extra à esquerda do X (badges, etc)
+}) {
+  return (
+    <div className="admin-border-b flex items-center justify-between px-5 pt-5 pb-3">
+      <div className="min-w-0">
+        <h2 className="text-base font-bold admin-text-primary truncate">{title}</h2>
+        {subtitle && <p className="text-xs admin-text-secondary mt-0.5 truncate">{subtitle}</p>}
+      </div>
+      <div className="flex items-center gap-2 shrink-0">
+        {children}
+        <button onClick={onClose} className="group admin-text-secondary hover:opacity-80 transition-colors">
+          <X className="w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-90" />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 // Modal genérico de fundo — sobe ao abrir, desce ao fechar
 export function Modal({ children, onClose, panelClassName, overlayClassName }: { children: (close: () => void) => React.ReactNode; onClose: () => void; panelClassName?: string; overlayClassName?: string }) {

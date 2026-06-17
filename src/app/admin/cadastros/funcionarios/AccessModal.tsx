@@ -19,6 +19,7 @@ const PERM_LABELS: { key: keyof Permissions; label: string; desc: string }[] = [
   { key: "verFinanceiroGeral", label: "Financeiro geral", desc: "Faturamento da barbearia inteira" },
   { key: "gerenciarFuncionarios", label: "Gerenciar funcionários", desc: "Criar e editar acessos" },
   { key: "gerenciarCadastros", label: "Cadastros", desc: "Serviços, produtos, clientes, cupons" },
+  { key: "gerenciarGrade", label: "Configurar grade", desc: "Editar horários e bloqueios da própria agenda" },
 ];
 
 function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { UserPlus, X, Pencil, Trash2, Phone, Scissors, Check, ChevronDown, KeyRound, ShieldCheck } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { AccessModal } from "./AccessModal";
@@ -82,6 +83,15 @@ function RoleSelect({
 }
 
 export default function FuncionariosPage() {
+  // Suspense exigido pelo useSearchParams (abrir cadastro via ?novo=1 da sidebar).
+  return (
+    <Suspense fallback={null}>
+      <FuncionariosPageInner />
+    </Suspense>
+  );
+}
+
+function FuncionariosPageInner() {
   const [funcionarios, setFuncionarios] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -105,6 +115,18 @@ export default function FuncionariosPage() {
     setForm(EMPTY_FORM);
     setModal({ id: null });
   };
+
+  // Abre o cadastro automaticamente quando chega via ?novo=1 (atalho da sidebar /
+  // deep-link). Limpa o param em seguida para que clicar de novo reabra sempre.
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    if (searchParams.get("novo") === "1") {
+      abrirNovo();
+      router.replace(pathname);
+    }
+  }, [searchParams, pathname, router]);
 
   const abrirEdicao = (f: Employee) => {
     setForm({ name: f.name, role: f.role, phone: f.phone, active: f.active });

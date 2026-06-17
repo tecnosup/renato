@@ -41,6 +41,38 @@ service cloud.firestore {
         && resource.data.barberId == request.auth.token.barberId;
     }
 
+    // Grade semanal de cada barbeiro.
+    // - READ: público (landing precisa para calcular slots disponíveis via server).
+    // - WRITE: só logado com permissão gerenciarGrade (owner raiz ou claim true).
+    match /schedules/{barberId} {
+      allow read: if true;
+      allow write: if canManageSchedule(barberId);
+    }
+
+    // Bloqueios pontuais de slots.
+    // - READ: público (endpoint server-side usa Admin SDK, mas regra permissiva
+    //   evita erros caso haja leitura client-side futura).
+    // - CREATE/DELETE: logado com permissão gerenciarGrade para o próprio barbeiro
+    //   (owner raiz pode qualquer um).
+    match /blockedSlots/{id} {
+      allow read: if true;
+      allow create: if canManageSchedule(request.resource.data.barberId);
+      allow delete: if canManageSchedule(resource.data.barberId);
+    }
+
+    // Lista de espera. Operação interna do balcão — só admin logado lê/escreve.
+    match /waitlist/{id} {
+      allow read, create, delete: if request.auth != null;
+    }
+
+    function canManageSchedule(targetBarberId) {
+      return request.auth != null
+        && (!('perms' in request.auth.token)
+            || (request.auth.token.perms.gerenciarGrade == true
+                && (request.auth.token.barberId == targetBarberId
+                    || request.auth.token.perms.verAgendaTodos == true)));
+    }
+
     function isValidNewAppointment() {
       let d = request.resource.data;
       return d.status == "pendente"
