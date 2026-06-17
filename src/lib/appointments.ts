@@ -90,6 +90,67 @@ export async function rescheduleAppointment(
   await updateDoc(doc(db, COLLECTION, id), { date, time });
 }
 
+function mapAppointment(d: { id: string; data: () => Record<string, unknown> }): Appointment {
+  const data = d.data();
+  return {
+    id: d.id,
+    serviceId: (data.serviceId as string) ?? "",
+    serviceName: (data.serviceName as string) ?? "",
+    servicePrice: (data.servicePrice as number) ?? 0,
+    barberId: (data.barberId as string) ?? "",
+    barberName: (data.barberName as string) ?? "",
+    date: (data.date as string) ?? "",
+    time: (data.time as string) ?? "",
+    customerName: (data.customerName as string) ?? "",
+    customerPhone: (data.customerPhone as string) ?? "",
+    origin: (data.origin as Appointment["origin"]) ?? "landing",
+    status: (data.status as AppointmentStatus) ?? "pendente",
+    createdAt: (data.createdAt as { toMillis?: () => number })?.toMillis?.() ?? Date.now(),
+  };
+}
+
+/**
+ * Escuta os agendamentos recentes vindos da landing (últimos ~14 dias em diante)
+ * para a central de notificações do admin. Entrega a lista completa ordenada do
+ * mais novo para o mais antigo e, separadamente, avisa quando UM novo chega
+ * (após a primeira leitura) — para disparar o toast + som.
+ *
+ * Filtra por `date >=` (campo único, sem índice composto) e checa `origin` no
+ * cliente. Limita a 30 itens.
+ */
+export function subscribeToRecentLandingAppointments(
+  onList: (list: Appointment[]) => void,
+  onNew?: (appointment: Appointment) => void
+): () => void {
+  const desde = new Date();
+  desde.setDate(desde.getDate() - 14);
+  const desdeStr = `${desde.getFullYear()}-${String(desde.getMonth() + 1).padStart(2, "0")}-${String(desde.getDate()).padStart(2, "0")}`;
+  const q = query(collection(db, COLLECTION), where("date", ">=", desdeStr));
+
+  let primeira = true;
+  return onSnapshot(q, (snap) => {
+    const list = snap.docs
+      .map(mapAppointment)
+      .filter((a) => a.origin === "landing")
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 30);
+    onList(list);
+
+    if (primeira) {
+      primeira = false;
+      return;
+    }
+    if (onNew) {
+      snap.docChanges().forEach((change) => {
+        if (change.type !== "added") return;
+        const data = change.doc.data();
+        if (data.origin !== "landing") return;
+        onNew(mapAppointment(change.doc));
+      });
+    }
+  });
+}
+
 /**
  * Escuta em tempo real os agendamentos de um dia (YYYY-MM-DD), ordenados por
  * horario. Retorna a funcao de unsubscribe. Usado pela Agenda do admin.

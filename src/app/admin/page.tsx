@@ -353,6 +353,8 @@ function AgendaPageInner() {
   const [form, setForm] = useState({ cliente: "", whatsapp: "", servico: "Corte Clássico", preco: "45", barberId: "qualquer", hora: "" });
   const [salvandoAgend, setSalvandoAgend] = useState(false);
   const [erroAgend, setErroAgend] = useState("");
+  // Horário destacado ao chegar via "Ver na agenda" da notificação.
+  const [destaqueHora, setDestaqueHora] = useState<string | null>(null);
 
   // Modais das ações rápidas (Link de agendamento / Lista de espera).
   const [linkModal, setLinkModal] = useState(false);
@@ -415,6 +417,31 @@ function AgendaPageInner() {
       if (!gradeBarberIdAlvo && ativos.length > 0) setGradeBarberIdAlvo(ativos[0].id);
     });
   }, []);
+
+  // "Ver na agenda" (da notificação): seleciona o dia, o barbeiro e destaca o horário.
+  useEffect(() => {
+    const date = searchParams.get("date");
+    const barber = searchParams.get("barber");
+    const time = searchParams.get("time");
+    if (!date) return;
+    setDiaSelecionado(date);
+    const d = new Date(date + "T12:00:00");
+    setMes(d.getMonth());
+    setAno(d.getFullYear());
+    if (barber && barber !== "qualquer") setGradeBarberIdAlvo(barber);
+    if (time) setDestaqueHora(time);
+    router.replace(pathname);
+  }, [searchParams, pathname, router]);
+
+  // Rola até o horário destacado e remove o realce depois de alguns segundos.
+  useEffect(() => {
+    if (!destaqueHora) return;
+    const scroll = setTimeout(() => {
+      document.getElementById(`slot-${destaqueHora}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 450);
+    const limpar = setTimeout(() => setDestaqueHora(null), 3500);
+    return () => { clearTimeout(scroll); clearTimeout(limpar); };
+  }, [destaqueHora, diaSelecionado, gradeBarberIdEfetivo]);
 
   // Escuta a grade do barbeiro alvo em tempo real
   useEffect(() => {
@@ -897,11 +924,13 @@ function AgendaPageInner() {
 
               if (agend) {
                 const isConc = agend.status === "concluido";
+                const destacado = destaqueHora === hora;
                 return (
                   <li
                     key={hora}
+                    id={`slot-${hora}`}
                     onClick={() => abrirAcao(agend)}
-                    className={`flex items-center gap-4 px-4 py-3 cursor-pointer transition-colors ${isConc ? "bg-emerald-400/5 hover:bg-emerald-400/10" : "bg-gold/5 hover:bg-gold/10"}`}
+                    className={`flex items-center gap-4 px-4 py-3 cursor-pointer transition-colors ${isConc ? "bg-emerald-400/5 hover:bg-emerald-400/10" : "bg-gold/5 hover:bg-gold/10"} ${destacado ? "ring-2 ring-gold ring-inset animate-pulse" : ""}`}
                   >
                     <div className="w-12 shrink-0">
                       <p className={`text-sm font-mono font-semibold ${isConc ? "text-emerald-400" : "text-gold"}`}>{hora}</p>
@@ -918,8 +947,9 @@ function AgendaPageInner() {
                 );
               }
 
+              const destacado = destaqueHora === hora;
               return (
-                <li key={hora} className="admin-glass-card-hover flex items-center gap-4 px-4 py-3 transition-colors cursor-pointer" onClick={() => setModal({ hora })}>
+                <li key={hora} id={`slot-${hora}`} className={`admin-glass-card-hover flex items-center gap-4 px-4 py-3 transition-colors cursor-pointer ${destacado ? "ring-2 ring-gold ring-inset animate-pulse" : ""}`} onClick={() => setModal({ hora })}>
                   <div className="w-12 shrink-0">
                     <p className="text-sm font-mono font-semibold admin-text-primary">{hora}</p>
                     <p className="text-[10px] admin-text-secondary">0/1</p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 /**
@@ -37,8 +38,10 @@ export function ModalHeader({
 // Modal genérico de fundo — sobe ao abrir, desce ao fechar
 export function Modal({ children, onClose, panelClassName, overlayClassName }: { children: (close: () => void) => React.ReactNode; onClose: () => void; panelClassName?: string; overlayClassName?: string }) {
   const [visible, setVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const id = requestAnimationFrame(() => setVisible(true));
     return () => cancelAnimationFrame(id);
   }, []);
@@ -48,9 +51,13 @@ export function Modal({ children, onClose, panelClassName, overlayClassName }: {
     setTimeout(onClose, 300);
   };
 
-  return (
+  // Portal no body: escapa de ancestrais com transform/filter, onde `fixed`
+  // ficaria preso ao elemento em vez de cobrir a viewport.
+  if (!mounted) return null;
+
+  return createPortal(
     <div
-      className={`transform-gpu fixed inset-0 z-50 flex items-end sm:items-center justify-center transition-opacity duration-200 ${
+      className={`fixed inset-0 z-50 flex items-end sm:items-center justify-center transition-opacity duration-200 ${
         overlayClassName ?? "bg-black/10"
       } ${
         visible ? "opacity-100" : "opacity-0"
@@ -67,6 +74,7 @@ export function Modal({ children, onClose, panelClassName, overlayClassName }: {
       >
         {children(close)}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
