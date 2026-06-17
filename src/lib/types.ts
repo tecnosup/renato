@@ -196,6 +196,18 @@ export const ROLE_PRESETS: Record<EmployeeRole, Permissions> = {
   },
 };
 
+/** Acesso total — todas as permissões ligadas. Usado pelo botão "Acesso total". */
+export const FULL_PERMS: Permissions = {
+  verAgendaPropria: true,
+  verAgendaTodos: true,
+  verCaixa: true,
+  verFinanceiroProprio: true,
+  verFinanceiroGeral: true,
+  gerenciarFuncionarios: true,
+  gerenciarCadastros: true,
+  gerenciarGrade: true,
+};
+
 /** Dados que o formulário envia ao criar/editar um funcionário. */
 export interface EmployeeInput {
   name: string;

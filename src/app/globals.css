@@ -41,6 +41,9 @@
   --admin-card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 4px 20px rgba(0, 0, 0, 0.25);
   --admin-card-blur: blur(12px) saturate(150%);
   --admin-card-bg-accent-emerald: rgba(52, 211, 153, 0.1);
+  /* Destaque dourado (card de notificação) — tint translúcido no Liquid Glass */
+  --admin-card-bg-accent-gold: rgba(194, 163, 93, 0.13);
+  --admin-card-border-accent-gold: rgba(194, 163, 93, 0.35);
 
   --admin-modal-bg: rgba(255, 255, 255, 0.03);
   --admin-modal-border: rgba(255, 255, 255, 0.15);
@@ -74,6 +77,9 @@
   --admin-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   --admin-card-blur: none;
   --admin-card-bg-accent-emerald: #1e293b;
+  /* Destaque dourado no Noturno — sólido escuro com tom quente + borda dourada */
+  --admin-card-bg-accent-gold: #2a2418;
+  --admin-card-border-accent-gold: rgba(194, 163, 93, 0.5);
 
   --admin-modal-bg: #1e293b;
   --admin-modal-border: rgba(255, 255, 255, 0.08);
@@ -107,6 +113,9 @@
   --admin-card-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
   --admin-card-blur: none;
   --admin-card-bg-accent-emerald: #ffffff;
+  /* Destaque dourado no Diurno — creme claro + borda dourada */
+  --admin-card-bg-accent-gold: #faf4e6;
+  --admin-card-border-accent-gold: rgba(194, 163, 93, 0.55);
 
   --admin-modal-bg: #ffffff;
   --admin-modal-border: rgba(15, 23, 42, 0.08);
@@ -148,6 +157,14 @@ body {
     background-color: var(--admin-card-bg-accent-emerald);
     backdrop-filter: var(--admin-card-blur);
     border: 1px solid var(--admin-card-border);
+    box-shadow: var(--admin-card-shadow);
+  }
+
+  /* Destaque dourado (card de notificação de novo agendamento) — cor em todos os modos */
+  .admin-glass-card-accent-gold {
+    background-color: var(--admin-card-bg-accent-gold);
+    backdrop-filter: var(--admin-card-blur);
+    border: 1px solid var(--admin-card-border-accent-gold);
     box-shadow: var(--admin-card-shadow);
   }
 

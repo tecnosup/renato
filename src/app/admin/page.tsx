@@ -7,7 +7,7 @@ import {
   FileText, ListOrdered, ChevronDown, MessageCircle, CalendarClock, Trash2,
   Check, Settings2, Unlock, Copy, Clock, UserPlus,
 } from "lucide-react";
-import { subscribeToDay, cancelAppointment, rescheduleAppointment, createAppointment } from "@/lib/appointments";
+import { subscribeToDay, cancelAppointment, rescheduleAppointment } from "@/lib/appointments";
 import {
   generateSlots, saveSchedule, subscribeToSchedule, subscribeToBlockedSlots,
   blockSlot, unblockSlot, blockFullDay, unblockFullDay, DEFAULT_SCHEDULE,
@@ -15,6 +15,7 @@ import {
 import { subscribeToEmployees } from "@/lib/employees";
 import { addToWaitlist, removeFromWaitlist, subscribeToWaitlist, type WaitlistEntry } from "@/lib/waitlist";
 import { Modal, ModalHeader } from "@/components/ui/Modal";
+import { SuccessSplash } from "@/components/ui/SuccessSplash";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { can } from "@/lib/access";
 import type { Appointment, WeeklySchedule, DaySchedule, Employee } from "@/lib/types";
@@ -158,9 +159,22 @@ function ConfigurarGradeModal({
   );
   // "editing" | "confirming" | "saving" | "success"
   const [stage, setStage] = useState<"editing" | "confirming" | "saving" | "success">("editing");
+  // Almoço padrão, aplicável a todos os dias abertos de uma vez.
+  const [almoco, setAlmoco] = useState({ start: "12:00", end: "13:00" });
 
   const updateDay = (day: number, patch: Partial<DaySchedule>) => {
     setDraft((prev) => ({ ...prev, [day]: { ...prev[day], ...patch } }));
+  };
+
+  // Aplica o almoço padrão a todos os dias abertos (depois dá pra ajustar individual).
+  const aplicarAlmocoTodos = () => {
+    setDraft((prev) => {
+      const next = { ...prev };
+      for (let i = 0; i < 7; i++) {
+        if (next[i].open) next[i] = { ...next[i], breakStart: almoco.start || undefined, breakEnd: almoco.end || undefined };
+      }
+      return next;
+    });
   };
 
   const handleConfirm = async () => {
@@ -191,15 +205,9 @@ function ConfigurarGradeModal({
             )}
           </div>
 
-          {/* Tela de sucesso */}
+          {/* Tela de sucesso (padrão do site) */}
           {stage === "success" && (
-            <div className="flex flex-col items-center justify-center py-12 px-6 gap-4">
-              <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center animate-bounce">
-                <Check className="w-8 h-8 text-emerald-400" />
-              </div>
-              <p className="text-base font-bold admin-text-primary">Grade salva!</p>
-              <p className="text-xs admin-text-secondary text-center">Os horários já estão atualizados.</p>
-            </div>
+            <SuccessSplash message="Grade salva!" subtitle="Os horários já estão atualizados." />
           )}
 
           {/* Tela de confirmação */}
@@ -232,6 +240,26 @@ function ConfigurarGradeModal({
           {stage === "editing" && (
             <>
               <div className="p-5 space-y-2 max-h-[60vh] overflow-y-auto">
+                {/* Almoço padrão — aplica a todos os dias abertos de uma vez */}
+                <div className="rounded-xl p-3 admin-surface-subtle border border-gold/15 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-3.5 h-3.5 text-gold" />
+                    <span className="text-xs font-semibold admin-text-primary">Almoço padrão</span>
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <TimeInput value={almoco.start} onChange={(v) => setAlmoco((a) => ({ ...a, start: v }))} />
+                    <span className="text-xs admin-text-secondary">até</span>
+                    <TimeInput value={almoco.end} onChange={(v) => setAlmoco((a) => ({ ...a, end: v }))} />
+                    <button
+                      type="button"
+                      onClick={aplicarAlmocoTodos}
+                      className="ml-auto text-[11px] font-semibold text-gold hover:text-white bg-gold/10 hover:bg-gold/20 border border-gold/25 rounded-lg px-2.5 py-1.5 transition-colors"
+                    >
+                      Aplicar a todos os dias
+                    </button>
+                  </div>
+                </div>
+
                 {Array.from({ length: 7 }, (_, i) => {
                   const day = draft[i];
                   return (
@@ -324,6 +352,9 @@ function AgendaPageInner() {
   const [modal, setModal] = useState<{ hora: string } | null>(null);
   const [form, setForm] = useState({ cliente: "", whatsapp: "", servico: "Corte Clássico", preco: "45", barberId: "qualquer", hora: "" });
   const [salvandoAgend, setSalvandoAgend] = useState(false);
+  const [erroAgend, setErroAgend] = useState("");
+  // Horário destacado ao chegar via "Ver na agenda" da notificação.
+  const [destaqueHora, setDestaqueHora] = useState<string | null>(null);
 
   // Modais das ações rápidas (Link de agendamento / Lista de espera).
   const [linkModal, setLinkModal] = useState(false);
@@ -360,6 +391,8 @@ function AgendaPageInner() {
   const [schedule, setSchedule] = useState<WeeklySchedule>({ ...DEFAULT_SCHEDULE });
   const [blockedSlots, setBlockedSlots] = useState<string[]>([]);
   const [configurandoGrade, setConfigurandoGrade] = useState(false);
+  const [confirmarBloqueio, setConfirmarBloqueio] = useState(false);
+  const [bloqueandoDia, setBloqueandoDia] = useState(false);
 
   // Lista de funcionários (para seletor no modal de configuração quando owner/gerente)
   const [funcionarios, setFuncionarios] = useState<Employee[]>([]);
@@ -384,6 +417,31 @@ function AgendaPageInner() {
       if (!gradeBarberIdAlvo && ativos.length > 0) setGradeBarberIdAlvo(ativos[0].id);
     });
   }, []);
+
+  // "Ver na agenda" (da notificação): seleciona o dia, o barbeiro e destaca o horário.
+  useEffect(() => {
+    const date = searchParams.get("date");
+    const barber = searchParams.get("barber");
+    const time = searchParams.get("time");
+    if (!date) return;
+    setDiaSelecionado(date);
+    const d = new Date(date + "T12:00:00");
+    setMes(d.getMonth());
+    setAno(d.getFullYear());
+    if (barber && barber !== "qualquer") setGradeBarberIdAlvo(barber);
+    if (time) setDestaqueHora(time);
+    router.replace(pathname);
+  }, [searchParams, pathname, router]);
+
+  // Rola até o horário destacado e remove o realce depois de alguns segundos.
+  useEffect(() => {
+    if (!destaqueHora) return;
+    const scroll = setTimeout(() => {
+      document.getElementById(`slot-${destaqueHora}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 450);
+    const limpar = setTimeout(() => setDestaqueHora(null), 3500);
+    return () => { clearTimeout(scroll); clearTimeout(limpar); };
+  }, [destaqueHora, diaSelecionado, gradeBarberIdEfetivo]);
 
   // Escuta a grade do barbeiro alvo em tempo real
   useEffect(() => {
@@ -466,9 +524,16 @@ function AgendaPageInner() {
     await unblockSlot(gradeBarberIdEfetivo, diaSelecionado, hora);
   };
 
-  const handleBloquearDia = async () => {
-    if (!gradeBarberIdEfetivo) return;
-    await blockFullDay(gradeBarberIdEfetivo, diaSelecionado, schedule);
+  // Executa o bloqueio do dia inteiro (após a dupla confirmação).
+  const executarBloqueioDia = async () => {
+    if (!gradeBarberIdEfetivo || bloqueandoDia) return;
+    setBloqueandoDia(true);
+    try {
+      await blockFullDay(gradeBarberIdEfetivo, diaSelecionado, schedule);
+      setConfirmarBloqueio(false);
+    } finally {
+      setBloqueandoDia(false);
+    }
   };
 
   const handleDesbloquearDia = async () => {
@@ -479,32 +544,46 @@ function AgendaPageInner() {
   // Abre o modal de agendamento presencial, resetando o form (hora opcional).
   const abrirNovoAgendamento = (hora: string) => {
     setForm({ cliente: "", whatsapp: "", servico: SERVICOS[0], preco: "45", barberId: "qualquer", hora });
+    setErroAgend("");
     setModal({ hora });
   };
 
-  // Salva o agendamento presencial no Firestore (origin "admin"). Recebe `close`
-  // para animar a saída do modal ao concluir.
+  // Salva o agendamento presencial pelo MESMO endpoint da landing — assim o
+  // anti-conflito (servidor) é idêntico nos dois fluxos. Recebe `close` para
+  // animar a saída do modal ao concluir.
   const salvarAgendamento = async (close: () => void) => {
     if (salvandoAgend) return;
     const nome = form.cliente.trim();
     const hora = form.hora || modal?.hora || "";
     if (!nome || !hora) return; // validação mínima: cliente + horário
     setSalvandoAgend(true);
+    setErroAgend("");
     try {
       const barbeiro = funcionarios.find((f) => f.id === form.barberId);
-      await createAppointment({
-        serviceId: form.servico.toLowerCase().replace(/\s+/g, "-"),
-        serviceName: form.servico,
-        servicePrice: Number(form.preco) || 0,
-        barberId: form.barberId,
-        barberName: barbeiro?.name ?? "Qualquer disponível",
-        date: diaSelecionado,
-        time: hora,
-        customerName: nome,
-        customerPhone: form.whatsapp.trim(),
-        origin: "admin",
+      const res = await fetch("/api/appointments/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serviceId: form.servico.toLowerCase().replace(/\s+/g, "-"),
+          serviceName: form.servico,
+          servicePrice: Number(form.preco) || 0,
+          barberId: form.barberId,
+          barberName: barbeiro?.name ?? "Qualquer disponível",
+          date: diaSelecionado,
+          time: hora,
+          customerName: nome,
+          customerPhone: form.whatsapp.trim(),
+          origin: "admin",
+        }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setErroAgend(data.error ?? "Não foi possível concluir o agendamento.");
+        return;
+      }
       close();
+    } catch {
+      setErroAgend("Falha de conexão. Tente novamente.");
     } finally {
       setSalvandoAgend(false);
     }
@@ -544,14 +623,30 @@ function AgendaPageInner() {
       barberId: "qualquer",
       hora: "",
     });
+    setErroAgend("");
     setModal({ hora: "" });
     setWaitlistModal(false);
     removeFromWaitlist(entry.id);
   };
 
-  const agendDia = (agendamentos[diaSelecionado] ?? []).filter((a) => a.status !== "cancelado");
+  const agendDiaTodos = (agendamentos[diaSelecionado] ?? []).filter((a) => a.status !== "cancelado");
+  // Cada barbeiro vê só a SUA agenda. Agendamentos "qualquer" (sem barbeiro fixo,
+  // vindos da landing) aparecem em todas as grades, pois qualquer um pode atender.
+  const agendDia = gradeBarberIdEfetivo
+    ? agendDiaTodos.filter((a) => a.barberId === gradeBarberIdEfetivo || a.barberId === "qualquer")
+    : agendDiaTodos;
   const agendPorHora: Record<string, Appointment> = {};
   agendDia.forEach((a) => { agendPorHora[a.time] = a; });
+
+  // Horários livres para o modal de agendamento, conforme o barbeiro escolhido.
+  // "qualquer": livre enquanto nem todos os barbeiros estiverem ocupados.
+  const totalBarbeiros = Math.max(funcionarios.length, 1);
+  const ocupadosCount: Record<string, number> = {};
+  agendDia.forEach((a) => { ocupadosCount[a.time] = (ocupadosCount[a.time] ?? 0) + 1; });
+  const horariosModal = HORARIOS.filter((h) => {
+    if (form.barberId === "qualquer") return (ocupadosCount[h] ?? 0) < totalBarbeiros;
+    return !agendDia.some((a) => a.barberId === form.barberId && a.time === h);
+  });
 
   // Todos os slots do dia (incluindo bloqueados) para os cards de resumo
   const todosSlotsDia = generateSlots(dayConfig);
@@ -735,7 +830,7 @@ function AgendaPageInner() {
                     </button>
                   ) : (
                     <button
-                      onClick={handleBloquearDia}
+                      onClick={() => setConfirmarBloqueio(true)}
                       className="flex items-center gap-1 text-[10px] font-semibold text-red-400 hover:text-red-300 transition-colors"
                       title="Bloquear dia inteiro"
                     >
@@ -829,11 +924,13 @@ function AgendaPageInner() {
 
               if (agend) {
                 const isConc = agend.status === "concluido";
+                const destacado = destaqueHora === hora;
                 return (
                   <li
                     key={hora}
+                    id={`slot-${hora}`}
                     onClick={() => abrirAcao(agend)}
-                    className={`flex items-center gap-4 px-4 py-3 cursor-pointer transition-colors ${isConc ? "bg-emerald-400/5 hover:bg-emerald-400/10" : "bg-gold/5 hover:bg-gold/10"}`}
+                    className={`flex items-center gap-4 px-4 py-3 cursor-pointer transition-colors ${isConc ? "bg-emerald-400/5 hover:bg-emerald-400/10" : "bg-gold/5 hover:bg-gold/10"} ${destacado ? "ring-2 ring-gold ring-inset animate-pulse" : ""}`}
                   >
                     <div className="w-12 shrink-0">
                       <p className={`text-sm font-mono font-semibold ${isConc ? "text-emerald-400" : "text-gold"}`}>{hora}</p>
@@ -850,8 +947,9 @@ function AgendaPageInner() {
                 );
               }
 
+              const destacado = destaqueHora === hora;
               return (
-                <li key={hora} className="admin-glass-card-hover flex items-center gap-4 px-4 py-3 transition-colors cursor-pointer" onClick={() => setModal({ hora })}>
+                <li key={hora} id={`slot-${hora}`} className={`admin-glass-card-hover flex items-center gap-4 px-4 py-3 transition-colors cursor-pointer ${destacado ? "ring-2 ring-gold ring-inset animate-pulse" : ""}`} onClick={() => setModal({ hora })}>
                   <div className="w-12 shrink-0">
                     <p className="text-sm font-mono font-semibold admin-text-primary">{hora}</p>
                     <p className="text-[10px] admin-text-secondary">0/1</p>
@@ -905,15 +1003,15 @@ function AgendaPageInner() {
                     onChange={(e) => setForm({ ...form, cliente: e.target.value })}
                     className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors" />
                 </div>
-                {/* Horário: fixo quando veio de um slot; grade de chips quando aberto pelo "+" */}
+                {/* Horário: fixo quando veio de um slot; grade de chips (só livres) quando aberto pelo "+" */}
                 {!modal.hora && (
                   <div>
                     <label className="text-xs admin-text-secondary mb-1.5 block">Horário</label>
-                    {HORARIOS.length === 0 ? (
-                      <p className="text-xs admin-text-secondary py-2">Nenhum horário livre neste dia.</p>
+                    {horariosModal.length === 0 ? (
+                      <p className="text-xs admin-text-secondary py-2">Nenhum horário livre neste dia para este barbeiro.</p>
                     ) : (
                       <div className="grid grid-cols-4 gap-2">
-                        {HORARIOS.map((h) => (
+                        {horariosModal.map((h) => (
                           <button
                             key={h}
                             type="button"
@@ -952,12 +1050,15 @@ function AgendaPageInner() {
                 </div>
                 <div>
                   <label className="text-xs admin-text-secondary mb-1 block">Barbeiro</label>
-                  <select value={form.barberId} onChange={(e) => setForm({ ...form, barberId: e.target.value })}
+                  <select value={form.barberId} onChange={(e) => setForm({ ...form, barberId: e.target.value, hora: modal.hora ? form.hora : "" })}
                     className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors">
                     <option value="qualquer">Qualquer disponível</option>
                     {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
                   </select>
                 </div>
+                {erroAgend && (
+                  <p className="text-rose-400 text-xs text-center leading-snug px-2">{erroAgend}</p>
+                )}
                 <div className="flex gap-3 pt-1">
                   <button onClick={close} className="transform-gpu flex-1 admin-glass-card admin-glass-card-hover admin-text-secondary py-3 rounded-xl text-sm font-semibold transition-colors">Cancelar</button>
                   <button
@@ -1170,6 +1271,37 @@ function AgendaPageInner() {
           schedule={schedule}
           onClose={() => setConfigurandoGrade(false)}
         />
+      )}
+
+      {/* Confirmação: bloquear o dia inteiro */}
+      {confirmarBloqueio && (
+        <Modal onClose={() => setConfirmarBloqueio(false)}>
+          {(close) => (
+            <>
+              <ModalHeader title="Bloquear o dia inteiro?" onClose={close} />
+              <div className="p-5 space-y-4">
+                <div className="admin-surface-subtle rounded-xl p-4">
+                  <p className="text-sm admin-text-secondary leading-relaxed">
+                    Todos os horários de <span className="admin-text-primary font-semibold capitalize">{nomeDia}</span>
+                    {" "}ficarão <span className="text-red-400 font-semibold">indisponíveis</span> — somem da landing e ninguém consegue agendar. Você pode desbloquear depois.
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={close} className="flex-1 admin-glass-card admin-glass-card-hover admin-text-secondary py-3 rounded-xl text-sm font-semibold transition-colors">
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={executarBloqueioDia}
+                    disabled={bloqueandoDia}
+                    className="flex-1 bg-red-500 hover:bg-red-400 text-white py-3 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+                  >
+                    {bloqueandoDia ? "Bloqueando..." : <><Ban className="w-4 h-4" /> Bloquear dia</>}
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </Modal>
       )}
     </div>
   );

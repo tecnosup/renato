@@ -23,6 +23,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { NotificationBell } from "@/components/layout/NotificationBell";
+import { useNotifications } from "@/components/providers/NotificationsProvider";
 import { useNavShortcuts } from "@/hooks/useNavShortcuts";
 import { NAV_SHORTCUTS_CENTER_INDEX, getMenuItemByHref } from "@/lib/nav-shortcuts";
 import { canAccessPath } from "@/lib/access";
@@ -251,6 +253,7 @@ function DesktopSidebar() {
           {visibleItems.map((item) => (
             <NavLink key={item.href} item={item} />
           ))}
+          <li><NotificationBell variant="sidebar" /></li>
         </ul>
       </nav>
 
@@ -277,11 +280,13 @@ function NavBottomItem({
   icon: Icon,
   label,
   pathname,
+  badge = 0,
 }: {
   href: string;
   icon: React.ElementType;
   label: string;
   pathname: string;
+  badge?: number;
 }) {
   const isActive = pathname === href || pathname.startsWith(href + "/");
 
@@ -303,13 +308,18 @@ function NavBottomItem({
         whileTap={{ scale: 0.85 }}
         animate={{ scale: isActive ? 1 : 0.92 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
-        className={`flex items-center justify-center w-10 h-10 rounded-full ${
+        className={`relative flex items-center justify-center w-10 h-10 rounded-full ${
           isActive
             ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 shadow-[0_0_22px_rgba(194,163,93,0.6)]"
             : "admin-nav-text"
         }`}
       >
         <Icon className="w-5 h-5" />
+        {badge > 0 && (
+          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-gold text-slate-950 text-[9px] font-bold flex items-center justify-center border border-black/10">
+            {badge > 9 ? "9+" : badge}
+          </span>
+        )}
       </motion.div>
       <span className="text-[10px]">{label}</span>
     </Link>
@@ -319,6 +329,7 @@ function NavBottomItem({
 // Bottom nav — só aparece em mobile
 function MobileBottomNav() {
   const pathname = usePathname();
+  const { unread } = useNotifications();
   const { shortcuts } = useNavShortcuts();
   const centerHref = shortcuts[NAV_SHORTCUTS_CENTER_INDEX];
   const centerItem = getMenuItemByHref(centerHref);
@@ -342,7 +353,9 @@ function MobileBottomNav() {
           const item = getMenuItemByHref(href);
           if (!item) return null;
 
-          return <NavBottomItem key={href} href={item.href} icon={item.icon} label={item.label} pathname={pathname} />;
+          // Badge de notificações não-lidas no item "Menu".
+          const badge = item.href === "/admin/menu" ? unread : 0;
+          return <NavBottomItem key={href} href={item.href} icon={item.icon} label={item.label} pathname={pathname} badge={badge} />;
         })}
       </div>
 

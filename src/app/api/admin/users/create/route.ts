@@ -8,11 +8,13 @@ export const dynamic = "force-dynamic";
 
 const ROLES: EmployeeRole[] = ["barbeiro", "recepcionista", "gerente"];
 
-/** Proprietario (email == OWNER_EMAIL) ou quem tem gerenciarFuncionarios pode. */
+/** Dono-raiz (sem claims), proprietario (OWNER_EMAIL) ou quem tem gerenciarFuncionarios. */
 function canManage(user: { email?: string; perms?: Record<string, boolean> }) {
+  // Dono-raiz (logado sem custom claims) pode tudo — alinhado ao resto do sistema.
+  if (!user.perms) return true;
   const ownerEmail = process.env.OWNER_EMAIL?.toLowerCase();
   const isOwner = !!ownerEmail && user.email?.toLowerCase() === ownerEmail;
-  return isOwner || user.perms?.gerenciarFuncionarios === true;
+  return isOwner || user.perms.gerenciarFuncionarios === true;
 }
 
 interface CreateBody {

@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Bell, BellRing, LogOut, ChevronRight } from "lucide-react";
+import { BellRing, LogOut, ChevronRight } from "lucide-react";
 import { menuItems } from "@/lib/menu-items";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { canAccessPath } from "@/lib/access";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 
 export default function MenuPage() {
   const { perms, logout } = useAuth();
@@ -60,16 +61,7 @@ export default function MenuPage() {
           <ChevronRight className="w-4 h-4 admin-text-primary shrink-0" />
         </Link>
 
-        <Link href="/admin/notificacoes" className="admin-glass-card-hover flex items-center gap-4 rounded-xl px-3 py-3.5 transition-colors">
-          <div className="w-10 h-10 rounded-xl bg-amber-600/70 flex items-center justify-center shrink-0">
-            <Bell className="w-5 h-5 text-white" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-semibold admin-text-primary">Notificações</p>
-            <p className="text-xs admin-text-secondary mt-0.5">Atualizações e avisos do sistema</p>
-          </div>
-          <ChevronRight className="w-4 h-4 admin-text-primary shrink-0" />
-        </Link>
+        <NotificationBell variant="menu" />
       </div>
 
       {/* Sair */}
