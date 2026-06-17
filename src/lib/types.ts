@@ -28,6 +28,47 @@ export interface ServiceInput {
   order: number;
 }
 
+/**
+ * Produto (cosmético) da barbearia — coleção Firestore `products`.
+ *
+ * Hoje a landing usa só para VITRINE (catálogo visual). O cadastro já carrega
+ * `stock` e `cost` para a INTEGRAÇÃO FUTURA COM COMANDAS (a cargo do Vitor):
+ * ao vender na comanda, debita-se `stock` e usa-se `price`/`cost` para
+ * faturamento e margem. Schema documentado em docs/produtos.md.
+ */
+export interface Product {
+  id: string;
+  name: string;
+  /** Preço de venda ao cliente (R$). */
+  price: number;
+  /** Custo de aquisição (R$) — base do cálculo de margem. */
+  cost: number;
+  /** Quantidade atual em estoque (unidades). */
+  stock: number;
+  /** Volume/medida exibido (ex: "100g", "250ml"). */
+  volume: string;
+  description: string;
+  /** Produto visível na vitrine da landing. Inativo = soft delete. */
+  active: boolean;
+  /** Ordem de exibição (menor primeiro). */
+  order: number;
+  /** Foto do produto (Cloudflare R2). Opcional até o upload entrar em uso. */
+  imageUrl?: string;
+}
+
+/** Dados que o formulário envia ao criar/editar um produto. */
+export interface ProductInput {
+  name: string;
+  price: number;
+  cost: number;
+  stock: number;
+  volume: string;
+  description: string;
+  active: boolean;
+  order: number;
+  imageUrl?: string;
+}
+
 export interface BarberSpecialist {
   id: string;
   name: string;

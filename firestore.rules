@@ -24,6 +24,14 @@ service cloud.firestore {
       allow create, update, delete: if canManageCadastros();
     }
 
+    // Produtos (cosméticos). Vitrine pública na landing -> leitura aberta.
+    // Escrita restrita a gerenciarCadastros. A integração com comandas
+    // (debitar estoque na venda) será feita pelo lado admin/Vitor.
+    match /products/{id} {
+      allow read: if true;
+      allow create, update, delete: if canManageCadastros();
+    }
+
     function canManageCadastros() {
       return request.auth != null
         && (!('perms' in request.auth.token) || request.auth.token.perms.gerenciarCadastros == true);
