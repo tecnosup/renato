@@ -1,12 +1,42 @@
 export type ServiceCategory = 'cabelo' | 'barba' | 'tratamento';
 
+/**
+ * Categoria dinâmica (coleção Firestore `categories`), gerenciável pelo Renato.
+ * `type` separa as de serviço das de produto. Os enums legados de serviço
+ * (`cabelo`/`barba`/`tratamento`) viram seed com ids previsíveis (ver
+ * lib/categories.ts), permitindo a migração suave do campo antigo.
+ */
+export type CategoryType = 'servico' | 'produto';
+
+export interface Category {
+  id: string;
+  name: string;
+  type: CategoryType;
+  active: boolean;
+  order: number;
+}
+
+/** Dados que o formulário envia ao criar/editar uma categoria. */
+export interface CategoryInput {
+  name: string;
+  type: CategoryType;
+  active: boolean;
+  order: number;
+}
+
 export interface BarberService {
   id: string;
   name: string;
   price: number;
   duration: number;
   description: string;
+  /**
+   * Categoria legada (enum fixo). Mantida para compatibilidade; o código novo
+   * prefere `categoryId` quando presente. Serviços antigos só têm este campo.
+   */
   category: ServiceCategory;
+  /** Categoria dinâmica (id em `categories`). Preenchido após a migração. */
+  categoryId?: string;
   /**
    * Serviço visível na landing/agendamento. Inativo = soft delete.
    * Opcional para compatibilidade com o catálogo legado de data.ts; serviços
@@ -24,6 +54,7 @@ export interface ServiceInput {
   duration: number;
   description: string;
   category: ServiceCategory;
+  categoryId?: string;
   active: boolean;
   order: number;
 }
@@ -52,6 +83,8 @@ export interface Product {
   active: boolean;
   /** Ordem de exibição (menor primeiro). */
   order: number;
+  /** Categoria dinâmica (id em `categories`, type "produto"). Opcional. */
+  categoryId?: string;
   /** Foto do produto (Cloudflare R2). Opcional até o upload entrar em uso. */
   imageUrl?: string;
 }
@@ -66,6 +99,7 @@ export interface ProductInput {
   description: string;
   active: boolean;
   order: number;
+  categoryId?: string;
   imageUrl?: string;
 }
 

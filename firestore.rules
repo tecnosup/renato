@@ -32,6 +32,13 @@ service cloud.firestore {
       allow create, update, delete: if canManageCadastros();
     }
 
+    // Categorias (de serviço e de produto). A landing agrupa o catálogo por
+    // categoria -> leitura pública. Escrita restrita a gerenciarCadastros.
+    match /categories/{id} {
+      allow read: if true;
+      allow create, update, delete: if canManageCadastros();
+    }
+
     function canManageCadastros() {
       return request.auth != null
         && (!('perms' in request.auth.token) || request.auth.token.perms.gerenciarCadastros == true);
