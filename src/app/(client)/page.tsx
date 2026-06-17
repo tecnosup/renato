@@ -16,7 +16,7 @@ import Memberships from '@/components/(client)/Memberships';
 import ShowcaseBanner from '@/components/(client)/ShowcaseBanner';
 import ThreeDTiltCard from '@/components/(client)/ThreeDTiltCard';
 import Toast from '@/components/(client)/Toast';
-import { SERVICES, BARBERS } from '@/lib/data';
+import { BARBERS } from '@/lib/data';
 
 export default function App() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);

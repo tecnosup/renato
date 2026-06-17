@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SERVICES } from '@/lib/data';
+import { subscribeToServices } from '@/lib/services';
+import type { BarberService } from '@/lib/types';
 import { 
   Sparkles, 
   Calendar, 
@@ -165,6 +166,19 @@ export default function OrbCarousel() {
   const [activeCategory, setActiveCategory] = useState<'menu' | 'services' | 'products'>('menu');
   const [reservationSuccess, setReservationSuccess] = useState<string | null>(null);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+
+  // Serviços reais (Firestore), só os ativos, ordenados. Vitrine reflete o
+  // catálogo cadastrado no admin; sem fallback hardcoded.
+  const [services, setServices] = useState<BarberService[]>([]);
+  const [loadingServices, setLoadingServices] = useState<boolean>(true);
+
+  useEffect(() => {
+    const unsub = subscribeToServices((lista) => {
+      setServices(lista.filter((s) => s.active ?? true));
+      setLoadingServices(false);
+    });
+    return unsub;
+  }, []);
 
   const handleBookService = (serviceId: string) => {
     setSelectedServiceId(serviceId);
@@ -338,7 +352,25 @@ export default function OrbCarousel() {
 
               {/* Dynamic services listing grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="services-orbs-grid">
-                {SERVICES.map((srv, index) => {
+                {loadingServices ? (
+                  // Skeleton enquanto o catálogo carrega do Firestore
+                  Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="glass-card p-6 rounded-[24px] border border-white/10 animate-pulse min-h-[230px] flex flex-col justify-between">
+                      <div className="space-y-3">
+                        <div className="h-4 w-20 bg-white/10 rounded" />
+                        <div className="h-5 w-40 bg-white/10 rounded" />
+                        <div className="h-10 w-full bg-white/5 rounded" />
+                      </div>
+                      <div className="h-6 w-24 bg-white/10 rounded mt-5" />
+                    </div>
+                  ))
+                ) : services.length === 0 ? (
+                  <div className="col-span-full glass-card p-8 rounded-[24px] border border-white/10 text-center">
+                    <p className="font-sans text-sm text-zinc-300">Nenhum serviço disponível no momento.</p>
+                    <p className="font-sans text-[11px] text-zinc-500 mt-1">Volte em breve ou entre em contato com a barbearia.</p>
+                  </div>
+                ) : (
+                services.map((srv, index) => {
                   const isSelected = selectedServiceId === srv.id;
                   return (
                     <motion.div
@@ -427,7 +459,8 @@ export default function OrbCarousel() {
                       </div>
                     </motion.div>
                   );
-                })}
+                })
+                )}
               </div>
             </motion.div>
           )}
