@@ -1,10 +1,31 @@
+export type ServiceCategory = 'cabelo' | 'barba' | 'tratamento';
+
 export interface BarberService {
   id: string;
   name: string;
   price: number;
   duration: number;
   description: string;
-  category: 'cabelo' | 'barba' | 'tratamento';
+  category: ServiceCategory;
+  /**
+   * Serviço visível na landing/agendamento. Inativo = soft delete.
+   * Opcional para compatibilidade com o catálogo legado de data.ts; serviços
+   * vindos do Firestore sempre preenchem (ver lib/services.ts).
+   */
+  active?: boolean;
+  /** Ordem de exibição (menor primeiro). Opcional pelo mesmo motivo. */
+  order?: number;
+}
+
+/** Dados que o formulário envia ao criar/editar um serviço. */
+export interface ServiceInput {
+  name: string;
+  price: number;
+  duration: number;
+  description: string;
+  category: ServiceCategory;
+  active: boolean;
+  order: number;
 }
 
 export interface BarberSpecialist {

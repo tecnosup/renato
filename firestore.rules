@@ -16,6 +16,19 @@ service cloud.firestore {
       allow create, update, delete: if request.auth != null;
     }
 
+    // Serviços (catálogo). A landing precisa LER para montar o passo de
+    // seleção no agendamento e a vitrine, então leitura é pública. Só o admin
+    // logado com permissão gerenciarCadastros pode criar/editar/excluir.
+    match /services/{id} {
+      allow read: if true;
+      allow create, update, delete: if canManageCadastros();
+    }
+
+    function canManageCadastros() {
+      return request.auth != null
+        && (!('perms' in request.auth.token) || request.auth.token.perms.gerenciarCadastros == true);
+    }
+
     // Agendamentos.
     // - CREATE: landing anônima pode, com os campos esperados e status "pendente".
     // - READ: quem pode ver a agenda de todos (owner sem claims, ou perms
