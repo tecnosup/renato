@@ -139,3 +139,36 @@ export function subscribeToDay(
     callback(list);
   });
 }
+
+/** Métricas simples de um serviço, agregadas dos agendamentos. */
+export interface ServiceStat {
+  count: number;     // total de agendamentos (status ativos)
+  revenue: number;   // soma de servicePrice (status ativos)
+}
+
+/**
+ * Escuta em tempo real a contagem/faturamento de agendamentos por serviceId.
+ * Para a tela de Serviços (análise simples). Lê a coleção inteira e agrega no
+ * cliente — adequado ao volume de uma barbearia; ignora cancelados.
+ */
+export function subscribeToServiceStats(
+  callback: (statsByService: Record<string, ServiceStat>) => void
+): () => void {
+  const q = query(collection(db, COLLECTION));
+
+  return onSnapshot(q, (snap) => {
+    const stats: Record<string, ServiceStat> = {};
+    snap.docs.forEach((d) => {
+      const data = d.data();
+      const status = (data.status as AppointmentStatus) ?? "pendente";
+      if (status === "cancelado") return;
+      const id = data.serviceId as string | undefined;
+      if (!id) return;
+      const entry = stats[id] ?? { count: 0, revenue: 0 };
+      entry.count += 1;
+      entry.revenue += (data.servicePrice as number) ?? 0;
+      stats[id] = entry;
+    });
+    callback(stats);
+  });
+}
