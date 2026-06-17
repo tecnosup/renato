@@ -2,16 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { subscribeToServices } from '@/lib/services';
-import type { BarberService } from '@/lib/types';
+import { subscribeToProducts } from '@/lib/products';
+import { subscribeToCategories, serviceCategoryId } from '@/lib/categories';
+import type { BarberService, Product, Category } from '@/lib/types';
 import { 
   Sparkles, 
   Calendar, 
   ShoppingBag, 
-  ArrowLeft, 
-  Tag, 
-  Star, 
-  Sparkle, 
-  Clock, 
+  ArrowLeft,
+  Tag,
+  Sparkle,
+  Clock,
   Compass, 
   CheckCircle2, 
   X, 
@@ -19,45 +20,6 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
-interface ProductItem {
-  id: string;
-  name: string;
-  price: number;
-  volume: string;
-  description: string;
-  image: string;
-  rating: number;
-}
-
-const PRODUCTS: ProductItem[] = [
-  {
-    id: 'p1',
-    name: 'Pomada Matte Século XXI',
-    price: 65,
-    volume: '100g',
-    description: 'Fixação extra-forte de longa duração com efeito matte de toque seco absoluto. Elaborada com argilas e ceras de abelha naturais.',
-    image: 'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?q=80&w=400&auto=format&fit=crop',
-    rating: 5
-  },
-  {
-    id: 'p2',
-    name: 'Balm Nutritivo Real',
-    price: 55,
-    volume: '80ml',
-    description: 'Fórmula hidratante biológica que combate coceiras, estimula o bulbo, protege de raios UV e alinha os fios sem pesar.',
-    image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=400&auto=format&fit=crop',
-    rating: 4.8
-  },
-  {
-    id: 'p3',
-    name: 'Shampoo Fortificante Ativo',
-    price: 75,
-    volume: '250ml',
-    description: 'Antiqueda enriquecido com cafeína anidra, mentol criogênico de estimulação sanguínea e biotina concentrada de absorção rápida.',
-    image: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?q=80&w=400&auto=format&fit=crop',
-    rating: 5
-  }
-];
 
 interface GlassOrbProps {
   category: 'services' | 'products';
@@ -180,6 +142,32 @@ export default function OrbCarousel() {
     return unsub;
   }, []);
 
+  // Produtos reais (Firestore), só os ativos, ordenados. Sem fallback hardcoded.
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState<boolean>(true);
+
+  useEffect(() => {
+    const unsub = subscribeToProducts((lista) => {
+      setProducts(lista.filter((p) => p.active ?? true));
+      setLoadingProducts(false);
+    });
+    return unsub;
+  }, []);
+
+  // Categorias dinâmicas para os chips de filtro da vitrine.
+  const [serviceCats, setServiceCats] = useState<Category[]>([]);
+  const [productCats, setProductCats] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const u1 = subscribeToCategories("servico", setServiceCats);
+    const u2 = subscribeToCategories("produto", setProductCats);
+    return () => { u1(); u2(); };
+  }, []);
+
+  // Chip de categoria ativo em cada aba (null = todas).
+  const [serviceCatFilter, setServiceCatFilter] = useState<string | null>(null);
+  const [productCatFilter, setProductCatFilter] = useState<string | null>(null);
+
   const handleBookService = (serviceId: string) => {
     setSelectedServiceId(serviceId);
     // Triggers the scheduling modal by dispatching the custom-event
@@ -191,12 +179,20 @@ export default function OrbCarousel() {
     }
   };
 
-  const handleReserveProduct = (product: ProductItem) => {
+  const handleReserveProduct = (product: Product) => {
     setReservationSuccess(product.name);
     setTimeout(() => {
       setReservationSuccess(null);
     }, 4000);
   };
+
+  // Listas filtradas pelo chip de categoria ativo.
+  const servicesShown = serviceCatFilter
+    ? services.filter((s) => (s.categoryId ?? serviceCategoryId(s.category)) === serviceCatFilter)
+    : services;
+  const productsShown = productCatFilter
+    ? products.filter((p) => (p.categoryId ?? "") === productCatFilter)
+    : products;
 
   return (
     <section 
@@ -350,6 +346,28 @@ export default function OrbCarousel() {
                 </button>
               </div>
 
+              {/* Chips de categoria (serviços) */}
+              {!loadingServices && serviceCats.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-2 mb-6" id="services-cat-chips">
+                  {[{ id: null as string | null, name: "Todos" }, ...serviceCats].map((c) => {
+                    const sel = serviceCatFilter === c.id;
+                    return (
+                      <button
+                        key={c.id ?? "todos"}
+                        onClick={() => setServiceCatFilter(c.id)}
+                        className={`font-display text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-full border transition-all ${
+                          sel
+                            ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300"
+                            : "border-white/10 text-zinc-400 hover:border-emerald-500/30 hover:text-emerald-300"
+                        }`}
+                      >
+                        {c.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
               {/* Dynamic services listing grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="services-orbs-grid">
                 {loadingServices ? (
@@ -364,13 +382,13 @@ export default function OrbCarousel() {
                       <div className="h-6 w-24 bg-white/10 rounded mt-5" />
                     </div>
                   ))
-                ) : services.length === 0 ? (
+                ) : servicesShown.length === 0 ? (
                   <div className="col-span-full glass-card p-8 rounded-[24px] border border-white/10 text-center">
                     <p className="font-sans text-sm text-zinc-300">Nenhum serviço disponível no momento.</p>
                     <p className="font-sans text-[11px] text-zinc-500 mt-1">Volte em breve ou entre em contato com a barbearia.</p>
                   </div>
                 ) : (
-                services.map((srv, index) => {
+                servicesShown.map((srv, index) => {
                   const isSelected = selectedServiceId === srv.id;
                   return (
                     <motion.div
@@ -510,9 +528,48 @@ export default function OrbCarousel() {
                 </button>
               </div>
 
+              {/* Chips de categoria (produtos) */}
+              {!loadingProducts && productCats.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-2 mb-6" id="products-cat-chips">
+                  {[{ id: null as string | null, name: "Todos" }, ...productCats].map((c) => {
+                    const sel = productCatFilter === c.id;
+                    return (
+                      <button
+                        key={c.id ?? "todos"}
+                        onClick={() => setProductCatFilter(c.id)}
+                        className={`font-display text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-full border transition-all ${
+                          sel
+                            ? "bg-amber-500/15 border-amber-500/40 text-amber-300"
+                            : "border-white/10 text-zinc-400 hover:border-amber-500/30 hover:text-amber-300"
+                        }`}
+                      >
+                        {c.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
               {/* Dynamic products listing grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="products-orbs-grid">
-                {PRODUCTS.map((prod, index) => (
+                {loadingProducts ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="glass-card p-5 rounded-[24px] border border-white/10 animate-pulse min-h-[320px] flex flex-col justify-between">
+                      <div className="space-y-4">
+                        <div className="w-full h-44 bg-white/5 rounded-xl" />
+                        <div className="h-4 w-32 bg-white/10 rounded" />
+                        <div className="h-10 w-full bg-white/5 rounded" />
+                      </div>
+                      <div className="h-6 w-24 bg-white/10 rounded mt-5" />
+                    </div>
+                  ))
+                ) : productsShown.length === 0 ? (
+                  <div className="col-span-full glass-card p-8 rounded-[24px] border border-white/10 text-center">
+                    <p className="font-sans text-sm text-zinc-300">Nenhum produto disponível no momento.</p>
+                    <p className="font-sans text-[11px] text-zinc-500 mt-1">Volte em breve ou entre em contato com a barbearia.</p>
+                  </div>
+                ) : (
+                productsShown.map((prod, index) => (
                   <motion.div
                     key={prod.id}
                     initial={{ opacity: 0, y: 15 }}
@@ -528,31 +585,27 @@ export default function OrbCarousel() {
                     <div className="glow-decor absolute -inset-10 bg-amber-500/[0.01] group-hover:bg-amber-500/[0.08] blur-2xl rounded-full transition-all duration-500 pointer-events-none" />
 
                     <div className="space-y-4 relative z-10">
-                      {/* Product image frame with high luxury aesthetics */}
-                      <div className="w-full h-44 rounded-xl bg-zinc-950 border border-zinc-800 relative overflow-hidden select-none shadow-inner">
-                        <img 
-                          src={prod.image} 
-                          alt={prod.name} 
-                          className="w-full h-full object-cover grayscale brightness-95 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-500 pointer-events-none"
-                          referrerPolicy="no-referrer"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                        <div className="absolute top-2.5 left-2.5 font-mono text-[8px] text-white bg-black/75 px-2 py-0.5 rounded border border-white/5 uppercase">
-                          {prod.volume}
-                        </div>
+                      {/* Product image frame (placeholder até o upload R2 entrar) */}
+                      <div className="w-full h-44 rounded-xl bg-zinc-950 border border-zinc-800 relative overflow-hidden select-none shadow-inner flex items-center justify-center">
+                        {prod.imageUrl ? (
+                          <img
+                            src={prod.imageUrl}
+                            alt={prod.name}
+                            className="w-full h-full object-cover grayscale brightness-95 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-500 pointer-events-none"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        ) : (
+                          <ShoppingBag className="w-10 h-10 text-zinc-700" />
+                        )}
+                        {prod.volume && (
+                          <div className="absolute top-2.5 left-2.5 font-mono text-[8px] text-white bg-black/75 px-2 py-0.5 rounded border border-white/5 uppercase">
+                            {prod.volume}
+                          </div>
+                        )}
                       </div>
 
                       <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <div className="flex gap-0.5 text-amber-450">
-                            {Array.from({ length: 5 }).map((_, si) => (
-                              <Star key={si} className="w-3 h-3 fill-current" />
-                            ))}
-                          </div>
-                          <span className="font-mono text-[8px] text-zinc-500 font-bold">{prod.rating}/5.0</span>
-                        </div>
-
                         <h4 className="font-display font-extrabold text-sm text-zinc-200 uppercase group-hover:text-amber-300 transition-colors leading-tight">
                           {prod.name}
                         </h4>
@@ -580,7 +633,8 @@ export default function OrbCarousel() {
                       </button>
                     </div>
                   </motion.div>
-                ))}
+                ))
+                )}
               </div>
             </motion.div>
           )}
