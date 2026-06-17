@@ -3,8 +3,8 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import {
-  Plus, Pencil, Trash2, Scissors, Check, ChevronDown, ChevronUp, Clock,
-  EyeOff, Eye, Sparkles, TrendingUp, Tag, Search, AlertCircle, DollarSign, Tags,
+  Plus, Pencil, Trash2, Scissors, ChevronUp, ChevronDown, Clock,
+  EyeOff, Eye, Sparkles, TrendingUp, Tag, Search, AlertCircle, DollarSign,
 } from "lucide-react";
 import { Modal, ModalHeader } from "@/components/ui/Modal";
 import {
@@ -24,6 +24,7 @@ import {
   serviceCategoryId,
 } from "@/lib/categories";
 import { CategoryManagerModal } from "@/components/admin/CategoryManagerModal";
+import { CategorySelect } from "@/components/admin/CategorySelect";
 import { subscribeToServiceStats, type ServiceStat } from "@/lib/appointments";
 import { useAuth } from "@/components/providers/AuthProvider";
 import type { BarberService, ServiceCategory, Category } from "@/lib/types";
@@ -49,68 +50,6 @@ const EMPTY_FORM: FormState = {
 };
 
 const brl = (v: number) => `R$ ${v.toLocaleString("pt-BR")}`;
-
-// Dropdown tematizado de categoria (dinâmica, do Firestore). Substitui o
-// <select> nativo, cujo menu aberto quebra o tema do admin.
-function CategorySelect({
-  value,
-  categorias,
-  onChange,
-  onGerenciar,
-}: {
-  value: string;
-  categorias: Category[];
-  onChange: (id: string) => void;
-  onGerenciar: () => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const atual = categorias.find((c) => c.id === value);
-
-  return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm text-left flex items-center justify-between focus:outline-none focus:border-gold/50 transition-colors"
-      >
-        <span className={atual ? "admin-text-primary" : "admin-text-secondary"}>
-          {atual ? atual.name : "Selecione uma categoria"}
-        </span>
-        <ChevronDown className={`w-4 h-4 admin-text-secondary transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
-      <div
-        className="grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
-        style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
-      >
-        <div className="overflow-hidden">
-          <div className="admin-surface-subtle rounded-xl p-1 mt-1">
-            {categorias.map((c) => {
-              const sel = c.id === value;
-              return (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => { onChange(c.id); setOpen(false); }}
-                  className={`admin-glass-card-hover flex items-center justify-between w-full rounded-lg px-3 py-2.5 text-sm transition-colors ${sel ? "text-gold" : "admin-text-primary"}`}
-                >
-                  {c.name}
-                  {sel && <Check className="w-4 h-4" />}
-                </button>
-              );
-            })}
-            <button
-              type="button"
-              onClick={() => { onGerenciar(); setOpen(false); }}
-              className="admin-glass-card-hover flex items-center gap-2 w-full rounded-lg px-3 py-2.5 text-sm admin-text-secondary hover:text-gold transition-colors border-t border-white/5 mt-1"
-            >
-              <Tags className="w-4 h-4" /> Gerenciar categorias
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function ServicosPage() {
   // Suspense exigido pelo useSearchParams (abrir cadastro via ?novo=1 da sidebar).

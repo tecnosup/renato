@@ -17,8 +17,11 @@ import {
   seedProductsIfEmpty,
   swapProductOrder,
 } from "@/lib/products";
+import { subscribeToCategories } from "@/lib/categories";
+import { CategorySelect } from "@/components/admin/CategorySelect";
+import { CategoryManagerModal } from "@/components/admin/CategoryManagerModal";
 import { useAuth } from "@/components/providers/AuthProvider";
-import type { Product } from "@/lib/types";
+import type { Product, Category } from "@/lib/types";
 
 // Limite abaixo do qual o estoque é sinalizado como baixo.
 const LOW_STOCK = 5;
@@ -30,6 +33,7 @@ type FormState = {
   stock: string;
   volume: string;
   description: string;
+  categoryId: string;
   active: boolean;
 };
 
@@ -40,6 +44,7 @@ const EMPTY_FORM: FormState = {
   stock: "0",
   volume: "",
   description: "",
+  categoryId: "",
   active: true,
 };
 
@@ -74,8 +79,12 @@ function ProdutosPageInner() {
 
   // Busca + filtro (estado local).
   const [busca, setBusca] = useState("");
-  // null = todos; "inativos" = desativados; "estoque-baixo" = stock <= LOW_STOCK.
-  const [filtro, setFiltro] = useState<"inativos" | "estoque-baixo" | null>(null);
+  // null = todos; "inativos"; "estoque-baixo"; senão = id de categoria.
+  const [filtro, setFiltro] = useState<string | "inativos" | "estoque-baixo" | null>(null);
+
+  // Categorias dinâmicas (Firestore, type "produto").
+  const [categorias, setCategorias] = useState<Category[]>([]);
+  const [gerenciarCat, setGerenciarCat] = useState(false);
 
   const [erro, setErro] = useState<string | null>(null);
   const [formErros, setFormErros] = useState<Record<string, string>>({});
@@ -88,8 +97,13 @@ function ProdutosPageInner() {
     return unsub;
   }, []);
 
+  useEffect(() => {
+    const unsub = subscribeToCategories("produto", setCategorias);
+    return unsub;
+  }, []);
+
   const abrirNovo = () => {
-    setForm({ ...EMPTY_FORM, active: true });
+    setForm({ ...EMPTY_FORM, active: true, categoryId: categorias[0]?.id ?? "" });
     setFormErros({});
     setModal({ id: null });
   };
@@ -113,6 +127,7 @@ function ProdutosPageInner() {
       stock: String(p.stock),
       volume: p.volume,
       description: p.description,
+      categoryId: p.categoryId ?? "",
       active: p.active ?? true,
     });
     setFormErros({});
@@ -154,6 +169,7 @@ function ProdutosPageInner() {
         stock: Number(form.stock),
         volume: form.volume.trim(),
         description: form.description.trim(),
+        categoryId: form.categoryId,
         active: form.active,
       };
       if (modal?.id) {
@@ -218,6 +234,10 @@ function ProdutosPageInner() {
     [produtos]
   );
 
+  // Categoria de um produto (id pode ser vazio -> grupo "Sem categoria").
+  const catName = (id?: string) =>
+    (id && categorias.find((c) => c.id === id)?.name) || "Sem categoria";
+
   // Busca + filtro.
   const filtrados = useMemo(() => {
     const termo = busca.trim().toLowerCase();
@@ -225,12 +245,25 @@ function ProdutosPageInner() {
       if (termo && !p.name.toLowerCase().includes(termo)) return false;
       if (filtro === "inativos") return !(p.active ?? true);
       if (filtro === "estoque-baixo") return (p.active ?? true) && p.stock <= LOW_STOCK;
+      if (filtro) return (p.categoryId ?? "") === filtro;
       return true;
     });
   }, [produtos, busca, filtro]);
 
-  // Sem busca nem filtro, a reordenação por setas fica ativa.
+  // Sem busca nem filtro, agrupa por categoria e a reordenação fica ativa.
   const semFiltro = !busca.trim() && filtro === null;
+
+  // Grupos por categoria (na ordem das categorias; "Sem categoria" por último).
+  const grupos = useMemo(() => {
+    const map = new Map<string, Product[]>();
+    for (const c of categorias) map.set(c.id, []);
+    map.set("", []); // sem categoria
+    for (const p of filtrados) {
+      const id = p.categoryId && map.has(p.categoryId) ? p.categoryId : "";
+      map.get(id)!.push(p);
+    }
+    return map;
+  }, [filtrados, categorias]);
 
   const renderItem = (p: Product, lista?: Product[], idx?: number) => {
     const active = p.active ?? true;
@@ -414,13 +447,17 @@ function ProdutosPageInner() {
               />
             </div>
             <div className="flex items-center gap-1.5 overflow-x-auto">
-              {([null, "estoque-baixo", "inativos"] as const).map((f) => {
-                const sel = filtro === f;
-                const label = f === null ? "Todos" : f === "inativos" ? "Inativos" : "Estoque baixo";
+              {[
+                { key: null as string | null, label: "Todos" },
+                ...categorias.map((c) => ({ key: c.id as string | null, label: c.name })),
+                { key: "estoque-baixo" as string | null, label: "Estoque baixo" },
+                { key: "inativos" as string | null, label: "Inativos" },
+              ].map(({ key, label }) => {
+                const sel = filtro === key;
                 return (
                   <button
                     key={label}
-                    onClick={() => setFiltro(f)}
+                    onClick={() => setFiltro(key)}
                     className={`shrink-0 text-xs px-3 py-2 rounded-lg transition-colors ${
                       sel ? "bg-gold text-slate-950 font-semibold" : "admin-surface-subtle admin-text-secondary hover:text-gold"
                     }`}
@@ -436,12 +473,29 @@ function ProdutosPageInner() {
             <div className="transform-gpu rounded-2xl admin-glass-card p-8 text-center">
               <p className="text-sm admin-text-secondary">Nenhum produto encontrado.</p>
             </div>
+          ) : semFiltro ? (
+            // Agrupado por categoria, com reordenação por setas dentro do grupo.
+            <div className="space-y-4">
+              {Array.from(grupos.entries()).map(([catId, itens]) => {
+                if (itens.length === 0) return null;
+                return (
+                  <div key={catId || "sem-categoria"}>
+                    <h3 className="text-[11px] font-bold admin-text-secondary uppercase tracking-wider px-1 mb-2">
+                      {catName(catId)} · {itens.length}
+                    </h3>
+                    <div className="transform-gpu rounded-2xl overflow-hidden admin-glass-card">
+                      <ul className="admin-divide">
+                        {itens.map((p, i) => renderItem(p, itens, i))}
+                      </ul>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           ) : (
             <div className="transform-gpu rounded-2xl overflow-hidden admin-glass-card">
               <ul className="admin-divide">
-                {semFiltro
-                  ? filtrados.map((p, i) => renderItem(p, filtrados, i))
-                  : filtrados.map((p) => renderItem(p))}
+                {filtrados.map((p) => renderItem(p))}
               </ul>
             </div>
           )}
@@ -519,6 +573,15 @@ function ProdutosPageInner() {
                   </div>
                 </div>
                 <div>
+                  <label className="text-xs admin-text-secondary mb-1.5 block">Categoria</label>
+                  <CategorySelect
+                    value={form.categoryId}
+                    categorias={categorias}
+                    onChange={(categoryId) => setForm((f) => ({ ...f, categoryId }))}
+                    onGerenciar={() => setGerenciarCat(true)}
+                  />
+                </div>
+                <div>
                   <label className="text-xs admin-text-secondary mb-1.5 block">Descrição</label>
                   <textarea
                     value={form.description}
@@ -588,6 +651,15 @@ function ProdutosPageInner() {
             </>
           )}
         </Modal>
+      )}
+
+      {/* Gerenciar categorias */}
+      {gerenciarCat && (
+        <CategoryManagerModal
+          type="produto"
+          categorias={categorias}
+          onClose={() => setGerenciarCat(false)}
+        />
       )}
     </div>
   );
