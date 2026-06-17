@@ -102,6 +102,20 @@ export async function activateService(id: string): Promise<void> {
   await updateDoc(doc(db, COLLECTION, id), { active: true });
 }
 
+/**
+ * Troca o campo `order` entre dois serviços (reordenação por setas no admin).
+ * A ordem reflete diretamente na vitrine/agendamento da landing.
+ */
+export async function swapServiceOrder(
+  a: { id: string; order: number },
+  b: { id: string; order: number }
+): Promise<void> {
+  await Promise.all([
+    updateDoc(doc(db, COLLECTION, a.id), { order: b.order }),
+    updateDoc(doc(db, COLLECTION, b.id), { order: a.order }),
+  ]);
+}
+
 /** Remove um serviço definitivamente. Use com cautela (prefira deactivate). */
 export async function deleteService(id: string): Promise<void> {
   await deleteDoc(doc(db, COLLECTION, id));
