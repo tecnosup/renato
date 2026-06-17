@@ -8,7 +8,7 @@ import {
   updateEmployeeAccess,
   revokeEmployeeAccess,
 } from "@/lib/employees";
-import { ROLE_PRESETS, type Employee, type Permissions } from "@/lib/types";
+import { ROLE_PRESETS, FULL_PERMS, type Employee, type Permissions } from "@/lib/types";
 
 // Rotulos amigaveis de cada permissao (na ordem de exibicao).
 const PERM_LABELS: { key: keyof Permissions; label: string; desc: string }[] = [
@@ -203,6 +203,24 @@ export function AccessModal({
                   <ShieldCheck className="w-4 h-4 text-gold" />
                   <p className="text-sm font-semibold admin-text-primary">Permissões</p>
                   <span className="text-[10px] admin-text-secondary">preset: {employee.role}</span>
+                  {(() => {
+                    const isFull = Object.values(perms).every(Boolean);
+                    return (
+                      <button
+                        type="button"
+                        onClick={() => setPerms({ ...FULL_PERMS })}
+                        className={`ml-auto text-[10px] font-bold uppercase tracking-wide rounded-lg px-2.5 py-1.5 transition-colors flex items-center gap-1 ${
+                          isFull
+                            ? "bg-gold/20 text-gold border border-gold/40"
+                            : "admin-surface-subtle admin-text-secondary border border-white/10 hover:text-gold hover:border-gold/40"
+                        }`}
+                        title="Liga todas as permissões (acesso de proprietário)"
+                      >
+                        <ShieldCheck className="w-3 h-3" />
+                        {isFull ? "Acesso total ✓" : "Acesso total"}
+                      </button>
+                    );
+                  })()}
                 </div>
                 <div className="admin-surface-subtle rounded-xl divide-y divide-white/5">
                   {PERM_LABELS.map(({ key, label, desc }) => (

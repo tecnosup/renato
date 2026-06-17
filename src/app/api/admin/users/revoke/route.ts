@@ -7,9 +7,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function canManage(user: { email?: string; perms?: Record<string, boolean> }) {
+  // Dono-raiz (logado sem custom claims) pode tudo — alinhado ao resto do sistema.
+  if (!user.perms) return true;
   const ownerEmail = process.env.OWNER_EMAIL?.toLowerCase();
   const isOwner = !!ownerEmail && user.email?.toLowerCase() === ownerEmail;
-  return isOwner || user.perms?.gerenciarFuncionarios === true;
+  return isOwner || user.perms.gerenciarFuncionarios === true;
 }
 
 interface RevokeBody {
