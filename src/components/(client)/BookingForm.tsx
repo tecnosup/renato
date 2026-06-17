@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SERVICES } from '@/lib/data';
 import { BarberService, BarberSpecialist, Employee } from '@/lib/types';
 import { subscribeToEmployees } from '@/lib/employees';
+import { subscribeToServices } from '@/lib/services';
 import { 
   Sparkles, 
   Check, 
@@ -43,8 +43,9 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
   const [step, setStep] = useState<number>(1);
   const [direction, setDirection] = useState<number>(1); // 1 = forward, -1 = backward
   
-  // Selection states
-  const [selectedService, setSelectedService] = useState<BarberService>(SERVICES[0]);
+  // Selection states. selectedService começa null até os serviços carregarem
+  // do Firestore (a landing reflete o catálogo real cadastrado no admin).
+  const [selectedService, setSelectedService] = useState<BarberService | null>(null);
   const [selectedBarber, setSelectedBarber] = useState<BarberSpecialist>(ANY_BARBER);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
@@ -82,6 +83,26 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
     });
     return unsub;
   }, []);
+
+  // Serviços reais (Firestore, coleção `services`), apenas os ativos, ordenados.
+  // Reflete o catálogo cadastrado no admin; sem fallback hardcoded.
+  const [services, setServices] = useState<BarberService[]>([]);
+  const [loadingServices, setLoadingServices] = useState<boolean>(true);
+
+  useEffect(() => {
+    const unsub = subscribeToServices((lista) => {
+      setServices(lista.filter((s) => s.active ?? true));
+      setLoadingServices(false);
+    });
+    return unsub;
+  }, []);
+
+  // Assim que os serviços carregam, pré-seleciona o primeiro (se nada escolhido).
+  useEffect(() => {
+    if (!selectedService && services.length > 0) {
+      setSelectedService(services[0]);
+    }
+  }, [services, selectedService]);
 
   // Calendario abre no mes/ano reais de hoje.
   const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth());
@@ -122,7 +143,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
   useEffect(() => {
     const handleSelectService = (e: Event) => {
       const customEvent = e as CustomEvent<string>;
-      const matched = SERVICES.find(s => s.id === customEvent.detail);
+      const matched = services.find(s => s.id === customEvent.detail);
       if (matched) {
         setSelectedService(matched);
         setStep(2); // Automatically fast-forward to Passo 2 Choose Barber
@@ -131,7 +152,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
     };
     window.addEventListener('select-service', handleSelectService);
     return () => window.removeEventListener('select-service', handleSelectService);
-  }, []);
+  }, [services]);
 
   if (!isOpen) return null;
 
@@ -297,6 +318,8 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
   const validateAndSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
+    // Guard de tipo: a esta altura do fluxo sempre há serviço selecionado.
+    if (!selectedService) return;
 
     const newErrors: { [key: string]: string } = {};
 
@@ -369,7 +392,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
 
   const handleResetAndRestart = () => {
     setStep(1);
-    setSelectedService(SERVICES[0]);
+    setSelectedService(services[0] ?? null);
     setSelectedBarber(ANY_BARBER);
     setSelectedDate('');
     setSelectedTime('');
@@ -404,7 +427,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
     })
   };
 
-  const discountedPrice = selectedService.price * (1 - appliedDiscount);
+  const discountedPrice = (selectedService?.price ?? 0) * (1 - appliedDiscount);
 
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 backdrop-blur-md" id="reservar-modal">
@@ -491,7 +514,27 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                     {/* STEP 1: SERVICES CATALOGUE GRID */}
                     {step === 1 && (
                       <div className="space-y-2" id="app-step-services">
-                        {SERVICES.map((srv) => (
+                        {loadingServices ? (
+                          // Skeleton enquanto o catálogo carrega do Firestore
+                          Array.from({ length: 4 }).map((_, i) => (
+                            <div
+                              key={i}
+                              className="w-full p-3 rounded-xl border border-white/10 bg-white/5 animate-pulse flex items-center justify-between"
+                            >
+                              <div className="flex flex-col gap-2">
+                                <div className="h-3 w-32 bg-white/10 rounded" />
+                                <div className="h-2 w-48 bg-white/5 rounded" />
+                              </div>
+                              <div className="h-3 w-12 bg-white/10 rounded" />
+                            </div>
+                          ))
+                        ) : services.length === 0 ? (
+                          <div className="w-full p-6 rounded-xl border border-white/10 bg-white/5 text-center">
+                            <p className="font-sans text-sm text-slate-300">Nenhum serviço disponível no momento.</p>
+                            <p className="font-sans text-[11px] text-zinc-500 mt-1">Entre em contato com a barbearia para agendar.</p>
+                          </div>
+                        ) : (
+                        services.map((srv) => (
                           <button
                             key={srv.id}
                             type="button"
@@ -513,7 +556,8 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                               <span className="font-mono text-[8px] text-zinc-500">{srv.duration} min</span>
                             </div>
                           </button>
-                        ))}
+                        ))
+                        )}
                       </div>
                     )}
 
@@ -600,7 +644,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                           <div className="flex flex-col text-left leading-tight">
                             <span className="font-mono text-[8px] text-gold uppercase block leading-none mb-1 font-bold">SERVIÇO ESCOLHIDO</span>
                             <span className="font-sans font-semibold text-slate-100 uppercase text-[11px]">
-                              {selectedService.name} <span className="text-emerald-400 font-bold ml-1.5">R$ {selectedService.price}</span>
+                              {selectedService?.name} <span className="text-emerald-400 font-bold ml-1.5">R$ {selectedService?.price}</span>
                             </span>
                           </div>
                           <button
@@ -787,7 +831,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                           <div className="flex flex-col">
                             <span className="font-mono text-[8px] text-gold uppercase block mb-0.5 font-bold">RESUMO DO RITUAL</span>
                             <span className="font-sans font-black text-xs text-slate-100 uppercase leading-none">
-                              {selectedService.name}
+                              {selectedService?.name}
                             </span>
                             <span className="font-sans text-[10.5px] text-slate-400 mt-1">
                               Com {selectedBarber.name.split(' "')[0]} • {selectedTime}hs no dia {selectedDate ? formatSelectedShortDate(selectedDate) : ''}
@@ -798,11 +842,11 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                             <span className="font-sans font-bold text-xs text-gold">
                               {appliedDiscount > 0 ? (
                                 <div className="flex flex-col items-end leading-none">
-                                  <span className="text-slate-500 line-through text-[9px] font-normal">R$ {selectedService.price}</span>
+                                  <span className="text-slate-500 line-through text-[9px] font-normal">R$ {selectedService?.price}</span>
                                   <span className="text-gold mt-0.5">R$ {discountedPrice.toFixed(0)},00</span>
                                 </div>
                               ) : (
-                                <span>R$ {selectedService.price},00</span>
+                                <span>R$ {selectedService?.price},00</span>
                               )}
                             </span>
                           </div>
@@ -963,7 +1007,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                   <div className="space-y-2.5 font-mono text-[10px] text-zinc-800">
                     <div className="flex flex-col border-b border-zinc-100 pb-1.5">
                       <span className="text-[7.5px] text-zinc-400 uppercase">[VOUCHER_SINALIZACAO]</span>
-                      <span className="text-xs font-display font-bold text-zinc-950 uppercase">{selectedService.name}</span>
+                      <span className="text-xs font-display font-bold text-zinc-950 uppercase">{selectedService?.name}</span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -974,7 +1018,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                       <div className="flex flex-col items-end text-right">
                         <span className="text-[7.5px] text-zinc-400 uppercase">[INVESTIMENTO]</span>
                         <span className="font-bold text-zinc-900 text-xs">
-                          R$ {appliedDiscount > 0 ? discountedPrice.toFixed(0) : selectedService.price},00
+                          R$ {appliedDiscount > 0 ? discountedPrice.toFixed(0) : selectedService?.price},00
                         </span>
                       </div>
                     </div>

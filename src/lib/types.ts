@@ -1,10 +1,106 @@
+export type ServiceCategory = 'cabelo' | 'barba' | 'tratamento';
+
+/**
+ * Categoria dinâmica (coleção Firestore `categories`), gerenciável pelo Renato.
+ * `type` separa as de serviço das de produto. Os enums legados de serviço
+ * (`cabelo`/`barba`/`tratamento`) viram seed com ids previsíveis (ver
+ * lib/categories.ts), permitindo a migração suave do campo antigo.
+ */
+export type CategoryType = 'servico' | 'produto';
+
+export interface Category {
+  id: string;
+  name: string;
+  type: CategoryType;
+  active: boolean;
+  order: number;
+}
+
+/** Dados que o formulário envia ao criar/editar uma categoria. */
+export interface CategoryInput {
+  name: string;
+  type: CategoryType;
+  active: boolean;
+  order: number;
+}
+
 export interface BarberService {
   id: string;
   name: string;
   price: number;
   duration: number;
   description: string;
-  category: 'cabelo' | 'barba' | 'tratamento';
+  /**
+   * Categoria legada (enum fixo). Mantida para compatibilidade; o código novo
+   * prefere `categoryId` quando presente. Serviços antigos só têm este campo.
+   */
+  category: ServiceCategory;
+  /** Categoria dinâmica (id em `categories`). Preenchido após a migração. */
+  categoryId?: string;
+  /**
+   * Serviço visível na landing/agendamento. Inativo = soft delete.
+   * Opcional para compatibilidade com o catálogo legado de data.ts; serviços
+   * vindos do Firestore sempre preenchem (ver lib/services.ts).
+   */
+  active?: boolean;
+  /** Ordem de exibição (menor primeiro). Opcional pelo mesmo motivo. */
+  order?: number;
+}
+
+/** Dados que o formulário envia ao criar/editar um serviço. */
+export interface ServiceInput {
+  name: string;
+  price: number;
+  duration: number;
+  description: string;
+  category: ServiceCategory;
+  categoryId?: string;
+  active: boolean;
+  order: number;
+}
+
+/**
+ * Produto (cosmético) da barbearia — coleção Firestore `products`.
+ *
+ * Hoje a landing usa só para VITRINE (catálogo visual). O cadastro já carrega
+ * `stock` e `cost` para a INTEGRAÇÃO FUTURA COM COMANDAS (a cargo do Vitor):
+ * ao vender na comanda, debita-se `stock` e usa-se `price`/`cost` para
+ * faturamento e margem. Schema documentado em docs/produtos.md.
+ */
+export interface Product {
+  id: string;
+  name: string;
+  /** Preço de venda ao cliente (R$). */
+  price: number;
+  /** Custo de aquisição (R$) — base do cálculo de margem. */
+  cost: number;
+  /** Quantidade atual em estoque (unidades). */
+  stock: number;
+  /** Volume/medida exibido (ex: "100g", "250ml"). */
+  volume: string;
+  description: string;
+  /** Produto visível na vitrine da landing. Inativo = soft delete. */
+  active: boolean;
+  /** Ordem de exibição (menor primeiro). */
+  order: number;
+  /** Categoria dinâmica (id em `categories`, type "produto"). Opcional. */
+  categoryId?: string;
+  /** Foto do produto (Cloudflare R2). Opcional até o upload entrar em uso. */
+  imageUrl?: string;
+}
+
+/** Dados que o formulário envia ao criar/editar um produto. */
+export interface ProductInput {
+  name: string;
+  price: number;
+  cost: number;
+  stock: number;
+  volume: string;
+  description: string;
+  active: boolean;
+  order: number;
+  categoryId?: string;
+  imageUrl?: string;
 }
 
 export interface BarberSpecialist {
