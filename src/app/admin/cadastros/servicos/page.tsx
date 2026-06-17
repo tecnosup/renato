@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import {
   Plus, Pencil, Trash2, Scissors, Check, ChevronDown, ChevronUp, Clock,
-  EyeOff, Eye, Sparkles, TrendingUp, Tag, Search, AlertCircle, DollarSign,
+  EyeOff, Eye, Sparkles, TrendingUp, Tag, Search, AlertCircle, DollarSign, Tags,
 } from "lucide-react";
 import { Modal, ModalHeader } from "@/components/ui/Modal";
 import {
@@ -17,24 +17,24 @@ import {
   seedServicesIfEmpty,
   swapServiceOrder,
 } from "@/lib/services";
+import {
+  subscribeToCategories,
+  seedServiceCategoriesIfEmpty,
+  migrateServiceCategories,
+  serviceCategoryId,
+} from "@/lib/categories";
+import { CategoryManagerModal } from "@/components/admin/CategoryManagerModal";
 import { subscribeToServiceStats, type ServiceStat } from "@/lib/appointments";
 import { useAuth } from "@/components/providers/AuthProvider";
-import type { BarberService, ServiceCategory } from "@/lib/types";
-
-const CATEGORY_LABEL: Record<ServiceCategory, string> = {
-  cabelo: "Cabelo",
-  barba: "Barba",
-  tratamento: "Tratamento",
-};
-
-const CATEGORIES: ServiceCategory[] = ["cabelo", "barba", "tratamento"];
+import type { BarberService, ServiceCategory, Category } from "@/lib/types";
 
 type FormState = {
   name: string;
   price: string;
   duration: string;
   description: string;
-  category: ServiceCategory;
+  categoryId: string;
+  category: ServiceCategory; // mantido para compatibilidade do payload legado
   active: boolean;
 };
 
@@ -43,22 +43,28 @@ const EMPTY_FORM: FormState = {
   price: "",
   duration: "30",
   description: "",
+  categoryId: "",
   category: "cabelo",
   active: true,
 };
 
 const brl = (v: number) => `R$ ${v.toLocaleString("pt-BR")}`;
 
-// Dropdown tematizado (substitui o <select> nativo, cujo menu aberto usa o
-// estilo branco do SO e quebra o tema do admin). Mesmo padrao do RoleSelect.
+// Dropdown tematizado de categoria (dinâmica, do Firestore). Substitui o
+// <select> nativo, cujo menu aberto quebra o tema do admin.
 function CategorySelect({
   value,
+  categorias,
   onChange,
+  onGerenciar,
 }: {
-  value: ServiceCategory;
-  onChange: (c: ServiceCategory) => void;
+  value: string;
+  categorias: Category[];
+  onChange: (id: string) => void;
+  onGerenciar: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  const atual = categorias.find((c) => c.id === value);
 
   return (
     <div className="relative">
@@ -67,7 +73,9 @@ function CategorySelect({
         onClick={() => setOpen((o) => !o)}
         className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm text-left flex items-center justify-between focus:outline-none focus:border-gold/50 transition-colors"
       >
-        <span className="admin-text-primary">{CATEGORY_LABEL[value]}</span>
+        <span className={atual ? "admin-text-primary" : "admin-text-secondary"}>
+          {atual ? atual.name : "Selecione uma categoria"}
+        </span>
         <ChevronDown className={`w-4 h-4 admin-text-secondary transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       <div
@@ -76,20 +84,27 @@ function CategorySelect({
       >
         <div className="overflow-hidden">
           <div className="admin-surface-subtle rounded-xl p-1 mt-1">
-            {CATEGORIES.map((c) => {
-              const sel = c === value;
+            {categorias.map((c) => {
+              const sel = c.id === value;
               return (
                 <button
-                  key={c}
+                  key={c.id}
                   type="button"
-                  onClick={() => { onChange(c); setOpen(false); }}
+                  onClick={() => { onChange(c.id); setOpen(false); }}
                   className={`admin-glass-card-hover flex items-center justify-between w-full rounded-lg px-3 py-2.5 text-sm transition-colors ${sel ? "text-gold" : "admin-text-primary"}`}
                 >
-                  {CATEGORY_LABEL[c]}
+                  {c.name}
                   {sel && <Check className="w-4 h-4" />}
                 </button>
               );
             })}
+            <button
+              type="button"
+              onClick={() => { onGerenciar(); setOpen(false); }}
+              className="admin-glass-card-hover flex items-center gap-2 w-full rounded-lg px-3 py-2.5 text-sm admin-text-secondary hover:text-gold transition-colors border-t border-white/5 mt-1"
+            >
+              <Tags className="w-4 h-4" /> Gerenciar categorias
+            </button>
           </div>
         </div>
       </div>
@@ -128,8 +143,12 @@ function ServicosPageInner() {
 
   // Busca + filtro (estado local, não toca o Firestore).
   const [busca, setBusca] = useState("");
-  // null = todas as categorias; "inativos" = só os desativados.
-  const [filtroCategoria, setFiltroCategoria] = useState<ServiceCategory | "inativos" | null>(null);
+  // null = todas; "inativos" = só os desativados; senão = id de categoria.
+  const [filtroCategoria, setFiltroCategoria] = useState<string | "inativos" | null>(null);
+
+  // Categorias dinâmicas (Firestore, type "servico").
+  const [categorias, setCategorias] = useState<Category[]>([]);
+  const [gerenciarCat, setGerenciarCat] = useState(false);
 
   // Feedback de erro inline (operações de escrita que falham).
   const [erro, setErro] = useState<string | null>(null);
@@ -144,6 +163,16 @@ function ServicosPageInner() {
     return unsub;
   }, []);
 
+  // Garante as categorias legadas e migra serviços antigos (enum -> categoryId)
+  // uma vez ao montar; depois assina a lista em tempo real.
+  useEffect(() => {
+    seedServiceCategoriesIfEmpty()
+      .then(() => migrateServiceCategories())
+      .catch(() => {});
+    const unsub = subscribeToCategories("servico", setCategorias);
+    return unsub;
+  }, []);
+
   // Analise simples: agrega agendamentos por serviceId (toda a coleção).
   // Só assina se o usuário pode ver a agenda de todos (senão a query é negada).
   useEffect(() => {
@@ -153,7 +182,7 @@ function ServicosPageInner() {
   }, [podeVerAnalise]);
 
   const abrirNovo = () => {
-    setForm({ ...EMPTY_FORM, active: true });
+    setForm({ ...EMPTY_FORM, active: true, categoryId: categorias[0]?.id ?? "" });
     setFormErros({});
     setModal({ id: null });
   };
@@ -176,6 +205,8 @@ function ServicosPageInner() {
       duration: String(s.duration),
       description: s.description,
       category: s.category,
+      // categoryId existente, ou derivado do enum legado.
+      categoryId: s.categoryId ?? serviceCategoryId(s.category),
       active: s.active ?? true,
     });
     setFormErros({});
@@ -215,7 +246,8 @@ function ServicosPageInner() {
         price: Number(form.price),
         duration: Number(form.duration),
         description: form.description.trim(),
-        category: form.category,
+        category: form.category, // mantém o enum legado preenchido
+        categoryId: form.categoryId,
         active: form.active,
       };
       if (modal?.id) {
@@ -296,13 +328,18 @@ function ServicosPageInner() {
     return { totalBookings: b, totalRevenue: r };
   }, [statsByService]);
 
+  // Resolve o id de categoria de um serviço (dinâmico, com fallback do enum).
+  const catIdOf = (s: BarberService) => s.categoryId ?? serviceCategoryId(s.category);
+  // Nome de uma categoria pelo id (para exibição).
+  const catName = (id: string) => categorias.find((c) => c.id === id)?.name ?? "Outros";
+
   // Aplica busca (nome) + filtro de categoria/inativos.
   const filtrados = useMemo(() => {
     const termo = busca.trim().toLowerCase();
     return servicos.filter((s) => {
       if (termo && !s.name.toLowerCase().includes(termo)) return false;
       if (filtroCategoria === "inativos") return !(s.active ?? true);
-      if (filtroCategoria) return s.category === filtroCategoria;
+      if (filtroCategoria) return catIdOf(s) === filtroCategoria;
       return true;
     });
   }, [servicos, busca, filtroCategoria]);
@@ -311,12 +348,18 @@ function ServicosPageInner() {
   // reordenação por setas fica ativa (ordem reflete o campo `order`/landing).
   const semFiltro = !busca.trim() && filtroCategoria === null;
 
-  // Grupos por categoria (preservando a ordem já vinda do Firestore).
+  // Grupos por categoria (na ordem das categorias), preservando a ordem dos
+  // serviços. Categorias sem itens são omitidas na renderização.
   const grupos = useMemo(() => {
-    const map: Record<ServiceCategory, BarberService[]> = { cabelo: [], barba: [], tratamento: [] };
-    for (const s of filtrados) map[s.category].push(s);
+    const map = new Map<string, BarberService[]>();
+    for (const c of categorias) map.set(c.id, []);
+    for (const s of filtrados) {
+      const id = catIdOf(s);
+      if (!map.has(id)) map.set(id, []); // categoria removida -> grupo "Outros"
+      map.get(id)!.push(s);
+    }
     return map;
-  }, [filtrados]);
+  }, [filtrados, categorias]);
 
   // Renderiza um item da lista. Quando recebe `grupo`+`idx` (modo agrupado sem
   // filtro), habilita as setas de reordenação dentro daquele grupo.
@@ -361,7 +404,7 @@ function ServicosPageInner() {
             )}
           </div>
           <p className="text-xs admin-text-secondary truncate mt-0.5">
-            {brl(s.price)} · {s.duration}min · {CATEGORY_LABEL[s.category]}
+            {brl(s.price)} · {s.duration}min · {catName(catIdOf(s))}
             {podeVerAnalise && bookings > 0 ? ` · ${bookings} agend. · ${brl(revenue)}` : ""}
           </p>
         </div>
@@ -509,13 +552,16 @@ function ServicosPageInner() {
               />
             </div>
             <div className="flex items-center gap-1.5 overflow-x-auto">
-              {([null, "cabelo", "barba", "tratamento", "inativos"] as const).map((cat) => {
-                const sel = filtroCategoria === cat;
-                const label = cat === null ? "Todos" : cat === "inativos" ? "Inativos" : CATEGORY_LABEL[cat];
+              {[
+                { key: null as string | null, label: "Todos" },
+                ...categorias.map((c) => ({ key: c.id as string | null, label: c.name })),
+                { key: "inativos" as string | null, label: "Inativos" },
+              ].map(({ key, label }) => {
+                const sel = filtroCategoria === key;
                 return (
                   <button
                     key={label}
-                    onClick={() => setFiltroCategoria(cat)}
+                    onClick={() => setFiltroCategoria(key)}
                     className={`shrink-0 text-xs px-3 py-2 rounded-lg transition-colors ${
                       sel ? "bg-gold text-slate-950 font-semibold" : "admin-surface-subtle admin-text-secondary hover:text-gold"
                     }`}
@@ -534,13 +580,12 @@ function ServicosPageInner() {
           ) : semFiltro ? (
             // Agrupado por categoria, com reordenação por setas dentro de cada grupo.
             <div className="space-y-4">
-              {CATEGORIES.map((cat) => {
-                const itens = grupos[cat];
+              {Array.from(grupos.entries()).map(([catId, itens]) => {
                 if (itens.length === 0) return null;
                 return (
-                  <div key={cat}>
+                  <div key={catId}>
                     <h3 className="text-[11px] font-bold admin-text-secondary uppercase tracking-wider px-1 mb-2">
-                      {CATEGORY_LABEL[cat]} · {itens.length}
+                      {catName(catId)} · {itens.length}
                     </h3>
                     <div className="transform-gpu rounded-2xl overflow-hidden admin-glass-card">
                       <ul className="admin-divide">
@@ -612,8 +657,10 @@ function ServicosPageInner() {
                 <div>
                   <label className="text-xs admin-text-secondary mb-1.5 block">Categoria</label>
                   <CategorySelect
-                    value={form.category}
-                    onChange={(category) => setForm((f) => ({ ...f, category }))}
+                    value={form.categoryId}
+                    categorias={categorias}
+                    onChange={(categoryId) => setForm((f) => ({ ...f, categoryId }))}
+                    onGerenciar={() => setGerenciarCat(true)}
                   />
                 </div>
                 <div>
@@ -686,6 +733,15 @@ function ServicosPageInner() {
             </>
           )}
         </Modal>
+      )}
+
+      {/* Gerenciar categorias */}
+      {gerenciarCat && (
+        <CategoryManagerModal
+          type="servico"
+          categorias={categorias}
+          onClose={() => setGerenciarCat(false)}
+        />
       )}
     </div>
   );
