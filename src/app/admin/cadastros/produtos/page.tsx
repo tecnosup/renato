@@ -20,6 +20,7 @@ import {
 import { subscribeToCategories } from "@/lib/categories";
 import { CategorySelect } from "@/components/admin/CategorySelect";
 import { CategoryManagerModal } from "@/components/admin/CategoryManagerModal";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { useAuth } from "@/components/providers/AuthProvider";
 import type { Product, Category } from "@/lib/types";
 
@@ -35,6 +36,7 @@ type FormState = {
   description: string;
   categoryId: string;
   active: boolean;
+  imageUrl: string;
 };
 
 const EMPTY_FORM: FormState = {
@@ -46,6 +48,7 @@ const EMPTY_FORM: FormState = {
   description: "",
   categoryId: "",
   active: true,
+  imageUrl: "",
 };
 
 const brl = (v: number) => `R$ ${v.toLocaleString("pt-BR")}`;
@@ -129,6 +132,7 @@ function ProdutosPageInner() {
       description: p.description,
       categoryId: p.categoryId ?? "",
       active: p.active ?? true,
+      imageUrl: p.imageUrl ?? "",
     });
     setFormErros({});
     setModal({ id: p.id });
@@ -171,6 +175,7 @@ function ProdutosPageInner() {
         description: form.description.trim(),
         categoryId: form.categoryId,
         active: form.active,
+        imageUrl: form.imageUrl.trim() || undefined,
       };
       if (modal?.id) {
         await updateProduct(modal.id, payload);
@@ -291,9 +296,18 @@ function ProdutosPageInner() {
             </button>
           </div>
         )}
-        <div className={`w-10 h-10 rounded-xl bg-gold/15 flex items-center justify-center shrink-0 ${!active ? "opacity-40" : ""}`}>
-          <Package className="w-5 h-5 text-gold" />
-        </div>
+        {p.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- imagem do R2/CDN
+          <img
+            src={p.imageUrl}
+            alt={p.name}
+            className={`w-10 h-10 rounded-xl object-cover shrink-0 ${!active ? "opacity-40" : ""}`}
+          />
+        ) : (
+          <div className={`w-10 h-10 rounded-xl bg-gold/15 flex items-center justify-center shrink-0 ${!active ? "opacity-40" : ""}`}>
+            <Package className="w-5 h-5 text-gold" />
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-sm font-medium admin-text-primary truncate max-w-full">{p.name}</p>
@@ -591,6 +605,12 @@ function ProdutosPageInner() {
                     className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm admin-text-primary focus:outline-none focus:border-gold/50 transition-colors resize-none"
                   />
                 </div>
+                <ImageUploadField
+                  value={form.imageUrl}
+                  folder="produtos"
+                  label="Foto do produto"
+                  onChange={(url) => setForm((f) => ({ ...f, imageUrl: url }))}
+                />
                 <button
                   type="button"
                   onClick={() => setForm((f) => ({ ...f, active: !f.active }))}

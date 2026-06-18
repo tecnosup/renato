@@ -25,6 +25,7 @@ import {
 } from "@/lib/categories";
 import { CategoryManagerModal } from "@/components/admin/CategoryManagerModal";
 import { CategorySelect } from "@/components/admin/CategorySelect";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { subscribeToServiceStats, type ServiceStat } from "@/lib/appointments";
 import { useAuth } from "@/components/providers/AuthProvider";
 import type { BarberService, ServiceCategory, Category } from "@/lib/types";
@@ -37,6 +38,7 @@ type FormState = {
   categoryId: string;
   category: ServiceCategory; // mantido para compatibilidade do payload legado
   active: boolean;
+  imageUrl: string;
 };
 
 const EMPTY_FORM: FormState = {
@@ -47,6 +49,7 @@ const EMPTY_FORM: FormState = {
   categoryId: "",
   category: "cabelo",
   active: true,
+  imageUrl: "",
 };
 
 const brl = (v: number) => `R$ ${v.toLocaleString("pt-BR")}`;
@@ -73,6 +76,10 @@ function ServicosPageInner() {
   // canSeeAllAgenda(); evita o permission-denied para barbeiro restrito.
   const { perms } = useAuth();
   const podeVerAnalise = perms === undefined || perms.verAgendaTodos === true;
+  // Seed/migração escrevem no Firestore -> só quem tem gerenciarCadastros
+  // (owner raiz = perms undefined). Casa com a rule canManageCadastros(); evita
+  // o permission-denied silencioso para barbeiro restrito ao abrir a tela.
+  const podeGerenciarCadastros = perms === undefined || perms.gerenciarCadastros === true;
 
   // modal: null = fechado, { id: null } = novo, { id } = editando
   const [modal, setModal] = useState<{ id: string | null } | null>(null);
@@ -103,14 +110,17 @@ function ServicosPageInner() {
   }, []);
 
   // Garante as categorias legadas e migra serviços antigos (enum -> categoryId)
-  // uma vez ao montar; depois assina a lista em tempo real.
+  // uma vez ao montar; depois assina a lista em tempo real. Seed/migração só
+  // para quem pode escrever cadastros — senão as Rules negam (permission-denied).
   useEffect(() => {
-    seedServiceCategoriesIfEmpty()
-      .then(() => migrateServiceCategories())
-      .catch(() => {});
+    if (podeGerenciarCadastros) {
+      seedServiceCategoriesIfEmpty()
+        .then(() => migrateServiceCategories())
+        .catch(() => {});
+    }
     const unsub = subscribeToCategories("servico", setCategorias);
     return unsub;
-  }, []);
+  }, [podeGerenciarCadastros]);
 
   // Analise simples: agrega agendamentos por serviceId (toda a coleção).
   // Só assina se o usuário pode ver a agenda de todos (senão a query é negada).
@@ -147,6 +157,7 @@ function ServicosPageInner() {
       // categoryId existente, ou derivado do enum legado.
       categoryId: s.categoryId ?? serviceCategoryId(s.category),
       active: s.active ?? true,
+      imageUrl: s.imageUrl ?? "",
     });
     setFormErros({});
     setModal({ id: s.id });
@@ -188,6 +199,7 @@ function ServicosPageInner() {
         category: form.category, // mantém o enum legado preenchido
         categoryId: form.categoryId,
         active: form.active,
+        imageUrl: form.imageUrl.trim() || undefined,
       };
       if (modal?.id) {
         await updateService(modal.id, payload);
@@ -330,9 +342,18 @@ function ServicosPageInner() {
             </button>
           </div>
         )}
-        <div className={`w-10 h-10 rounded-xl bg-gold/15 flex items-center justify-center shrink-0 ${!active ? "opacity-40" : ""}`}>
-          <Scissors className="w-5 h-5 text-gold" />
-        </div>
+        {s.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- imagem do R2/CDN
+          <img
+            src={s.imageUrl}
+            alt={s.name}
+            className={`w-10 h-10 rounded-xl object-cover shrink-0 ${!active ? "opacity-40" : ""}`}
+          />
+        ) : (
+          <div className={`w-10 h-10 rounded-xl bg-gold/15 flex items-center justify-center shrink-0 ${!active ? "opacity-40" : ""}`}>
+            <Scissors className="w-5 h-5 text-gold" />
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="text-sm font-medium admin-text-primary truncate">{s.name}</p>
@@ -479,8 +500,10 @@ function ServicosPageInner() {
         </div>
       ) : (
         <>
-          {/* Busca + filtros por categoria */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-4">
+          {/* Busca + filtros por categoria. Envolto num card para ter contraste
+              sobre a imagem de fundo (sem card, o glass deixa o fundo vazar e o
+              texto some — ver docs/admin-theme.md). */}
+          <div className="transform-gpu rounded-2xl admin-glass-card p-3 flex flex-col sm:flex-row gap-3 mb-4">
             <div className="relative flex-1">
               <Search className="w-4 h-4 admin-text-secondary absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
@@ -523,7 +546,10 @@ function ServicosPageInner() {
                 if (itens.length === 0) return null;
                 return (
                   <div key={catId}>
-                    <h3 className="text-[11px] font-bold admin-text-secondary uppercase tracking-wider px-1 mb-2">
+                    {/* Label solto sobre a imagem de fundo -> branco fixo
+                        (regra "texto sobre o fundo" de docs/admin-theme.md),
+                        senão o cinza translúcido some no fundo. */}
+                    <h3 className="text-[11px] font-bold text-slate-100 uppercase tracking-wider px-1 mb-2 drop-shadow">
                       {catName(catId)} · {itens.length}
                     </h3>
                     <div className="transform-gpu rounded-2xl overflow-hidden admin-glass-card">
@@ -612,6 +638,12 @@ function ServicosPageInner() {
                     className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm admin-text-primary focus:outline-none focus:border-gold/50 transition-colors resize-none"
                   />
                 </div>
+                <ImageUploadField
+                  value={form.imageUrl}
+                  folder="servicos"
+                  label="Foto do serviço"
+                  onChange={(url) => setForm((f) => ({ ...f, imageUrl: url }))}
+                />
                 <button
                   type="button"
                   onClick={() => setForm((f) => ({ ...f, active: !f.active }))}
