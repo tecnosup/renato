@@ -600,6 +600,11 @@ function AgendaPageInner() {
   const diasNoMes = new Date(ano, mes + 1, 0).getDate();
   const celulas = Array(primeiroDia).fill(null).concat(Array.from({ length: diasNoMes }, (_, i) => i + 1));
   const hojeKey = toKey(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  // Horários já passados (só quando o dia selecionado é hoje). Compara "HH:mm"
+  // como string (zero-padded) — slot vazio passado não é mais agendável.
+  const ehHoje = diaSelecionado === hojeKey;
+  const agoraHHmm = `${String(hoje.getHours()).padStart(2, "0")}:${String(hoje.getMinutes()).padStart(2, "0")}`;
+  const horaPassada = (hora: string) => ehHoje && hora < agoraHHmm;
 
   // Nome do barbeiro alvo para exibir no header da grade
   const barberNameAlvo = verTodos
@@ -862,6 +867,19 @@ function AgendaPageInner() {
                     <span className={`text-[10px] font-semibold px-2 py-1 rounded-full ${isConc ? "bg-emerald-400/15 text-emerald-400" : "bg-gold/15 text-gold"}`}>
                       {isConc ? "Concluído" : "Agendado"}
                     </span>
+                  </li>
+                );
+              }
+
+              // Slot vazio cujo horário já passou (hoje): não é agendável.
+              if (horaPassada(hora)) {
+                return (
+                  <li key={hora} id={`slot-${hora}`} className="flex items-center gap-4 px-4 py-3 opacity-40">
+                    <div className="w-12 shrink-0">
+                      <p className="text-sm font-mono font-semibold admin-text-secondary">{hora}</p>
+                      <p className="text-[10px] admin-text-secondary">0/1</p>
+                    </div>
+                    <p className="text-sm admin-text-secondary flex-1">Horário encerrado</p>
                   </li>
                 );
               }
