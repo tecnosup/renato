@@ -57,6 +57,9 @@ export function DatePicker({ value, onChange, onClose }: { value: string; onChan
     onClose();
   };
 
+  const hoje = new Date();
+  const hojeIso = `${hoje.getFullYear()}-${pad(hoje.getMonth() + 1)}-${pad(hoje.getDate())}`;
+
   return (
     <div className="rounded-2xl bg-black/25 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] p-2">
       <div className="flex items-center justify-between mb-1.5">
@@ -81,12 +84,17 @@ export function DatePicker({ value, onChange, onClose }: { value: string; onChan
             if (!dia) return <span key={i} />;
             const iso = `${ano}-${pad(mes + 1)}-${pad(dia)}`;
             const isSel = iso === value;
+            const isHoje = iso === hojeIso;
             return (
               <button
                 key={i}
                 onClick={() => selecionar(dia)}
                 className={`flex items-center justify-center h-7 rounded-lg text-xs transition-colors ${
-                  isSel ? "bg-linear-to-br from-blue-400 to-cyan-400 text-slate-950 font-bold" : "text-slate-200 hover:bg-white/10"
+                  isSel
+                    ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950 font-bold"
+                    : isHoje
+                      ? "text-gold font-bold ring-1 ring-inset ring-gold/50 hover:bg-white/10"
+                      : "text-slate-200 hover:bg-white/10"
                 }`}
               >
                 {dia}

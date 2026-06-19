@@ -35,8 +35,11 @@ export function ModalHeader({
   );
 }
 
-// Modal genérico de fundo — sobe ao abrir, desce ao fechar
-export function Modal({ children, onClose, panelClassName, overlayClassName }: { children: (close: () => void) => React.ReactNode; onClose: () => void; panelClassName?: string; overlayClassName?: string }) {
+// Modal genérico de fundo — sobe ao abrir, desce ao fechar.
+// fullHeight: no mobile o painel ocupa a tela inteira (sem cantos no topo) e
+// vira um flex column (sem scroll no painel) — o conteúdo define o que é fixo
+// e o que rola. No desktop continua um card centralizado.
+export function Modal({ children, onClose, panelClassName, overlayClassName, fullHeight }: { children: (close: () => void) => React.ReactNode; onClose: () => void; panelClassName?: string; overlayClassName?: string; fullHeight?: boolean }) {
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -69,7 +72,11 @@ export function Modal({ children, onClose, panelClassName, overlayClassName }: {
       onClick={close}
     >
       <div
-        className={`transform-gpu w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl max-h-[90vh] overflow-y-auto transition-all duration-[360ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`transform-gpu w-full sm:max-w-md ${
+          fullHeight
+            ? "h-[100dvh] sm:h-auto sm:max-h-[88vh] sm:rounded-2xl flex flex-col overflow-hidden"
+            : "rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto"
+        } transition-all duration-[360ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
           panelClassName ?? "admin-glass-modal"
         } ${
           visible ? "translate-y-0 scale-100 opacity-100" : "translate-y-full sm:translate-y-24 scale-95 opacity-0"

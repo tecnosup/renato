@@ -26,12 +26,16 @@
    Diurno       = cards sólidos claros, texto escuro, sem blur. */
 [data-theme="liquid-glass"] {
   --admin-text-primary: #f8fafc;
-  --admin-text-secondary: rgba(248, 250, 252, 0.7);
+  /* 0.82: cards quase transparentes (2%) deixam a foto de fundo aparecer; a
+     70% o texto secundário sumia sobre regiões claras da imagem. */
+  --admin-text-secondary: rgba(248, 250, 252, 0.82);
   --admin-surface-subtle: rgba(255, 255, 255, 0.08);
   --admin-toggle-active-bg: rgba(255, 255, 255, 0.18);
   --admin-toggle-active-text: #ffffff;
   --admin-divider: rgba(255, 255, 255, 0.05);
-  --admin-placeholder: rgba(248, 250, 252, 0.5);
+  /* 0.65: a 50% o placeholder sumia sobre os inputs translúcidos do Liquid
+     Glass; ainda fica mais fraco que o texto digitado (primary, opaco). */
+  --admin-placeholder: rgba(248, 250, 252, 0.65);
   --admin-border: rgba(255, 255, 255, 0.08);
 
   --admin-card-bg: rgba(255, 255, 255, 0.02);
@@ -221,6 +225,15 @@ body {
   }
   .admin-input::placeholder {
     color: var(--admin-placeholder);
+  }
+  /* Remove a spinner nativa dos campos de valor (type="number"): as setinhas
+     de incremento ficavam feias e fora do tema. Usamos display:none (e não
+     appearance:textfield) porque o Lightning CSS do Tailwind v4 descarta o
+     valor depreciado `textfield`, invalidando a regra inteira. */
+  .admin-input[type="number"]::-webkit-inner-spin-button,
+  .admin-input[type="number"]::-webkit-outer-spin-button {
+    display: none;
+    margin: 0;
   }
 
   /* Navbar (pill inferior) e botão central, adaptados por tema */

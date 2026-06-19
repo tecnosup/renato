@@ -375,7 +375,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
 
       window.dispatchEvent(new CustomEvent('show-toast', {
         detail: {
-          title: 'RITUAL AGENDADO',
+          title: 'AGENDAMENTO CONFIRMADO',
           message: `Olá ${name.trim()}, seu agendamento de "${selectedService.name}" foi concluído para hoje ou dia selecionado (${formatSelectedShortDate(selectedDate)}) às ${selectedTime}h com ${selectedBarber.name.split(' "')[0]}. Voucher: ${randomTicket}`,
           type: 'success'
         }
@@ -442,7 +442,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
               <X className="w-5 h-5" />
             </button>
             <h2 className="font-sans font-semibold text-sm tracking-wide text-slate-100 uppercase">
-              {step === 4 ? 'Confirmar Ritual' : 'Agendar Ritual'}
+              {step === 4 ? 'Confirmar horário' : 'Agendar horário'}
             </h2>
           </div>
         </div>
@@ -829,7 +829,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                         {/* Compact Visual Summary Header */}
                         <div className="bg-white/5 backdrop-blur-md p-3 border border-white/10 rounded-xl text-left text-xs flex justify-between items-center relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]" id="booking-summary-receipt">
                           <div className="flex flex-col">
-                            <span className="font-mono text-[8px] text-gold uppercase block mb-0.5 font-bold">RESUMO DO RITUAL</span>
+                            <span className="font-mono text-[8px] text-gold uppercase block mb-0.5 font-bold">RESUMO</span>
                             <span className="font-sans font-black text-xs text-slate-100 uppercase leading-none">
                               {selectedService?.name}
                             </span>
@@ -945,7 +945,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                             ) : (
                               <>
                                 <Sparkles className="w-4 h-4" />
-                                Confirmar Ritual
+                                Confirmar horário
                               </>
                             )}
                           </button>
