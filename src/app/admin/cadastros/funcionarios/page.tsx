@@ -313,6 +313,11 @@ function FuncionariosPageInner() {
                 <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-gold/15 text-gold shrink-0">
                   Proprietário
                 </span>
+              </div>
+              <div className="flex items-center gap-2 mt-0.5 min-w-0">
+                {user?.email && (
+                  <p className="text-xs admin-text-secondary truncate">{user.email}</p>
+                )}
                 {ownerBarber?.active && (
                   <span className="flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded-full admin-surface-subtle admin-text-secondary shrink-0">
                     <Scissors className="w-2.5 h-2.5" />
@@ -320,9 +325,6 @@ function FuncionariosPageInner() {
                   </span>
                 )}
               </div>
-              {user?.email && (
-                <p className="text-xs admin-text-secondary truncate mt-0.5">{user.email}</p>
-              )}
             </div>
             <button
               onClick={abrirOwner}
