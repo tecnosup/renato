@@ -423,6 +423,19 @@ export default function OrbCarousel() {
                       </div>
 
                       <div className="space-y-3 relative z-10">
+                        {/* Foto do serviço — só quando cadastrada (imageUrl).
+                            Sem foto, o card mantém o layout original (sem buraco). */}
+                        {srv.imageUrl && (
+                          <div className="w-full h-40 rounded-xl bg-zinc-950 border border-zinc-800 relative overflow-hidden select-none shadow-inner -mt-1">
+                            <img
+                              src={srv.imageUrl}
+                              alt={srv.name}
+                              className="w-full h-full object-cover grayscale brightness-95 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-500 pointer-events-none"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          </div>
+                        )}
                         <div className="flex justify-between items-start pr-4">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="font-mono text-[8.5px] font-bold text-emerald-450 uppercase bg-emerald-500/5 border border-emerald-500/15 px-2.5 py-0.5 rounded">
