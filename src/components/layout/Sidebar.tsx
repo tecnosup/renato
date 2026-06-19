@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import type { ComponentType } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,7 +12,6 @@ import {
   UserCog,
   Scissors,
   Package,
-  Layers,
   Tag,
   FileText,
   DollarSign,
@@ -20,8 +20,12 @@ import {
   LogOut,
   Gift,
   Plus,
+  LayoutDashboard,
+  TrendingUp,
+  Percent,
   type LucideIcon,
 } from "lucide-react";
+import { FaCashRegister } from "react-icons/fa";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { useNotifications } from "@/components/providers/NotificationsProvider";
@@ -49,30 +53,58 @@ type NavChild = { label: string; href: string; action?: boolean };
 type NavItem = {
   label: string;
   href: string;
-  icon: LucideIcon;
+  icon: LucideIcon | ComponentType<{ className?: string }>;
   accent: string;
+  /** Ativo só no match exato (não por prefixo) — evita conflito com sub-rotas top-level. */
+  exact?: boolean;
   children?: NavChild[];
 };
 
 const navItems: NavItem[] = [
   {
+    label: "Dashboard",
+    href: "/admin/dashboard",
+    icon: LayoutDashboard,
+    accent: "group-hover:text-purple-400",
+  },
+  {
     label: "Agenda",
     href: "/admin",
     icon: Calendar,
     accent: "group-hover:text-gold",
-    // Ações rápidas da Agenda (no mobile o FAB ainda inclui "Abrir comanda").
     children: [
       { label: "Agendar horário", href: "/admin?novo=1", action: true },
       { label: "Link de agendamento", href: "/admin?acao=link", action: true },
       { label: "Lista de espera", href: "/admin?acao=espera", action: true },
     ],
   },
-  // Entidades de cadastro: link direto para a tela.
   {
-    label: "Clientes",
-    href: "/admin/cadastros/clientes",
-    icon: Users,
-    accent: "group-hover:text-indigo-400",
+    label: "Caixa",
+    href: "/admin/financeiro/caixa",
+    icon: FaCashRegister,
+    accent: "group-hover:text-cyan-400",
+  },
+  {
+    label: "Comandas",
+    href: "/admin/comandas",
+    icon: FileText,
+    accent: "group-hover:text-amber-400",
+    children: [
+      { label: "Nova comanda", href: "/admin/comandas?nova=1", action: true },
+    ],
+  },
+  {
+    label: "Financeiro",
+    href: "/admin/financeiro",
+    icon: DollarSign,
+    accent: "group-hover:text-emerald-400",
+    exact: true,
+  },
+  {
+    label: "Meu Financeiro",
+    href: "/admin/financeiro/meu-financeiro",
+    icon: TrendingUp,
+    accent: "group-hover:text-lime-400",
   },
   {
     label: "Funcionários",
@@ -81,16 +113,10 @@ const navItems: NavItem[] = [
     accent: "group-hover:text-sky-400",
   },
   {
-    label: "Serviços",
-    href: "/admin/cadastros/servicos",
-    icon: Scissors,
-    accent: "group-hover:text-orange-400",
-  },
-  {
-    label: "Pacotes",
-    href: "/admin/cadastros/pacotes",
-    icon: Layers,
-    accent: "group-hover:text-fuchsia-400",
+    label: "Comissões",
+    href: "/admin/financeiro/comissoes",
+    icon: Percent,
+    accent: "group-hover:text-violet-400",
   },
   {
     label: "Produtos",
@@ -99,37 +125,22 @@ const navItems: NavItem[] = [
     accent: "group-hover:text-teal-400",
   },
   {
+    label: "Serviços",
+    href: "/admin/cadastros/servicos",
+    icon: Scissors,
+    accent: "group-hover:text-orange-400",
+  },
+  {
+    label: "Clientes",
+    href: "/admin/cadastros/clientes",
+    icon: Users,
+    accent: "group-hover:text-indigo-400",
+  },
+  {
     label: "Cupons",
     href: "/admin/cupons",
     icon: Tag,
     accent: "group-hover:text-pink-400",
-  },
-  {
-    label: "Comandas",
-    href: "/admin/comandas",
-    icon: FileText,
-    accent: "group-hover:text-amber-400",
-    children: [
-      { label: "Abertas", href: "/admin/comandas/abertas" },
-      { label: "Histórico", href: "/admin/comandas/historico" },
-    ],
-  },
-  {
-    label: "Financeiro",
-    href: "/admin/financeiro",
-    icon: DollarSign,
-    accent: "group-hover:text-emerald-400",
-    children: [
-      { label: "Visão geral", href: "/admin/financeiro" },
-      { label: "Caixa", href: "/admin/financeiro/caixa" },
-      { label: "Histórico de Caixas", href: "/admin/financeiro/historico" },
-      { label: "Entrada / Saída", href: "/admin/financeiro/entrada-saida" },
-      { label: "Fluxo de Caixa", href: "/admin/financeiro/fluxo" },
-      { label: "Comissões", href: "/admin/financeiro/comissoes" },
-      { label: "Conta do Cliente", href: "/admin/financeiro/conta-cliente" },
-      { label: "Conta Profissional", href: "/admin/financeiro/conta-profissional" },
-      { label: "Caixinha", href: "/admin/financeiro/caixinha" },
-    ],
   },
   {
     label: "Aniversariantes",
@@ -158,7 +169,11 @@ function NavLink({
 }) {
   const pathname = usePathname();
   const Icon = item.icon;
-  const isActive = item.href === "/admin" ? pathname === "/admin" : pathname === item.href || pathname.startsWith(item.href + "/");
+  const isActive = item.exact
+    ? pathname === item.href
+    : item.href === "/admin"
+      ? pathname === "/admin"
+      : pathname === item.href || pathname.startsWith(item.href + "/");
   const [open, setOpen] = useState(isActive);
 
   // Auto-expande ao navegar para dentro deste item (mantém colapsável manualmente).

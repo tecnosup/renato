@@ -2,8 +2,9 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { UserPlus, X, Pencil, Trash2, Phone, Scissors, Check, ChevronDown, KeyRound, ShieldCheck } from "lucide-react";
+import { UserPlus, X, Pencil, Trash2, Phone, Scissors, Check, ChevronDown, KeyRound, ShieldCheck, UserCog } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
+import { PageHeader } from "@/components/admin/PageHeader";
 import { AccessModal } from "./AccessModal";
 import {
   subscribeToEmployees,
@@ -160,22 +161,21 @@ function FuncionariosPageInner() {
 
   return (
     <div className="flex-1 overflow-y-auto p-4 pb-20 md:p-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-100">Funcionários</h1>
-          <p className="text-slate-300 text-sm mt-1">
-            {funcionarios.length} cadastrados · {ativos} ativos
-          </p>
-        </div>
-        <button
-          onClick={abrirNovo}
-          className="bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2"
-        >
-          <UserPlus className="w-4 h-4" />
-          <span className="hidden sm:inline">Novo Funcionário</span>
-        </button>
-      </div>
+      <PageHeader
+        className="mb-5"
+        icon={UserCog}
+        title="Funcionários"
+        subtitle={`${funcionarios.length} cadastrados · ${ativos} ativos`}
+        action={
+          <button
+            onClick={abrirNovo}
+            className="bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2"
+          >
+            <UserPlus className="w-4 h-4" />
+            <span className="hidden sm:inline">Novo Funcionário</span>
+          </button>
+        }
+      />
 
       {/* Lista */}
       {loading ? (

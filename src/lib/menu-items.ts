@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { Users, DollarSign, Gift, Settings, Percent, Calendar, Scissors, UserCog, Package, Tag, type LucideIcon } from "lucide-react";
+import { Users, DollarSign, Gift, Settings, Percent, Calendar, Scissors, UserCog, Package, Tag, TrendingUp, FileText, LayoutDashboard, type LucideIcon } from "lucide-react";
 import { FaCashRegister } from "react-icons/fa";
 
 export interface MenuItem {
@@ -14,6 +14,14 @@ export interface MenuItem {
 
 export const menuItems: MenuItem[] = [
   {
+    label: "Dashboard",
+    desc: "Visão geral da barbearia",
+    href: "/admin/dashboard",
+    icon: LayoutDashboard,
+    color: "bg-purple-600",
+    badge: null,
+  },
+  {
     label: "Agenda",
     desc: "Veja e gerencie os agendamentos do dia",
     href: "/admin",
@@ -21,14 +29,6 @@ export const menuItems: MenuItem[] = [
     color: "bg-blue-600",
     badge: 9,
     badgeColor: "bg-red-500",
-  },
-  {
-    label: "Financeiro",
-    desc: "Controle seu caixa e fluxo financeiro",
-    href: "/admin/financeiro",
-    icon: DollarSign,
-    color: "bg-violet-600",
-    badge: null,
   },
   {
     label: "Caixa",
@@ -39,19 +39,27 @@ export const menuItems: MenuItem[] = [
     badge: null,
   },
   {
-    label: "Produtos",
-    desc: "Gerencie o estoque de produtos",
-    href: "/admin/cadastros/produtos",
-    icon: Package,
-    color: "bg-teal-600",
+    label: "Comandas",
+    desc: "Abra, edite e feche as comandas dos atendimentos",
+    href: "/admin/comandas",
+    icon: FileText,
+    color: "bg-amber-600",
     badge: null,
   },
   {
-    label: "Serviços",
-    desc: "Cadastre e edite os serviços da barbearia",
-    href: "/admin/cadastros/servicos",
-    icon: Scissors,
-    color: "bg-orange-600",
+    label: "Financeiro",
+    desc: "Controle seu caixa e fluxo financeiro",
+    href: "/admin/financeiro",
+    icon: DollarSign,
+    color: "bg-violet-600",
+    badge: null,
+  },
+  {
+    label: "Meu Financeiro",
+    desc: "Suas comandas, atendimentos e comissão",
+    href: "/admin/financeiro/meu-financeiro",
+    icon: TrendingUp,
+    color: "bg-lime-600",
     badge: null,
   },
   {
@@ -68,6 +76,22 @@ export const menuItems: MenuItem[] = [
     href: "/admin/financeiro/comissoes",
     icon: Percent,
     color: "bg-emerald-600",
+    badge: null,
+  },
+  {
+    label: "Produtos",
+    desc: "Gerencie o estoque de produtos",
+    href: "/admin/cadastros/produtos",
+    icon: Package,
+    color: "bg-teal-600",
+    badge: null,
+  },
+  {
+    label: "Serviços",
+    desc: "Cadastre e edite os serviços da barbearia",
+    href: "/admin/cadastros/servicos",
+    icon: Scissors,
+    color: "bg-orange-600",
     badge: null,
   },
   {

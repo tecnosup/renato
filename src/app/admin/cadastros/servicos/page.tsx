@@ -7,6 +7,7 @@ import {
   EyeOff, Eye, Sparkles, TrendingUp, Tag, Search, AlertCircle, DollarSign,
 } from "lucide-react";
 import { Modal, ModalHeader } from "@/components/ui/Modal";
+import { PageHeader } from "@/components/admin/PageHeader";
 import {
   subscribeToServices,
   createService,
@@ -398,22 +399,21 @@ function ServicosPageInner() {
 
   return (
     <div className="flex-1 overflow-y-auto p-4 pb-20 md:p-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-100">Serviços</h1>
-          <p className="text-slate-300 text-sm mt-1">
-            {servicos.length} cadastrados · {ativos} ativos
-          </p>
-        </div>
-        <button
-          onClick={abrirNovo}
-          className="bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">Novo Serviço</span>
-        </button>
-      </div>
+      <PageHeader
+        className="mb-5"
+        icon={Scissors}
+        title="Serviços"
+        subtitle={`${servicos.length} cadastrados · ${ativos} ativos`}
+        action={
+          <button
+            onClick={abrirNovo}
+            className="bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="hidden sm:inline">Novo Serviço</span>
+          </button>
+        }
+      />
 
       {/* Banner de erro de operação */}
       {erro && (
