@@ -5,7 +5,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import {
   ChevronLeft, ChevronRight, RefreshCw, Calendar, Ban, X, Plus, Link2,
   FileText, ListOrdered, ChevronDown, MessageCircle, CalendarClock, Trash2,
-  Check, Settings2, Unlock, Copy, Clock, UserPlus,
+  Check, Settings2, Unlock, Copy, Clock, UserPlus, History,
 } from "lucide-react";
 import { subscribeToDay, cancelAppointment, rescheduleAppointment } from "@/lib/appointments";
 import {
@@ -871,15 +871,26 @@ function AgendaPageInner() {
                 );
               }
 
-              // Slot vazio cujo horário já passou (hoje): não é agendável.
+              // Slot vazio cujo horário já passou (hoje): não é agendamento normal,
+              // mas continua clicável para registro RETROATIVO (walk-in lançado
+              // depois). Fica esmaecido, sem o "Disponível" verde.
               if (horaPassada(hora)) {
+                const destacado = destaqueHora === hora;
                 return (
-                  <li key={hora} id={`slot-${hora}`} className="flex items-center gap-4 px-4 py-3 opacity-40">
+                  <li
+                    key={hora}
+                    id={`slot-${hora}`}
+                    onClick={() => setModal({ hora })}
+                    className={`admin-glass-card-hover flex items-center gap-4 px-4 py-3 transition-colors cursor-pointer opacity-60 ${destacado ? "ring-2 ring-gold ring-inset animate-pulse" : ""}`}
+                  >
                     <div className="w-12 shrink-0">
                       <p className="text-sm font-mono font-semibold admin-text-secondary">{hora}</p>
                       <p className="text-[10px] admin-text-secondary">0/1</p>
                     </div>
-                    <p className="text-sm admin-text-secondary flex-1">Horário encerrado</p>
+                    <p className="text-sm admin-text-secondary flex-1">Encerrado</p>
+                    <button className="flex items-center gap-1.5 admin-surface-subtle admin-text-secondary text-xs px-3 py-1.5 rounded-lg hover:bg-gold/15 hover:text-gold transition-colors">
+                      <History className="w-3 h-3" /> Retroativo
+                    </button>
                   </li>
                 );
               }
