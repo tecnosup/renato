@@ -76,9 +76,22 @@ export async function createAppointment(input: AppointmentInput): Promise<string
   return ref.id;
 }
 
-/** Cancela um agendamento (status "cancelado" libera o slot). */
+/**
+ * Cancela um agendamento (status "cancelado" libera o slot) e, junto, cancela a
+ * comanda vinculada que ainda estiver em aberto (a comanda nasce com o
+ * agendamento). Comandas já pagas/canceladas não são tocadas.
+ */
 export async function cancelAppointment(id: string): Promise<void> {
   await updateDoc(doc(db, COLLECTION, id), { status: "cancelado" as AppointmentStatus });
+  const snap = await getDocs(query(collection(db, "comandas"), where("appointmentId", "==", id)));
+  await Promise.all(
+    snap.docs
+      .filter((d) => {
+        const st = d.data().status;
+        return st === "aberta" || st === "pagamento_pendente";
+      })
+      .map((d) => updateDoc(doc(db, "comandas", d.id), { status: "cancelada", closedAt: serverTimestamp() }))
+  );
 }
 
 /** Remarca um agendamento para nova data/horario. */

@@ -24,6 +24,7 @@ export function can(perms: Permissions | undefined, key: PermKey): boolean {
 const ROUTE_RULES: { prefix: string; perm: PermKey }[] = [
   { prefix: "/admin/cadastros/funcionarios", perm: "gerenciarFuncionarios" },
   { prefix: "/admin/financeiro/caixa", perm: "verCaixa" },
+  { prefix: "/admin/financeiro/meu-financeiro", perm: "verFinanceiroProprio" },
   { prefix: "/admin/financeiro/comissoes", perm: "verFinanceiroProprio" },
   { prefix: "/admin/financeiro", perm: "verFinanceiroGeral" },
   { prefix: "/admin/cadastros", perm: "gerenciarCadastros" },

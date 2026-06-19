@@ -2,8 +2,9 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { onIdTokenChanged, signOut, type User } from "firebase/auth";
+import { doc, onSnapshot } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import type { Permissions } from "@/lib/types";
 
 interface AuthContextValue {
@@ -71,6 +72,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
   }, []);
+
+  // Permissões ao vivo: ouve o doc do funcionário (barbers/{barberId}). Quando o
+  // dono/gerente altera as perms (rota users/update grava no doc E nos claims),
+  // forçamos o refresh do token — o onIdTokenChanged acima recarrega os claims
+  // novos e re-sincroniza a sessão, sem precisar relogar. Ignora o snapshot
+  // inicial (só reage a mudanças reais).
+  useEffect(() => {
+    if (!user || !barberId) return;
+    let primeiro = true;
+    return onSnapshot(doc(db, "barbers", barberId), () => {
+      if (primeiro) { primeiro = false; return; }
+      user.getIdToken(true).catch(() => {});
+    });
+  }, [user, barberId]);
 
   const logout = async () => {
     await signOut(auth);

@@ -3,23 +3,34 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
-  ChevronLeft, Plus, Minus, Trash2, Scissors, Package, Search, Receipt, X,
+  ChevronLeft, Plus, Minus, Trash2, Scissors, Package, Search, Receipt, Check,
+  Banknote, CreditCard, QrCode,
 } from "lucide-react";
 import { Modal, ModalHeader } from "@/components/ui/Modal";
 import { SuccessSplash } from "@/components/ui/SuccessSplash";
-import { subscribeToComanda, updateComandaItems, pagarComanda, cancelarComanda } from "@/lib/comandas";
+import { subscribeToComanda, updateComandaItems, pagarComanda, finalizarComanda, cancelarComanda } from "@/lib/comandas";
 import { subscribeToServices } from "@/lib/services";
 import { subscribeToProducts } from "@/lib/products";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { can } from "@/lib/access";
 import type { Comanda, ComandaItem, ComandaItemTipo, BarberService, Product } from "@/lib/types";
 
 function brl(v: number) {
   return `R$ ${v.toFixed(2).replace(".", ",")}`;
 }
 
-const FORMAS = ["Dinheiro", "Pix", "Cartão de débito", "Cartão de crédito"];
+// value = o que fica salvo na comanda (mantém o descritivo); label = texto curto
+// no botão; icon = ícone. Débito/crédito separados (fee/conciliação diferem).
+const FORMAS = [
+  { value: "Dinheiro", label: "Dinheiro", icon: Banknote },
+  { value: "Pix", label: "Pix", icon: QrCode },
+  { value: "Cartão de débito", label: "Débito", icon: CreditCard },
+  { value: "Cartão de crédito", label: "Crédito", icon: CreditCard },
+];
 
 const STATUS_BADGE: Record<Comanda["status"], { label: string; cls: string }> = {
   aberta: { label: "Aberta", cls: "bg-gold/15 text-gold" },
+  pagamento_pendente: { label: "Ag. pagamento", cls: "bg-amber-500/15 text-amber-400" },
   paga: { label: "Paga", cls: "bg-emerald-400/15 text-emerald-400" },
   cancelada: { label: "Cancelada", cls: "bg-red-500/15 text-red-400" },
 };
@@ -28,6 +39,8 @@ export default function ComandaDetalhePage() {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
+  const { perms } = useAuth();
+  const podeFechar = can(perms, "fecharComandas");
 
   const [comanda, setComanda] = useState<Comanda | null>(null);
   const [carregando, setCarregando] = useState(true);
@@ -38,6 +51,7 @@ export default function ComandaDetalhePage() {
   const [tab, setTab] = useState<ComandaItemTipo>("servico");
   const [busca, setBusca] = useState("");
   const [modalPagar, setModalPagar] = useState(false);
+  const [confirmarCancel, setConfirmarCancel] = useState(false);
 
   useEffect(() => {
     const unsub = subscribeToComanda(id, (c) => {
@@ -102,7 +116,7 @@ export default function ComandaDetalhePage() {
   const badge = STATUS_BADGE[comanda.status];
 
   return (
-    <div className="flex-1 overflow-y-auto pb-32">
+    <div className="flex-1 overflow-y-auto pb-52 md:pb-32">
       {/* Header (sobre o fundo) */}
       <div className="flex items-center gap-3 px-4 pt-5 pb-4">
         <button onClick={() => router.back()} className="text-slate-100 hover:text-white transition-colors">
@@ -141,32 +155,34 @@ export default function ComandaDetalhePage() {
         ) : (
           <ul className="admin-divide">
             {comanda.items.map((it) => (
-              <li key={it.id} className="flex items-center gap-3 px-4 py-3">
-                <span className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${it.tipo === "servico" ? "bg-violet-500/15 text-violet-400" : "bg-teal-500/15 text-teal-400"}`}>
-                  {it.tipo === "servico" ? <Scissors className="w-4 h-4" /> : <Package className="w-4 h-4" />}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium admin-text-primary truncate">{it.nome}</p>
-                  <p className="text-xs admin-text-secondary">{brl(it.preco)} · un</p>
+              <li key={it.id} className="px-4 py-3">
+                {/* Linha 1: ícone + nome/preço unitário + total da linha */}
+                <div className="flex items-center gap-3">
+                  <span className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${it.tipo === "servico" ? "bg-violet-500/15 text-violet-400" : "bg-teal-500/15 text-teal-400"}`}>
+                    {it.tipo === "servico" ? <Scissors className="w-4 h-4" /> : <Package className="w-4 h-4" />}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium admin-text-primary truncate">{it.nome}</p>
+                    <p className="text-xs admin-text-secondary">{brl(it.preco)} · un{!aberta && it.qtd > 1 ? ` · ${it.qtd}×` : ""}</p>
+                  </div>
+                  <span className="text-sm font-semibold admin-text-primary shrink-0">{brl(it.preco * it.qtd)}</span>
                 </div>
-                {aberta ? (
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <button onClick={() => mudarQtd(it.id, -1)} className="w-7 h-7 rounded-lg admin-surface-subtle admin-text-primary flex items-center justify-center hover:bg-gold/15 hover:text-gold transition-colors">
-                      <Minus className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="w-6 text-center text-sm font-semibold admin-text-primary">{it.qtd}</span>
-                    <button onClick={() => mudarQtd(it.id, 1)} className="w-7 h-7 rounded-lg admin-surface-subtle admin-text-primary flex items-center justify-center hover:bg-gold/15 hover:text-gold transition-colors">
-                      <Plus className="w-3.5 h-3.5" />
+                {/* Linha 2 (só com comanda aberta): controles de quantidade + remover */}
+                {aberta && (
+                  <div className="flex items-center justify-between mt-2.5 pl-11">
+                    <div className="flex items-center gap-1.5">
+                      <button onClick={() => mudarQtd(it.id, -1)} className="w-7 h-7 rounded-lg admin-surface-subtle admin-text-primary flex items-center justify-center hover:bg-gold/15 hover:text-gold transition-colors">
+                        <Minus className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="w-6 text-center text-sm font-semibold admin-text-primary">{it.qtd}</span>
+                      <button onClick={() => mudarQtd(it.id, 1)} className="w-7 h-7 rounded-lg admin-surface-subtle admin-text-primary flex items-center justify-center hover:bg-gold/15 hover:text-gold transition-colors">
+                        <Plus className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    <button onClick={() => removerItem(it.id)} className="flex items-center gap-1 text-xs admin-text-secondary hover:text-red-400 transition-colors">
+                      <Trash2 className="w-4 h-4" /> Remover
                     </button>
                   </div>
-                ) : (
-                  <span className="text-sm admin-text-secondary shrink-0">{it.qtd}×</span>
-                )}
-                <span className="w-20 text-right text-sm font-semibold admin-text-primary shrink-0">{brl(it.preco * it.qtd)}</span>
-                {aberta && (
-                  <button onClick={() => removerItem(it.id)} className="admin-text-secondary hover:text-red-400 transition-colors shrink-0">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
                 )}
               </li>
             ))}
@@ -178,8 +194,9 @@ export default function ComandaDetalhePage() {
         <p className="text-xs admin-text-secondary text-center mb-3">Pago com {comanda.formaPagamento}</p>
       )}
 
-      {/* Rodapé fixo: total + ações */}
-      <div className="fixed bottom-0 left-0 right-0 md:left-64 z-20 admin-glass-modal border-t border-white/10 px-4 py-3 pb-6 md:pb-3">
+      {/* Rodapé fixo: total + ações. No mobile flutua acima do menu inferior
+          (inset + arredondado); no desktop vira barra colada ao rodapé. */}
+      <div className="fixed z-20 inset-x-3 bottom-[5.5rem] rounded-2xl border border-white/10 md:inset-x-0 md:left-64 md:bottom-0 md:rounded-none md:border-x-0 md:border-b-0 admin-glass-modal px-4 py-3">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm admin-text-secondary">Total</span>
           <span className="text-xl font-bold admin-text-primary">{brl(comanda.total)}</span>
@@ -187,18 +204,28 @@ export default function ComandaDetalhePage() {
         {aberta && (
           <div className="flex gap-2">
             <button
-              onClick={() => cancelarComanda(comanda.id)}
+              onClick={() => setConfirmarCancel(true)}
               className="admin-glass-card admin-glass-card-hover admin-text-secondary py-3 px-4 rounded-xl text-sm font-semibold transition-colors"
             >
               Cancelar
             </button>
-            <button
-              onClick={() => setModalPagar(true)}
-              disabled={comanda.items.length === 0}
-              className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              <Receipt className="w-4 h-4" /> Fechar comanda
-            </button>
+            {podeFechar ? (
+              <button
+                onClick={() => setModalPagar(true)}
+                disabled={comanda.items.length === 0}
+                className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <Receipt className="w-4 h-4" /> Fechar comanda
+              </button>
+            ) : (
+              <button
+                onClick={() => finalizarComanda(comanda.id)}
+                disabled={comanda.items.length === 0}
+                className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <Check className="w-4 h-4" /> Finalizar atendimento
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -268,10 +295,41 @@ export default function ComandaDetalhePage() {
         <PagamentoModal
           total={comanda.total}
           onClose={() => setModalPagar(false)}
-          onConfirm={async (forma) => {
-            await pagarComanda(comanda.id, forma);
+          onConfirm={async (forma, valorFinal) => {
+            await pagarComanda(comanda.id, forma, valorFinal);
           }}
         />
+      )}
+
+      {/* Modal: confirmar cancelamento (ação destrutiva, sem desfazer) */}
+      {confirmarCancel && (
+        <Modal onClose={() => setConfirmarCancel(false)}>
+          {(close) => (
+            <>
+              <ModalHeader title="Cancelar comanda?" onClose={close} />
+              <div className="p-5 space-y-4">
+                <p className="text-sm admin-text-secondary leading-relaxed">
+                  A comanda de <strong className="admin-text-primary">{comanda.customerName}</strong> será marcada como{" "}
+                  <strong className="text-red-400">Cancelada</strong> e sairá das abertas. Esta ação não pode ser desfeita.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={close}
+                    className="flex-1 admin-glass-card admin-glass-card-hover admin-text-secondary py-3 rounded-xl text-sm font-semibold transition-colors"
+                  >
+                    Voltar
+                  </button>
+                  <button
+                    onClick={async () => { await cancelarComanda(comanda.id); close(); }}
+                    className="flex-1 bg-red-500 hover:bg-red-400 text-white py-3 rounded-xl text-sm font-bold transition-colors"
+                  >
+                    Sim, cancelar
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </Modal>
       )}
     </div>
   );
@@ -284,15 +342,18 @@ function PagamentoModal({
 }: {
   total: number;
   onClose: () => void;
-  onConfirm: (forma: string) => Promise<void>;
+  onConfirm: (forma: string, total: number) => Promise<void>;
 }) {
-  const [forma, setForma] = useState(FORMAS[0]);
+  const [forma, setForma] = useState(FORMAS[0].value);
+  const [valorStr, setValorStr] = useState(String(total));
   const [stage, setStage] = useState<"escolhendo" | "salvando" | "ok">("escolhendo");
+
+  const valorFinal = Number(valorStr) || total;
 
   const confirmar = async () => {
     setStage("salvando");
     try {
-      await onConfirm(forma);
+      await onConfirm(forma, valorFinal);
       setStage("ok");
       setTimeout(onClose, 1600);
     } catch {
@@ -305,24 +366,43 @@ function PagamentoModal({
       {(close) => (
         <>
           {stage === "ok" ? (
-            <SuccessSplash message="Comanda paga!" subtitle={`${brl(total)} · ${forma}`} />
+            <SuccessSplash message="Comanda paga!" subtitle={`${brl(valorFinal)} · ${forma}`} />
           ) : (
             <>
-              <ModalHeader title="Fechar comanda" subtitle={brl(total)} onClose={stage === "salvando" ? () => {} : close} />
+              <ModalHeader title="Fechar comanda" subtitle={brl(valorFinal)} onClose={stage === "salvando" ? () => {} : close} />
               <div className="p-5 space-y-3">
+                <div>
+                  <label className="text-xs admin-text-secondary uppercase tracking-widest font-semibold block mb-1.5">Valor a cobrar (R$)</label>
+                  <input
+                    type="number"
+                    value={valorStr}
+                    onChange={(e) => setValorStr(e.target.value)}
+                    onFocus={(e) => e.target.select()}
+                    className="w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-lg font-bold focus:outline-none focus:border-gold/50 transition-colors"
+                  />
+                  {valorFinal !== total && (
+                    <p className="text-[11px] admin-text-secondary mt-1">
+                      Itens: {brl(total)} · ajuste de {valorFinal < total ? "-" : "+"}{brl(Math.abs(total - valorFinal))}
+                    </p>
+                  )}
+                </div>
                 <p className="text-xs admin-text-secondary uppercase tracking-widest font-semibold">Forma de pagamento</p>
-                <div className="space-y-1.5">
-                  {FORMAS.map((f) => (
-                    <button
-                      key={f}
-                      onClick={() => setForma(f)}
-                      className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium border transition-colors ${
-                        forma === f ? "bg-gold/10 border-gold/40 text-gold" : "admin-surface-subtle border-transparent admin-text-primary"
-                      }`}
-                    >
-                      {f}
-                    </button>
-                  ))}
+                <div className="grid grid-cols-2 gap-2">
+                  {FORMAS.map((f) => {
+                    const Icon = f.icon;
+                    const sel = forma === f.value;
+                    return (
+                      <button
+                        key={f.value}
+                        onClick={() => setForma(f.value)}
+                        className={`flex items-center gap-2 px-3 py-3 rounded-xl text-sm font-medium border transition-colors ${
+                          sel ? "bg-gold/10 border-gold/40 text-gold" : "admin-surface-subtle border-transparent admin-text-primary"
+                        }`}
+                      >
+                        <Icon className="w-4 h-4 shrink-0" /> {f.label}
+                      </button>
+                    );
+                  })}
                 </div>
                 <div className="flex gap-3 pt-1">
                   <button onClick={close} disabled={stage === "salvando"} className="flex-1 admin-glass-card admin-glass-card-hover admin-text-secondary py-3 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50">

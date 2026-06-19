@@ -55,12 +55,45 @@ export async function updateComandaItems(id: string, items: ComandaItem[]): Prom
   await updateDoc(doc(db, COLLECTION, id), { items, total: calcularTotal(items) });
 }
 
-/** Fecha a comanda (paga), registrando a forma de pagamento. */
-export async function pagarComanda(id: string, formaPagamento: string): Promise<void> {
+/** Atualiza dados do cliente, barbeiro e itens de uma comanda de uma vez. */
+export async function updateComanda(
+  id: string,
+  data: {
+    customerName: string;
+    customerPhone?: string;
+    barberId: string;
+    barberName: string;
+    items: ComandaItem[];
+  }
+): Promise<void> {
+  await updateDoc(doc(db, COLLECTION, id), {
+    customerName: data.customerName,
+    customerPhone: data.customerPhone ?? "",
+    barberId: data.barberId,
+    barberName: data.barberName,
+    items: data.items,
+    total: calcularTotal(data.items),
+  });
+}
+
+/**
+ * Fecha a comanda (paga), registrando a forma de pagamento. `total` é opcional:
+ * quando informado, sobrescreve o valor cobrado (ajuste/desconto na hora de
+ * fechar). Sem ele, mantém o total atual (soma dos itens).
+ */
+export async function pagarComanda(id: string, formaPagamento: string, total?: number): Promise<void> {
   await updateDoc(doc(db, COLLECTION, id), {
     status: "paga" as ComandaStatus,
     formaPagamento,
+    ...(total !== undefined ? { total } : {}),
     closedAt: serverTimestamp(),
+  });
+}
+
+/** Finaliza o serviço sem registrar pagamento (aguarda pagamento no caixa). */
+export async function finalizarComanda(id: string): Promise<void> {
+  await updateDoc(doc(db, COLLECTION, id), {
+    status: "pagamento_pendente" as ComandaStatus,
   });
 }
 
@@ -69,6 +102,24 @@ export async function cancelarComanda(id: string): Promise<void> {
   await updateDoc(doc(db, COLLECTION, id), {
     status: "cancelada" as ComandaStatus,
     closedAt: serverTimestamp(),
+  });
+}
+
+/**
+ * Escuta as comandas de um barbeiro específico em tempo real (todas as
+ * status). Usado na tela de financeiro/comandas do próprio barbeiro.
+ */
+export function subscribeToMinhasComandas(
+  barberId: string,
+  callback: (comandas: Comanda[]) => void
+): () => void {
+  // Só filtra por barberId; ordena no cliente para evitar índice composto
+  // (mesmo padrão de subscribeToComandas com status).
+  const q = query(collection(db, COLLECTION), where("barberId", "==", barberId));
+  return onSnapshot(q, (snap) => {
+    const list = snap.docs.map((d) => mapComanda(d.id, d.data()));
+    list.sort((a, b) => b.createdAt - a.createdAt);
+    callback(list);
   });
 }
 
@@ -89,6 +140,44 @@ export function subscribeToComandas(
     // Quando filtramos por status não usamos orderBy (evita índice composto);
     // ordenamos no cliente.
     if (status) list.sort((a, b) => b.createdAt - a.createdAt);
+    callback(list);
+  });
+}
+
+/**
+ * Escuta as comandas de UM DIA (por `createdAt`), mais recentes primeiro.
+ * `dateKey` = "YYYY-MM-DD". Query escopada por range — não carrega o histórico
+ * inteiro (essencial com volume alto). Range + orderBy no mesmo campo não exige
+ * índice composto.
+ */
+export function subscribeToComandasNoDia(
+  dateKey: string,
+  callback: (comandas: Comanda[]) => void
+): () => void {
+  const [y, m, d] = dateKey.split("-").map(Number);
+  const inicio = new Date(y, m - 1, d, 0, 0, 0, 0);
+  const fim = new Date(y, m - 1, d + 1, 0, 0, 0, 0);
+  const q = query(
+    collection(db, COLLECTION),
+    where("createdAt", ">=", inicio),
+    where("createdAt", "<", fim),
+    orderBy("createdAt", "desc")
+  );
+  return onSnapshot(q, (snap) => callback(snap.docs.map((doc) => mapComanda(doc.id, doc.data()))));
+}
+
+/**
+ * Escuta TODAS as comandas em aberto (aberta + pagamento_pendente), de qualquer
+ * dia — elas precisam de ação (fechar) e não podem sumir por serem antigas.
+ * Bounded pela quantidade de comandas abertas (poucas em operação normal).
+ */
+export function subscribeToComandasAbertas(
+  callback: (comandas: Comanda[]) => void
+): () => void {
+  const q = query(collection(db, COLLECTION), where("status", "in", ["aberta", "pagamento_pendente"]));
+  return onSnapshot(q, (snap) => {
+    const list = snap.docs.map((doc) => mapComanda(doc.id, doc.data()));
+    list.sort((a, b) => b.createdAt - a.createdAt);
     callback(list);
   });
 }

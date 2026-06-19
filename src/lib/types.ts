@@ -140,6 +140,9 @@ export interface Permissions {
   gerenciarFuncionarios: boolean;
   gerenciarCadastros: boolean;
   gerenciarGrade: boolean;
+  fecharComandas: boolean;
+  /** Ao abrir comanda, escolher PARA QUAL barbeiro (atendimento presencial). */
+  escolherBarbeiroComanda: boolean;
 }
 
 /** Configuração de um dia da semana na grade do barbeiro. */
@@ -176,6 +179,8 @@ export const ROLE_PRESETS: Record<EmployeeRole, Permissions> = {
     gerenciarFuncionarios: true,
     gerenciarCadastros: true,
     gerenciarGrade: true,
+    fecharComandas: true,
+    escolherBarbeiroComanda: true,
   },
   recepcionista: {
     verAgendaPropria: true,
@@ -186,6 +191,8 @@ export const ROLE_PRESETS: Record<EmployeeRole, Permissions> = {
     gerenciarFuncionarios: false,
     gerenciarCadastros: true,
     gerenciarGrade: true,
+    fecharComandas: true,
+    escolherBarbeiroComanda: true,
   },
   barbeiro: {
     verAgendaPropria: true,
@@ -196,6 +203,8 @@ export const ROLE_PRESETS: Record<EmployeeRole, Permissions> = {
     gerenciarFuncionarios: false,
     gerenciarCadastros: false,
     gerenciarGrade: true,
+    fecharComandas: false,
+    escolherBarbeiroComanda: false,
   },
 };
 
@@ -209,6 +218,8 @@ export const FULL_PERMS: Permissions = {
   gerenciarFuncionarios: true,
   gerenciarCadastros: true,
   gerenciarGrade: true,
+  fecharComandas: true,
+  escolherBarbeiroComanda: true,
 };
 
 /** Dados que o formulário envia ao criar/editar um funcionário. */
@@ -251,6 +262,13 @@ export interface AppointmentInput {
   customerName: string;
   customerPhone: string;
   origin: AppointmentOrigin;
+  /**
+   * Itens do agendamento (serviços + produtos do catálogo). Opcional para
+   * compatibilidade com a landing, que envia só o serviço principal nos campos
+   * `service*`. No admin, alimenta a comanda que o agendamento gera. Quando
+   * presente, `serviceName`/`servicePrice` derivam dele (1º serviço + total).
+   */
+  items?: ComandaItem[];
 }
 
 /** Documento de agendamento como persistido no Firestore (coleção `appointments`). */
@@ -262,7 +280,7 @@ export interface Appointment extends AppointmentInput {
 
 // ─── Comandas ─────────────────────────────────────────────────────────────────
 
-export type ComandaStatus = "aberta" | "paga" | "cancelada";
+export type ComandaStatus = "aberta" | "pagamento_pendente" | "paga" | "cancelada";
 export type ComandaItemTipo = "servico" | "produto";
 /** De onde a comanda nasceu: junto de um agendamento, ou avulsa (walk-in). */
 export type ComandaOrigem = "agendamento" | "avulsa";

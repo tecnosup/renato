@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase-admin";
-import type { AppointmentInput } from "@/lib/types";
+import type { AppointmentInput, ComandaItem } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -34,6 +34,9 @@ export async function POST(req: Request) {
   }
   if (typeof body.servicePrice !== "number") {
     return NextResponse.json({ error: "Preço inválido." }, { status: 400 });
+  }
+  if (body.items !== undefined && !Array.isArray(body.items)) {
+    return NextResponse.json({ error: "Itens inválidos." }, { status: 400 });
   }
 
   const col = adminDb.collection("appointments");
@@ -78,6 +81,32 @@ export async function POST(req: Request) {
       status: "pendente",
       createdAt: FieldValue.serverTimestamp(),
     });
+
+    // Todo agendamento gera uma comanda "aberta" vinculada (base do sistema de
+    // comissão). Os itens vêm do agendamento; quando não há (ex: landing manda
+    // só o serviço), monta-se um item de serviço. A comanda é datada no DIA do
+    // agendamento, para cair no dia certo da Caixa. Falha aqui NÃO derruba o
+    // agendamento — o backfill recupera comandas que faltem.
+    try {
+      const items: ComandaItem[] = Array.isArray(body.items) && body.items.length > 0
+        ? body.items
+        : [{ id: `${ref.id}-svc`, tipo: "servico", refId: body.serviceId, nome: body.serviceName, preco: body.servicePrice ?? 0, qtd: 1 }];
+      const total = items.reduce((s, i) => s + i.preco * i.qtd, 0);
+      await adminDb.collection("comandas").add({
+        customerName: body.customerName,
+        customerPhone: body.customerPhone ?? "",
+        barberId: body.barberId,
+        barberName: body.barberName,
+        origem: "agendamento",
+        appointmentId: ref.id,
+        items,
+        status: "aberta",
+        total,
+        createdAt: Timestamp.fromDate(new Date(`${body.date}T${body.time || "12:00"}:00`)),
+      });
+    } catch (e) {
+      console.error("Falha ao gerar comanda do agendamento:", e);
+    }
 
     return NextResponse.json({ ok: true, id: ref.id });
   } catch (err) {
