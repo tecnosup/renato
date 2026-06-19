@@ -90,6 +90,8 @@ export function subscribeToEmployees(
         active: data.active ?? true,
         categoryId: data.categoryId ?? null,
         photoUrl: data.photoUrl ?? null,
+        // Fallback legado: sem campo, é agendável se o cargo era "barbeiro".
+        bookable: data.bookable ?? (data.role === "barbeiro"),
         createdAt: data.createdAt?.toMillis?.() ?? Date.now(),
         // Identidade/acesso — necessario para o card saber se ja tem login.
         authUid: data.authUid ?? null,
@@ -151,6 +153,7 @@ export function subscribeToOwnerBarber(
         active: data.active ?? true,
         categoryId: data.categoryId ?? null,
         photoUrl: data.photoUrl ?? null,
+        bookable: data.bookable ?? (data.role === "barbeiro"),
         createdAt: data.createdAt?.toMillis?.() ?? Date.now(),
         authUid: data.authUid ?? null,
         email: data.email ?? null,
@@ -171,17 +174,21 @@ export function subscribeToOwnerBarber(
 export async function upsertOwnerBarber(input: {
   ownerDocId?: string | null;
   name: string;
+  role: EmployeeRole;
   categoryId: string | null;
   photoUrl: string | null;
+  bookable: boolean;
   active: boolean;
 }): Promise<string> {
   const payload = {
     name: input.name,
-    role: "gerente" as EmployeeRole, // owner vê tudo; preset só por consistência do doc
+    // owner vê tudo (sem claims); role/perms aqui são só para consistência do doc.
+    role: input.role,
     phone: "",
     active: input.active,
     categoryId: input.categoryId,
     photoUrl: input.photoUrl,
+    bookable: input.bookable,
     isOwner: true,
   };
   if (input.ownerDocId) {

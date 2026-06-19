@@ -40,7 +40,7 @@ export function EditarComandaModal({
   const [showFecharForm, setShowFecharForm] = useState(false);
   const [formaPagamento, setFormaPagamento] = useState<FormaPagamento>("Dinheiro");
 
-  useEffect(() => subscribeToEmployees((l) => setBarbeiros(l.filter((e) => e.active && e.role === "barbeiro"))), []);
+  useEffect(() => subscribeToEmployees((l) => setBarbeiros(l.filter((e) => e.active && e.bookable))), []);
   useEffect(() => subscribeToServices((l) => setServices(l.filter((s) => s.active !== false))), []);
   useEffect(() => subscribeToProducts((l) => setProducts(l.filter((p) => p.active))), []);
 

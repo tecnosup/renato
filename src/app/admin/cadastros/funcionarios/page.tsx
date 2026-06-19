@@ -125,15 +125,14 @@ function FuncionariosPageInner() {
   const [categories, setCategories] = useState<EmployeeCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // modal: null = fechado, { id: null } = novo, { id } = editando
-  const [modal, setModal] = useState<{ id: string | null } | null>(null);
+  // modal: null = fechado, { id: null } = novo, { id } = editando, owner = perfil do dono
+  const [modal, setModal] = useState<{ id: string | null; owner?: boolean } | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<Employee | null>(null);
   const [acessoPara, setAcessoPara] = useState<Employee | null>(null);
   const [categoriasOpen, setCategoriasOpen] = useState(false);
   const [seeding, setSeeding] = useState(false);
-  const [ownerModalOpen, setOwnerModalOpen] = useState(false);
 
   useEffect(() => {
     const unsubEmp = subscribeToEmployees((lista) => {
@@ -193,25 +192,55 @@ function FuncionariosPageInner() {
     setModal({ id: f.id });
   };
 
+  // Abre o MESMO modal de edição para o perfil de barbeiro do proprietário.
+  // Pré-seleciona uma categoria agendável; "Ativo" significa "atendo como barbeiro".
+  const abrirOwner = () => {
+    const bookableCats = categories.filter((c) => c.bookable);
+    setForm({
+      name: ownerBarber?.name || (user?.email?.split("@")[0] ?? "Proprietário"),
+      categoryId: ownerBarber?.categoryId ?? bookableCats[0]?.id ?? "",
+      phone: "",
+      active: ownerBarber ? ownerBarber.active : true,
+      photoUrl: ownerBarber?.photoUrl ?? "",
+    });
+    setModal({ id: ownerBarber?.id ?? null, owner: true });
+  };
+
   const salvar = async (close: () => void) => {
     const name = form.name.trim();
     if (!name || saving) return;
     setSaving(true);
     try {
-      // role efetivo = preset da categoria escolhida (base do RBAC ao dar acesso).
+      // role/permissões base = da categoria escolhida (base do RBAC ao dar acesso).
       const cat = categories.find((c) => c.id === form.categoryId);
-      const payload = {
-        name,
-        role: cat?.preset ?? "barbeiro",
-        phone: form.phone.trim(),
-        active: form.active,
-        categoryId: form.categoryId || null,
-        photoUrl: form.photoUrl || null,
-      };
-      if (modal?.id) {
-        await updateEmployee(modal.id, payload);
+      const role = cat?.preset ?? "barbeiro";
+      const bookable = cat?.bookable ?? false;
+
+      if (modal?.owner) {
+        await upsertOwnerBarber({
+          ownerDocId: modal.id,
+          name,
+          role,
+          categoryId: form.categoryId || null,
+          photoUrl: form.photoUrl || null,
+          bookable,
+          active: form.active,
+        });
       } else {
-        await createEmployee(payload);
+        const payload = {
+          name,
+          role,
+          phone: form.phone.trim(),
+          active: form.active,
+          categoryId: form.categoryId || null,
+          photoUrl: form.photoUrl || null,
+          bookable,
+        };
+        if (modal?.id) {
+          await updateEmployee(modal.id, payload);
+        } else {
+          await createEmployee(payload);
+        }
       }
       close();
     } finally {
@@ -231,9 +260,10 @@ function FuncionariosPageInner() {
     setSeeding(true);
     try {
       const { createEmployeeCategory } = await import("@/lib/employee-categories");
-      await createEmployeeCategory({ name: "Barbeiro", preset: "barbeiro", bookable: true, order: 0 });
-      await createEmployeeCategory({ name: "Recepcionista", preset: "recepcionista", bookable: false, order: 1 });
-      await createEmployeeCategory({ name: "Gerente", preset: "gerente", bookable: false, order: 2 });
+      const { ROLE_PRESETS } = await import("@/lib/types");
+      await createEmployeeCategory({ name: "Barbeiro", preset: "barbeiro", perms: { ...ROLE_PRESETS.barbeiro }, bookable: true, order: 0 });
+      await createEmployeeCategory({ name: "Recepcionista", preset: "recepcionista", perms: { ...ROLE_PRESETS.recepcionista }, bookable: false, order: 1 });
+      await createEmployeeCategory({ name: "Gerente", preset: "gerente", perms: { ...ROLE_PRESETS.gerente }, bookable: false, order: 2 });
     } finally {
       setSeeding(false);
     }
@@ -252,7 +282,7 @@ function FuncionariosPageInner() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCategoriasOpen(true)}
-              className="admin-surface-subtle admin-text-primary px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:text-gold flex items-center gap-2"
+              className="transform-gpu admin-glass-card admin-glass-card-hover admin-text-primary px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:text-gold flex items-center gap-2"
             >
               <Tags className="w-4 h-4" />
               <span className="hidden sm:inline">Categorias</span>
@@ -289,10 +319,11 @@ function FuncionariosPageInner() {
               </p>
             </div>
             <button
-              onClick={() => setOwnerModalOpen(true)}
-              className="text-xs px-3 py-2 rounded-lg admin-surface-subtle admin-text-secondary hover:text-gold transition-colors shrink-0"
+              onClick={abrirOwner}
+              className="text-xs px-3 py-2 rounded-lg admin-surface-subtle admin-text-secondary hover:text-gold transition-colors shrink-0 flex items-center gap-1.5"
             >
-              {ownerBarber && ownerBarber.active ? "Editar" : "Também atendo"}
+              <Pencil className="w-3.5 h-3.5" />
+              {ownerBarber && ownerBarber.active ? "Editar perfil" : "Atender como barbeiro"}
             </button>
           </div>
         </div>
@@ -373,8 +404,9 @@ function FuncionariosPageInner() {
           {(close) => (
             <>
               <div className="flex items-center justify-between px-6 pt-6 pb-1">
-                <h3 className="text-base font-bold admin-text-primary">
-                  {modal.id ? "Editar funcionário" : "Novo funcionário"}
+                <h3 className="text-base font-bold admin-text-primary flex items-center gap-2">
+                  {modal.owner && <Crown className="w-4 h-4 text-gold" />}
+                  {modal.owner ? "Meu perfil de barbeiro" : modal.id ? "Editar funcionário" : "Novo funcionário"}
                 </h3>
                 <button onClick={close} className="group admin-text-primary hover:opacity-80">
                   <X className="w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-90" />
@@ -400,39 +432,52 @@ function FuncionariosPageInner() {
                 </div>
                 <div>
                   <label className="text-xs admin-text-secondary mb-1 block">Categoria</label>
-                  {categories.length === 0 ? (
-                    <p className="text-xs admin-text-secondary admin-surface-subtle rounded-xl px-4 py-3">
-                      Nenhuma categoria. Crie em <span className="text-gold">Categorias</span> primeiro.
-                    </p>
-                  ) : (
-                    <CategorySelect
-                      value={form.categoryId}
-                      categories={categories}
-                      onChange={(id) => setForm({ ...form, categoryId: id })}
-                    />
-                  )}
+                  {(() => {
+                    // No modo owner só fazem sentido categorias agendáveis.
+                    const opcoes = modal.owner ? categories.filter((c) => c.bookable) : categories;
+                    if (opcoes.length === 0) {
+                      return (
+                        <p className="text-xs admin-text-secondary admin-surface-subtle rounded-xl px-4 py-3">
+                          {modal.owner
+                            ? "Nenhuma categoria agendável. Marque uma como “Agendável” em Categorias."
+                            : <>Nenhuma categoria. Crie em <span className="text-gold">Categorias</span> primeiro.</>}
+                        </p>
+                      );
+                    }
+                    return (
+                      <CategorySelect
+                        value={form.categoryId}
+                        categories={opcoes}
+                        onChange={(id) => setForm({ ...form, categoryId: id })}
+                      />
+                    );
+                  })()}
                 </div>
-                <div>
-                  <label className="text-xs admin-text-secondary mb-1 block">WhatsApp (opcional)</label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 admin-text-secondary" />
-                    <input
-                      type="tel"
-                      placeholder="11999999999"
-                      value={form.phone}
-                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors"
-                    />
+                {!modal.owner && (
+                  <div>
+                    <label className="text-xs admin-text-secondary mb-1 block">WhatsApp (opcional)</label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 admin-text-secondary" />
+                      <input
+                        type="tel"
+                        placeholder="11999999999"
+                        value={form.phone}
+                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                        className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
                 <button
                   type="button"
                   onClick={() => setForm({ ...form, active: !form.active })}
                   className="flex items-center justify-between w-full admin-surface-subtle rounded-xl px-4 py-3"
                 >
-                  <div className="text-left">
-                    <p className="text-sm admin-text-primary">Ativo</p>
-                    <p className="text-[11px] admin-text-secondary">Aparece como opção no agendamento</p>
+                  <div className="text-left pr-3">
+                    <p className="text-sm admin-text-primary">{modal.owner ? "Atendo como barbeiro" : "Ativo"}</p>
+                    <p className="text-[11px] admin-text-secondary">
+                      {modal.owner ? "Apareço na agenda e ganho a aba “Meu Financeiro”" : "Aparece como opção no agendamento"}
+                    </p>
                   </div>
                   <span className={`relative shrink-0 w-11 h-6 rounded-full transition-colors ${form.active ? "bg-gold" : "admin-surface-subtle border border-white/10"}`}>
                     <span className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white shadow-sm transition-[left] duration-200 ${form.active ? "left-[22px]" : "left-0.5"}`} />
@@ -452,7 +497,7 @@ function FuncionariosPageInner() {
                   disabled={!form.name.trim() || saving}
                   className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {saving ? "Salvando..." : modal.id ? "Salvar" : "Cadastrar"}
+                  {saving ? "Salvando..." : modal.owner ? "Salvar" : modal.id ? "Salvar" : "Cadastrar"}
                 </button>
               </div>
             </>
@@ -495,7 +540,11 @@ function FuncionariosPageInner() {
 
       {/* Modal criar acesso (login + permissões) */}
       {acessoPara && (
-        <AccessModal employee={acessoPara} onClose={() => setAcessoPara(null)} />
+        <AccessModal
+          employee={acessoPara}
+          defaultPerms={categories.find((c) => c.id === acessoPara.categoryId)?.perms}
+          onClose={() => setAcessoPara(null)}
+        />
       )}
 
       {/* Modal gerenciar categorias */}
@@ -504,16 +553,6 @@ function FuncionariosPageInner() {
           categories={categories}
           countByCategory={countByCategory}
           onClose={() => setCategoriasOpen(false)}
-        />
-      )}
-
-      {/* Modal proprietário-barbeiro */}
-      {ownerModalOpen && (
-        <OwnerBarberModal
-          ownerBarber={ownerBarber}
-          ownerName={user?.email ?? "Proprietário"}
-          categories={categories}
-          onClose={() => setOwnerModalOpen(false)}
         />
       )}
     </div>
@@ -596,122 +635,3 @@ function CategoriaSecao({
   );
 }
 
-// Configura o proprietário como barbeiro (sem login: só agenda + Meu Financeiro).
-function OwnerBarberModal({
-  ownerBarber,
-  ownerName,
-  categories,
-  onClose,
-}: {
-  ownerBarber: Employee | null;
-  ownerName: string;
-  categories: EmployeeCategory[];
-  onClose: () => void;
-}) {
-  const bookableCats = categories.filter((c) => c.bookable);
-  const [atende, setAtende] = useState(!!ownerBarber && ownerBarber.active);
-  const [name, setName] = useState(ownerBarber?.name || ownerName.split("@")[0] || "Proprietário");
-  const [categoryId, setCategoryId] = useState(ownerBarber?.categoryId ?? bookableCats[0]?.id ?? "");
-  const [photoUrl, setPhotoUrl] = useState(ownerBarber?.photoUrl ?? "");
-  const [saving, setSaving] = useState(false);
-
-  const salvar = async (close: () => void) => {
-    if (saving) return;
-    // Desligado e nunca configurado: nada a salvar (evita doc-espelho inativo à toa).
-    if (!atende && !ownerBarber) { close(); return; }
-    setSaving(true);
-    try {
-      await upsertOwnerBarber({
-        ownerDocId: ownerBarber?.id ?? null,
-        name: name.trim() || "Proprietário",
-        categoryId: categoryId || null,
-        photoUrl: photoUrl || null,
-        // Desligar "atende" desativa o doc (preserva histórico de comandas).
-        active: atende,
-      });
-      close();
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <Modal onClose={onClose}>
-      {(close) => (
-        <>
-          <div className="admin-border-b flex items-center justify-between px-5 pt-5 pb-3">
-            <div className="flex items-center gap-2">
-              <Crown className="w-4 h-4 text-gold" />
-              <h2 className="text-base font-bold admin-text-primary">Atender como barbeiro</h2>
-            </div>
-            <button onClick={close} className="group admin-text-primary hover:opacity-80">
-              <X className="w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-90" />
-            </button>
-          </div>
-
-          <div className="p-5 space-y-3">
-            <button
-              type="button"
-              onClick={() => setAtende((v) => !v)}
-              className="flex items-center justify-between w-full admin-surface-subtle rounded-xl px-4 py-3"
-            >
-              <div className="text-left pr-3">
-                <p className="text-sm admin-text-primary">Também atendo clientes</p>
-                <p className="text-[11px] admin-text-secondary">Apareço na agenda e ganho a aba “Meu Financeiro”</p>
-              </div>
-              <span className={`relative shrink-0 w-11 h-6 rounded-full transition-colors ${atende ? "bg-gold" : "admin-surface-subtle border border-white/10"}`}>
-                <span className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white shadow-sm transition-[left] duration-200 ${atende ? "left-[22px]" : "left-0.5"}`} />
-              </span>
-            </button>
-
-            {atende && (
-              <>
-                <ImageUploadField
-                  value={photoUrl}
-                  folder="barbeiros"
-                  label="Foto de perfil"
-                  onChange={setPhotoUrl}
-                />
-                <div>
-                  <label className="text-xs admin-text-secondary mb-1 block">Nome exibido na agenda</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs admin-text-secondary mb-1 block">Categoria</label>
-                  {bookableCats.length === 0 ? (
-                    <p className="text-xs admin-text-secondary admin-surface-subtle rounded-xl px-4 py-3">
-                      Nenhuma categoria agendável. Marque uma categoria como “Agendável” em Categorias.
-                    </p>
-                  ) : (
-                    <CategorySelect value={categoryId} categories={bookableCats} onChange={setCategoryId} />
-                  )}
-                </div>
-              </>
-            )}
-
-            <div className="flex gap-3 pt-1">
-              <button
-                onClick={close}
-                className="transform-gpu flex-1 admin-glass-card admin-glass-card-hover admin-text-secondary py-3 rounded-xl text-sm font-semibold transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={() => salvar(close)}
-                disabled={saving || (atende && bookableCats.length === 0)}
-                className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {saving ? "Salvando..." : "Salvar"}
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-    </Modal>
-  );
-}

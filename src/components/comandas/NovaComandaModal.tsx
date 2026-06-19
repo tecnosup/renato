@@ -45,7 +45,7 @@ export function NovaComandaModal({
   const [items, setItems] = useState<ComandaItem[]>([]);
   const [stage, setStage] = useState<"form" | "salvando" | "ok">("form");
 
-  useEffect(() => subscribeToEmployees((l) => setBarbeiros(l.filter((e) => e.active && e.role === "barbeiro"))), []);
+  useEffect(() => subscribeToEmployees((l) => setBarbeiros(l.filter((e) => e.active && e.bookable))), []);
 
   const total = calcularTotal(items);
   // Exige barbeiro responsável (base da comissão) e ao menos 1 item. O nome

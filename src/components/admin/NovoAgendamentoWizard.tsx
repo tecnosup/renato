@@ -83,7 +83,7 @@ export function NovoAgendamentoWizard({
   useEffect(() => subscribeToProducts((l) => setProducts(l.filter((p) => p.active))), []);
 
   const barbeiros = useMemo(
-    () => funcionarios.filter((f) => f.active && f.role === "barbeiro"),
+    () => funcionarios.filter((f) => f.active && f.bookable),
     [funcionarios]
   );
 

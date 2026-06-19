@@ -411,7 +411,7 @@ function AgendaPageInner() {
   // Carrega os barbeiros ativos (seletor da grade e do agendamento presencial).
   useEffect(() => {
     return subscribeToEmployees((lista) => {
-      const ativos = lista.filter((e) => e.active && e.role === "barbeiro");
+      const ativos = lista.filter((e) => e.active && e.bookable);
       setFuncionarios(ativos);
       if (!gradeBarberIdAlvo && ativos.length > 0) setGradeBarberIdAlvo(ativos[0].id);
     });

@@ -135,11 +135,16 @@ export type EmployeeRole = "barbeiro" | "recepcionista" | "gerente";
 export interface EmployeeCategoryInput {
   /** Rótulo livre exibido nos cards e no select (ex: "Barbeiro", "Caixa"). */
   name: string;
-  /** De qual modelo de permissão esta categoria parte ao conceder acesso. */
+  /** Preset base do qual a categoria parte (preenche `perms` rapidamente). */
   preset: EmployeeRole;
+  /**
+   * Permissões completas da categoria — viram o padrão ao conceder acesso a
+   * alguém dela (ajustável depois por pessoa). Editáveis no "Avançado".
+   */
+  perms: Permissions;
   /** Agendável = aparece na agenda e como equipe na landing. */
   bookable: boolean;
-  /** Ordem de exibição (menor primeiro). */
+  /** Ordem de exibição/hierarquia (menor primeiro). */
   order: number;
 }
 
@@ -256,6 +261,13 @@ export interface EmployeeInput {
   categoryId?: string | null;
   /** Foto de perfil (URL pública no R2). Aparece no card e na landing. */
   photoUrl?: string | null;
+  /**
+   * Agendável = aparece na agenda/comandas/landing como barbeiro. Denormalizado
+   * da categoria (category.bookable) para os consumidores filtrarem direto, sem
+   * juntar categorias. Sincronizado ao salvar o funcionário e ao mudar a flag da
+   * categoria. Legados sem categoria: cai no fallback role === "barbeiro".
+   */
+  bookable?: boolean;
 }
 
 /** Documento de funcionário no Firestore (coleção `barbers`). */
