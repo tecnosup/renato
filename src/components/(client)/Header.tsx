@@ -193,7 +193,7 @@ export default function Header() {
               VAGAS HOJE DISPONÍVEIS
             </span>
             <span className="hidden sm:inline-block text-zinc-800">•</span>
-            <span className="hidden sm:inline-block text-zinc-550 tracking-[0.08em]">AV. BRIGADEIRO FARIA LIMA, 4500 • SÃO PAULO</span>
+            <span className="hidden sm:inline-block text-zinc-550 tracking-[0.08em]">R. DR. JOSÉ R. ALVES SOBRINHO, 351 • CRUZEIRO/SP</span>
           </div>
           <div className="font-mono text-zinc-500 tracking-[0.08em]">
             SP {currentTime ? `[${currentTime}]` : '[--:--:--]'} BR_TIME
@@ -328,9 +328,9 @@ export default function Header() {
                 <div className="flex flex-col gap-2 font-mono text-[9px] text-[#c2a35d]/60 pt-4 border-t border-zinc-900">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-3.5 h-3.5 text-[#c2a35d]/85" />
-                    <span>Av. Brigadeiro Faria Lima, 4500 - São Paulo, SP</span>
+                    <span>R. Dr. José Rodrigues Alves Sobrinho, 351 - Cruzeiro, SP</span>
                   </div>
-                  <div className="pl-5">Segunda a Sábado: 09:00 às 21:00</div>
+                  <div className="pl-5">Segunda a Sábado: 08:30 às 21:00</div>
                 </div>
               </div>
             </motion.div>

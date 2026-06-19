@@ -678,7 +678,7 @@ export default function OrbCarousel() {
               <div className="flex-1 leading-tight select-none">
                 <h5 className="font-display font-black text-xs uppercase text-zinc-900 tracking-wide">RESERVADO COM SUCESSO!</h5>
                 <p className="font-sans text-[10.5px] text-zinc-650 font-normal leading-normal mt-1">
-                  O item <strong>{reservationSuccess}</strong> foi separado e reservado exclusivamente para você retirar no salão Faria Lima.
+                  O item <strong>{reservationSuccess}</strong> foi separado e reservado exclusivamente para você retirar no salão em Cruzeiro.
                 </p>
               </div>
               <button 

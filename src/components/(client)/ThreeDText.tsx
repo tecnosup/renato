@@ -70,7 +70,7 @@ export default function ThreeDText() {
         <div className="w-full h-[1px] bg-zinc-900/60 flex justify-between px-10 text-[8px] tracking-[0.24em] font-sans font-bold text-zinc-600 select-none">
           <span>ALFAIATARIA DE CABELO</span>
           <span>FILOSOFIA ATEMPORAL</span>
-          <span>SÃO PAULO</span>
+          <span>CRUZEIRO • SP</span>
         </div>
 
         <motion.div 

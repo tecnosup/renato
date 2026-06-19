@@ -1000,7 +1000,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                       <Scissors className="w-3.5 h-3.5 text-zinc-900" />
                       <span className="font-display font-extrabold text-[12px] tracking-widest text-[#151515]">BARBER<span className="text-gold">CODE</span></span>
                     </div>
-                    <span className="font-mono text-[7px] text-zinc-450 uppercase tracking-widest font-semibold block col-span-12">FARIA LIMA 4500 • SÃO PAULO</span>
+                    <span className="font-mono text-[7px] text-zinc-450 uppercase tracking-widest font-semibold block col-span-12">CRUZEIRO/SP • VILA PAULO ROMEU</span>
                   </div>
 
                   {/* Body data info blocks */}

@@ -1,16 +1,117 @@
 "use client";
 import { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { Eye, Flame, Sparkles, Sliders, Scissors, Wind } from 'lucide-react';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
+import { Flame, Scissors, Wind, ChevronLeft, ChevronRight } from 'lucide-react';
+
+type HairType = 'liso' | 'afro';
+const HAIR_ORDER: HairType[] = ['liso', 'afro'];
+const HAIR_LABEL: Record<HairType, string> = { liso: 'Liso', afro: 'Afro' };
 
 interface TrendingCut {
   id: string;
   name: string;
   type: string;
-  image: string;
+  /** PNG sem fundo por textura de cabelo (cabeça flutuante). */
+  images: Record<HairType, string>;
   popularity: string;
   styling: string;
   description: string;
+}
+
+/**
+ * Carrossel da cabeça de um corte: alterna entre as texturas (liso/afro) por
+ * setas, arraste ou clique nos dots. Cada card tem o seu — independentes.
+ */
+function CutCarousel({ cut }: { cut: TrendingCut }) {
+  const [idx, setIdx] = useState(0); // índice em HAIR_ORDER
+  const hair = HAIR_ORDER[idx];
+  const go = (next: number) => setIdx((next + HAIR_ORDER.length) % HAIR_ORDER.length);
+
+  return (
+    <div className="relative w-full flex flex-col items-center">
+      {/* Palco da cabeça flutuante */}
+      <div className="relative w-full flex items-center justify-center [animation:cut-float_7s_ease-in-out_infinite]">
+        {/* Glow dourado ambiente atrás da cabeça */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] aspect-square bg-gold/10 rounded-full blur-[60px] group-hover:bg-gold/20 transition-all duration-700 pointer-events-none" />
+
+        {/* Área arrastável com crossfade entre texturas */}
+        <motion.div
+          className="relative w-[260px] h-[260px] md:w-[320px] md:h-[320px] cursor-grab active:cursor-grabbing touch-pan-y"
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.18}
+          onDragEnd={(_, info) => {
+            if (info.offset.x < -60) go(idx + 1);
+            else if (info.offset.x > 60) go(idx - 1);
+          }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={hair}
+              src={cut.images[hair]}
+              alt={`${cut.name} — cabelo ${HAIR_LABEL[hair]}`}
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.02 }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
+              className="absolute inset-0 w-full h-full object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.7)] pointer-events-none select-none"
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+            />
+          </AnimatePresence>
+        </motion.div>
+
+        {/* Sombra elíptica projetada no "chão" */}
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-1/2 h-4 bg-black/60 rounded-[100%] blur-md pointer-events-none" />
+
+        {/* Tag % em alta — flutua no canto */}
+        <div className="absolute top-2 right-2 bg-gold/10 md:backdrop-blur-sm border border-gold/30 text-gold px-2.5 py-1 text-[9px] font-mono font-bold uppercase rounded flex items-center gap-1 opacity-0 group-hover:opacity-100 -translate-y-1 group-hover:translate-y-0 transition-all duration-300">
+          <Flame className="w-3 h-3 fill-current" />
+          <span>{cut.popularity}</span>
+        </div>
+
+        {/* Setas laterais */}
+        <button
+          type="button"
+          onClick={() => go(idx - 1)}
+          aria-label="Textura anterior"
+          className="absolute left-0 md:-left-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full grid place-items-center bg-black/55 md:backdrop-blur-sm border border-white/10 text-zinc-300 hover:text-zinc-950 hover:bg-[#c2a35d] hover:border-gold transition-all duration-300 cursor-pointer active:scale-90"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => go(idx + 1)}
+          aria-label="Próxima textura"
+          className="absolute right-0 md:-right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full grid place-items-center bg-black/55 md:backdrop-blur-sm border border-white/10 text-zinc-300 hover:text-zinc-950 hover:bg-[#c2a35d] hover:border-gold transition-all duration-300 cursor-pointer active:scale-90"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Dots + rótulo da textura ativa */}
+      <div className="flex items-center gap-3 mt-1">
+        <div className="flex items-center gap-2">
+          {HAIR_ORDER.map((t, i) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setIdx(i)}
+              aria-label={`Ver cabelo ${HAIR_LABEL[t]}`}
+              aria-pressed={i === idx}
+              className={`rounded-full transition-all duration-300 cursor-pointer ${
+                i === idx ? 'w-5 h-1.5 bg-[#c2a35d]' : 'w-1.5 h-1.5 bg-white/25 hover:bg-white/50'
+              }`}
+            />
+          ))}
+        </div>
+        <span className="font-mono text-[8.5px] text-zinc-500 uppercase tracking-widest font-bold min-w-[28px] text-left">
+          {HAIR_LABEL[hair]}
+        </span>
+      </div>
+    </div>
+  );
 }
 
 export default function ShowcaseBanner() {
@@ -40,42 +141,32 @@ export default function ShowcaseBanner() {
   const smoothRightX = useSpring(xRightTrack, springConfig);
   const smoothScale = useSpring(scaleCenterImage, springConfig);
 
+  // Cortes mais pedidos, cada um em duas texturas de cabelo (liso / afro).
+  // As imagens são manequins 3D sem fundo (PNG transparente) — a cabeça flutua.
   const trendingCuts: TrendingCut[] = [
     {
-      id: "tc1",
-      name: "Textured Crop French",
-      type: "Degradê Médio Alto",
-      image: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=500&auto=format&fit=crop",
+      id: "americano",
+      name: "Americano",
+      type: "Taper Fade",
+      images: {
+        liso: "/cortes/americano-liso.png",
+        afro: "/cortes/americano-afro.png",
+      },
       popularity: "95%",
       styling: "Pó Texturizador + Pomada Matte",
-      description: "Corte moderno com o topo texturizado e degradê acentuado, ideal para fisionomias despojadas e urbanas."
+      description: "Topo texturizado curto com degradê limpo nas laterais e nuca. O queridinho versátil — cai bem em qualquer rosto."
     },
     {
-      id: "tc2",
-      name: "Slick Back Pompadour",
-      type: "Navalhado Conectado",
-      image: "https://images.unsplash.com/photo-1593702295094-aec22597af05?q=80&w=500&auto=format&fit=crop",
-      popularity: "88%",
-      styling: "Pomada Alto Brilho / Classic Grooming",
-      description: "Topete polido penteado para trás com as laterais em degradê sombreado limpo e imponente."
-    },
-    {
-      id: "tc3",
-      name: "Classic Side-Part Royal",
-      type: "Corte na Tesoura",
-      image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=500&auto=format&fit=crop",
+      id: "midfade",
+      name: "Mid Fade com Volume",
+      type: "Degradê Médio",
+      images: {
+        liso: "/cortes/midfade-liso.png",
+        afro: "/cortes/midfade-afro.png",
+      },
       popularity: "92%",
-      styling: "Creme de Pentear + Spray de Brilho",
-      description: "O requinte atemporal. Divisão lateral perfeita lapidada inteiramente no fio de tesoura de alta precisão."
-    },
-    {
-      id: "tc4",
-      name: "Modern Luxury Beard",
-      type: "Navalhado & Terapia",
-      image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=500&auto=format&fit=crop",
-      popularity: "98%",
-      styling: "Balm Nutritivo + Óleo Essencial",
-      description: "Design de barba imponente com linhas afiadas na navalha em gradiente com as costeletas."
+      styling: "Pomada Modeladora + Secador",
+      description: "Volume jogado para cima com transição na altura da orelha. Moderno, imponente e fácil de manter no dia a dia."
     }
   ];
 
@@ -107,6 +198,14 @@ export default function ShowcaseBanner() {
           0% { transform: translateX(-50%); }
           100% { transform: translateX(0); }
         }
+        /* Flutuação suave da cabeça do corte */
+        @keyframes cut-float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          [class*="cut-float"] { animation: none !important; }
+        }
       `}</style>
 
       {/* Title & Metadata Header */}
@@ -125,7 +224,7 @@ export default function ShowcaseBanner() {
             </h2>
           </div>
           <p className="font-serif italic text-zinc-400 text-sm md:text-base max-w-sm font-light leading-relaxed">
-            Retratos de atitude e excelência técnica esculpidos no templo da <strong>Século XXI</strong>. Visuais que ditam as tendências e representam sofisticação em São Paulo.
+            Retratos de atitude e excelência técnica esculpidos no templo da <strong>Século XXI</strong>. Visuais que ditam as tendências e representam sofisticação em Cruzeiro.
           </p>
         </motion.div>
       </div>
@@ -214,13 +313,15 @@ export default function ShowcaseBanner() {
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
         
         {/* Carousel title indicator */}
-        <div className="flex items-center gap-3 mb-10 select-none">
+        <div className="flex items-center gap-3 mb-12 select-none">
           <Flame className="w-5 h-5 text-gold animate-bounce" />
-          <span className="font-mono text-[10px] text-white uppercase tracking-[0.3em] font-extrabold">CORTES SÃO PAULO TRENDS EM ALTA</span>
+          <span className="font-mono text-[10px] text-white uppercase tracking-[0.3em] font-extrabold whitespace-nowrap">CORTES EM ALTA</span>
           <div className="h-[1.5px] bg-gold/15 flex-1" />
+          <span className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold hidden md:block whitespace-nowrap">Arraste ou use as setas • Liso / Afro</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="trending-grid">
+        {/* Vitrine: cabeças flutuantes sem moldura, carrossel liso/afro por corte */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12" id="trending-grid">
           {trendingCuts.map((cut, idx) => (
             <motion.div
               key={cut.id}
@@ -228,52 +329,27 @@ export default function ShowcaseBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
-              className="bg-[#0a0a0b]/85 md:bg-white/5 md:backdrop-blur-md border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] group overflow-hidden flex flex-col justify-between text-left rounded-2xl md:hover:border-gold/40 hover:shadow-[0_10px_40px_rgba(0,0,0,0.8)] transition-all duration-300 relative depth-card h-full min-h-[460px]"
+              className="group relative flex flex-col items-center text-center pt-8 pb-2 select-none"
             >
-              <div>
-                {/* Image Container with scale effects */}
-                <div className="w-full h-[220px] overflow-hidden relative select-none">
-                  <img 
-                    src={cut.image} 
-                    alt={cut.name} 
-                    className="w-full h-full object-cover grayscale brightness-90 group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-500 pointer-events-none"
-                    referrerPolicy="no-referrer"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-95" />
-                  
-                  {/* Floating index */}
-                  <span className="absolute top-4 left-4 font-mono text-[9px] bg-black/80 border border-gold/15 text-gold px-2 py-0.5 rounded">
-                    [REF_0{idx + 1}]
-                  </span>
+              {/* Carrossel da cabeça (setas + arraste + dots) */}
+              <CutCarousel cut={cut} />
 
-                  {/* Rating or popularity stats tag bottom right */}
-                  <div className="absolute bottom-4 right-4 bg-gold/10 md:backdrop-blur-sm border border-gold/30 text-gold px-2.5 py-1 text-[9px] font-mono font-bold uppercase rounded flex items-center gap-1">
-                    <Flame className="w-3 h-3 fill-current" />
-                    <span>EM ALTA: {cut.popularity}</span>
-                  </div>
-                </div>
+              {/* Pill de info abaixo da cabeça (o "contorno azul" do esboço, refinado) */}
+              <div className="relative mt-4 w-full max-w-[300px] rounded-2xl border border-white/10 bg-black/40 md:backdrop-blur-md px-5 py-4 group-hover:border-gold/40 group-hover:bg-black/55 transition-all duration-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+                <span className="font-mono text-[8px] text-[#c2a35d]/70 uppercase block font-bold tracking-[0.2em] leading-none mb-1.5">{cut.type}</span>
+                <h3 className="font-display font-black text-xl text-white uppercase tracking-tight group-hover:text-gold transition-colors">{cut.name}</h3>
 
-                {/* Details text panel */}
-                <div className="p-6 space-y-3">
-                  <span className="font-mono text-[9px] text-[#c2a35d]/70 uppercase block font-bold tracking-wider leading-none">{cut.type}</span>
-                  <h3 className="font-display font-black text-xl text-white uppercase tracking-tight group-hover:text-gold transition-colors">{cut.name}</h3>
-                  <p className="font-sans text-[11px] text-zinc-400 leading-relaxed font-normal">{cut.description}</p>
-                </div>
-              </div>
-
-              {/* Bottom Products Advice specs block */}
-              <div className="p-6 pt-0 border-t border-white/5 mt-4">
-                <div className="bg-black/30 md:backdrop-blur-sm p-3 border border-white/5 rounded-xl text-left space-y-1">
-                  <span className="font-mono text-[8px] text-slate-400 block uppercase font-bold leading-none">PRODUTO RECOMENDADO</span>
-                  <div className="font-mono text-[10px] text-gold font-bold flex items-center gap-1 truncate">
-                    <Wind className="w-3 h-3 shrink-0" />
-                    <span>{cut.styling}</span>
+                {/* Detalhes que só se revelam no hover/toque — texto em segundo plano */}
+                <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-out">
+                  <div className="overflow-hidden">
+                    <p className="font-sans text-[11px] text-zinc-400 leading-relaxed font-normal pt-3">{cut.description}</p>
+                    <div className="mt-3 pt-3 border-t border-white/5 flex items-center gap-1.5 justify-center font-mono text-[10px] text-gold font-bold">
+                      <Wind className="w-3 h-3 shrink-0" />
+                      <span className="truncate">{cut.styling}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-
             </motion.div>
           ))}
         </div>

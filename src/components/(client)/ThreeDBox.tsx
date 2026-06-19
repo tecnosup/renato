@@ -127,7 +127,7 @@ export default function ThreeDBox() {
 
           {/* Bottom labeling */}
           <div className="flex justify-between items-end text-[7.5px] text-zinc-550 tracking-[0.15em] font-sans">
-            <span>SÃO PAULO, BR</span>
+            <span>CRUZEIRO/SP, BR</span>
             <span>PRECISÃO E DESIGN</span>
           </div>
         </div>
