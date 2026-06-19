@@ -367,7 +367,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                   </div>
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>Estacionamento VIP Faria Lima Grátis</span>
+                    <span>Estacionamento VIP Grátis no Salão</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
@@ -584,7 +584,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                       <div>
                         <span>EXP EXCLUSIVO ATÉ CANCELAMENTO</span>
                       </div>
-                      <span>SÃO PAULO • BRASIL</span>
+                      <span>CRUZEIRO/SP • BRASIL</span>
                     </div>
                   </div>
                 </div>
@@ -593,7 +593,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                 <div className="md:col-span-6 space-y-3 font-sans text-left">
                   <span className="font-mono text-[7.5px] text-[#c2a35d]/75 uppercase block font-bold">[COMO_ATIVAR_FILA_EXPRESSA]</span>
                   <p className="text-xs text-zinc-405 leading-relaxed font-light">
-                    Como membro estético ativo, você é prioridade estrita em nosso salão físico na Faria Lima. Ao chegar, basta abrir seu celular nesta carteira e apresentar para as recepcionistas.
+                    Como membro estético ativo, você é prioridade estrita em nosso salão físico em Cruzeiro. Ao chegar, basta abrir seu celular nesta carteira e apresentar para as recepcionistas.
                   </p>
                   
                   <div className="space-y-2 font-mono text-[11px] text-zinc-500 pt-1">

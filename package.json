@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS=--use-system-ca next dev",
-    "build": "cross-env NODE_OPTIONS=--use-system-ca next build",
-    "start": "cross-env NODE_OPTIONS=--use-system-ca next start",
+    "dev": "cross-env NODE_USE_SYSTEM_CA=1 next dev",
+    "build": "cross-env NODE_USE_SYSTEM_CA=1 next build",
+    "start": "cross-env NODE_USE_SYSTEM_CA=1 next start",
     "lint": "eslint",
     "rules:deploy": "node scripts/deploy-rules.mjs",
     "rules:check": "node scripts/deploy-rules.mjs --check"

@@ -14,6 +14,7 @@ import BookingForm from '@/components/(client)/BookingForm';
 import OrbCarousel from '@/components/(client)/OrbCarousel';
 import Memberships from '@/components/(client)/Memberships';
 import ShowcaseBanner from '@/components/(client)/ShowcaseBanner';
+import LocationMap from '@/components/(client)/LocationMap';
 import ThreeDTiltCard from '@/components/(client)/ThreeDTiltCard';
 import Toast from '@/components/(client)/Toast';
 import { BARBERS } from '@/lib/data';
@@ -103,7 +104,7 @@ export default function App() {
               className="font-sans text-[8.5px] text-[#c2a35d] uppercase tracking-[0.35em] mb-3 sm:mb-4 flex items-center gap-2.5 font-bold bg-[#c2a35d]/5 border border-[#c2a35d]/10 px-4.5 py-1.5 rounded-full"
             >
               <span className="inline-block w-1.5 h-1.5 bg-[#c2a35d] rounded-full" />
-              SÃO PAULO • CLUBE HIGH-CLASS
+              CRUZEIRO/SP • CLUBE HIGH-CLASS
             </motion.div>
  
             <motion.h1
@@ -269,7 +270,10 @@ export default function App() {
       {/* SECTION 5: BANNER DE IMAGENS ESTÉTICAS & CORTES EM ALTA */}
       <ShowcaseBanner />
 
-      {/* SECTION 6: FOOTER (With Social Medias redes sociais and contacts) */}
+      {/* SECTION 6: LOCALIZAÇÃO (Mapa travado → abre Google Maps) */}
+      <LocationMap />
+
+      {/* SECTION 7: FOOTER (With Social Medias redes sociais and contacts) */}
       <footer className="w-full bg-black/90 md:bg-black/80 md:backdrop-blur-3xl py-16 px-4 md:px-8 border-t border-white/10 relative z-30" id="footer">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-start text-left">
           
@@ -306,7 +310,7 @@ export default function App() {
                 <Video className="w-4 h-4" />
               </a>
               <a 
-                href="https://wa.me/5511998765432" 
+                href="https://wa.me/5512996555081"
                 target="_blank" 
                 rel="noreferrer" 
                 className="w-8 h-8 rounded-full border border-zinc-800 hover:border-[#c2a35d] hover:bg-[#c2a35d] hover:text-black flex items-center justify-center text-[#c2a35d] transition-all animate-pulse"
@@ -347,6 +351,7 @@ export default function App() {
               <li><a href="#servicos" className="hover:text-gold transition-colors">Serviços & Produtos</a></li>
               <li><a href="#assinaturas" className="hover:text-gold transition-colors">Assinaturas VIP</a></li>
               <li><a href="#portfolio" className="hover:text-gold transition-colors">Aesthetics & Cortes</a></li>
+              <li><a href="#localizacao" className="hover:text-gold transition-colors">Como Chegar</a></li>
             </ul>
           </div>
 
@@ -356,14 +361,14 @@ export default function App() {
             <div className="flex gap-2 items-start text-[11px] leading-relaxed">
               <MapPin className="w-4 h-4 text-gold shrink-0 mt-0.5" />
               <div>
-                <p className="text-white font-sans font-semibold">Av. Brigadeiro Faria Lima, 4500</p>
-                <p>Itaim Bibi (Templo Corporativo)</p>
-                <p>São Paulo, SP</p>
+                <p className="text-white font-sans font-semibold">R. Dr. José Rodrigues Alves Sobrinho, 351</p>
+                <p>Vila Paulo Romeu</p>
+                <p>Cruzeiro, SP • 12710-410</p>
               </div>
             </div>
             <div className="flex gap-2 items-center text-[11px] pt-1">
               <Phone className="w-4 h-4 text-gold shrink-0" />
-              <a href="tel:+5511998765432" className="text-white font-sans font-medium hover:underline">+55 (11) 99876-5432</a>
+              <a href="tel:+5512996555081" className="text-white font-sans font-medium hover:underline">+55 (12) 99655-5081</a>
             </div>
           </div>
 
@@ -396,7 +401,7 @@ export default function App() {
         {/* Bottom grid specs indicator row */}
         <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-zinc-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-zinc-650 font-sans text-[8px] select-none uppercase tracking-wider">
           <span>ATENDIMENTO PRIVADO EXCLUSIVAMENTE SOB AGENDAMENTO PRÉVIO VIA PLATAFORMA</span>
-          <span className="bg-black px-3 py-1.5 text-[#c2a35d]/60 border border-zinc-850 font-bold rounded">SÉCULO XXI • SÃO PAULO</span>
+          <span className="bg-black px-3 py-1.5 text-[#c2a35d]/60 border border-zinc-850 font-bold rounded">SÉCULO XXI • CRUZEIRO/SP</span>
         </div>
       </footer>
 

@@ -114,12 +114,55 @@ function GlassOrb({ category, onClick, icon, label, sublabel }: GlassOrbProps) {
           <span className="font-display font-black text-xl md:text-2xl text-white uppercase tracking-wider block drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] select-none">
             {label}
           </span>
-          <span className="font-mono text-[9px] text-[#c2a35d] tracking-widest uppercase font-black block mt-1.5 group-hover:text-white transition-colors duration-300 select-none bg-black/40 px-2.5 py-0.5 rounded-full border border-white/5">
-            {sublabel}
-          </span>
+          {sublabel && (
+            <span className="font-mono text-[9px] text-[#c2a35d] tracking-widest uppercase font-black block mt-1.5 group-hover:text-white transition-colors duration-300 select-none bg-black/40 px-2.5 py-0.5 rounded-full border border-white/5">
+              {sublabel}
+            </span>
+          )}
         </div>
       </div>
     </button>
+  );
+}
+
+/**
+ * Orbe miniatura "viva" do header de categoria — esfera puramente CSS (sem
+ * imagem, sem lib 3D), que respira: glow pulsante + leve flutuação. Reaproveita
+ * a estética das orbes grandes (radial-gradient esmeralda/âmbar). `variant`
+ * escolhe a paleta; `icon` é o glifo central.
+ */
+function CategoryOrb({ variant, icon }: { variant: 'services' | 'products'; icon: React.ReactNode }) {
+  const isServices = variant === 'services';
+  const sphere = isServices
+    ? 'radial-gradient(circle at 35% 30%, #e2fbf0 0%, #0d9488 18%, #0f766e 42%, #042f2e 72%, #011512 100%)'
+    : 'radial-gradient(circle at 35% 30%, #fffbeb 0%, #f59e0b 18%, #b45309 42%, #451a03 72%, #1c0800 100%)';
+
+  return (
+    <div className="relative w-16 h-16 shrink-0 grid place-items-center [animation:orb-float_6s_ease-in-out_infinite]">
+      {/* Glow ambiente que pulsa por trás */}
+      <div
+        className={`absolute inset-0 rounded-full blur-xl [animation:orb-breathe_4s_ease-in-out_infinite] ${
+          isServices ? 'bg-emerald-500/40' : 'bg-amber-500/40'
+        }`}
+      />
+      {/* Anel orbital tracejado girando devagar */}
+      <div
+        className={`absolute -inset-1 rounded-full border border-dashed [animation:spin_24s_linear_infinite] ${
+          isServices ? 'border-emerald-400/30' : 'border-amber-400/30'
+        }`}
+      />
+      {/* Corpo da esfera de vidro */}
+      <div
+        className="relative w-12 h-12 rounded-full grid place-items-center overflow-hidden border border-white/15 shadow-[inset_-6px_-6px_12px_rgba(0,0,0,0.85),inset_6px_6px_12px_rgba(255,255,255,0.22)]"
+        style={{ background: sphere }}
+      >
+        {/* Brilho especular de cima */}
+        <div className="absolute top-[2px] left-3 right-3 h-1/2 rounded-[100%] bg-gradient-to-b from-white/60 via-white/10 to-transparent pointer-events-none" />
+        <div className={`relative z-10 ${isServices ? 'text-emerald-50' : 'text-amber-50'} drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]`}>
+          {icon}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -206,10 +249,6 @@ export default function OrbCarousel() {
         
         {/* Title Section */}
         <div className="text-center mb-8 flex flex-col items-center">
-          <div className="font-mono text-[9px] text-[#c2a35d] tracking-[0.3em] uppercase mb-2.5 flex items-center gap-1.5 font-bold bg-gold/5 px-3 py-1 border border-gold/15 rounded-full select-none">
-            <Sparkles className="w-3 h-3 text-gold animate-pulse" />
-            <span>[03_ESTILO_E_CUIDADO]</span>
-          </div>
           <h2 className="font-display font-black text-3xl md:text-5xl text-[#e2e2e2] uppercase tracking-tighter leading-none mb-3">
             SERVIÇOS & PRODUTOS
           </h2>
@@ -271,7 +310,7 @@ export default function OrbCarousel() {
                   onClick={() => setActiveCategory('services')}
                   icon={<Compass className="w-5 h-5 animate-spin-slow" />}
                   label="Serviços"
-                  sublabel="LINHA_DE_SERVIÇOS"
+                  sublabel=""
                 />
                 <div className="mt-5 max-w-xs px-2 select-none">
                   <h3 className="font-display font-bold text-[#e1e1e1] uppercase text-xs tracking-wider mb-1 group-hover:text-gold">Corte &amp; Barba</h3>
@@ -288,7 +327,7 @@ export default function OrbCarousel() {
                   onClick={() => setActiveCategory('products')}
                   icon={<ShoppingBag className="w-5 h-5" />}
                   label="Cosméticos"
-                  sublabel="CUIDADO_E_COSMÉTICOS"
+                  sublabel=""
                 />
                 <div className="mt-5 max-w-xs px-2 select-none">
                   <h3 className="font-display font-bold text-[#e1e1e1] uppercase text-xs tracking-wider mb-1 group-hover:text-gold">Produtos &amp; Cosméticos</h3>
@@ -313,33 +352,20 @@ export default function OrbCarousel() {
               id="orbs-services-inside"
             >
               {/* Back navigation header layout */}
-              <div className="flex flex-col sm:flex-row justify-between items-center glass-card-strong p-5 rounded-3xl gap-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-                <div className="flex items-center gap-4 text-left">
-                  {/* Floating miniature category Orb */}
-                  <div className="relative w-16 h-16 rounded-full border border-dashed border-gold/40 flex items-center justify-center shrink-0">
-                    <div className="absolute w-12 h-12 rounded-full overflow-hidden">
-                      <img 
-                        src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=150&auto=format&fit=crop" 
-                        alt="Ritual orb"
-                        className="w-full h-full object-cover rounded-full grayscale opacity-60"
-                        referrerPolicy="no-referrer"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </div>
-                    <Compass className="w-5 h-5 text-gold relative z-10 animate-spin-slow" />
-                  </div>
+              <div className="flex flex-col sm:flex-row sm:justify-between items-center glass-card-strong p-5 sm:p-6 rounded-3xl gap-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <div className="flex items-center gap-4 text-center sm:text-left flex-col sm:flex-row">
+                  <CategoryOrb variant="services" icon={<Compass className="w-5 h-5 animate-spin-slow" />} />
                   <div>
-                    <span className="font-mono text-[8.5px] text-[#c2a35d] tracking-widest uppercase font-black block leading-none mb-1.5">VOCÊ ENTROU EM</span>
+                    <span className="font-mono text-[8.5px] text-emerald-300/80 tracking-widest uppercase font-black block leading-none mb-1.5">VOCÊ ENTROU EM</span>
                     <h3 className="font-display font-light text-xl text-white uppercase tracking-wider">SERVIÇOS EXCLUSIVOS</h3>
-                    <p className="font-sans text-[10.5px] text-zinc-500">Nossa linha completa de cabelo, barba e tratamentos</p>
+                    <p className="font-sans text-[10.5px] text-zinc-500 mt-0.5">Nossa linha completa de cabelo, barba e tratamentos</p>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setActiveCategory('menu')}
-                  className="font-sans text-[9px] uppercase tracking-widest font-bold text-slate-300 hover:text-white py-3.5 px-6 border border-white/10 rounded-xl hover:border-white/30 bg-white/5 transition-all flex items-center gap-2 cursor-pointer"
+                  className="shrink-0 font-sans text-[9px] uppercase tracking-widest font-bold text-slate-300 hover:text-white py-3.5 px-6 border border-white/10 rounded-xl hover:border-white/30 bg-white/5 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   Voltar para as Orbes
@@ -417,12 +443,21 @@ export default function OrbCarousel() {
                         isSelected ? 'bg-amber-500/[0.05]' : ''
                       }`} />
 
-                      {/* Subtle aesthetic backdrop design */}
-                      <div className="absolute right-0 top-0 w-20 h-20 border-l border-b border-white/[0.02] flex items-center justify-center font-mono text-[8px] text-zinc-800 select-none">
-                        {`[0${index + 1}]`}
-                      </div>
 
                       <div className="space-y-3 relative z-10">
+                        {/* Foto do serviço — só quando cadastrada (imageUrl).
+                            Sem foto, o card mantém o layout original (sem buraco). */}
+                        {srv.imageUrl && (
+                          <div className="w-full h-40 rounded-xl bg-zinc-950 border border-zinc-800 relative overflow-hidden select-none shadow-inner -mt-1">
+                            <img
+                              src={srv.imageUrl}
+                              alt={srv.name}
+                              className="w-full h-full object-cover grayscale brightness-95 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-500 pointer-events-none"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          </div>
+                        )}
                         <div className="flex justify-between items-start pr-4">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="font-mono text-[8.5px] font-bold text-emerald-450 uppercase bg-emerald-500/5 border border-emerald-500/15 px-2.5 py-0.5 rounded">
@@ -495,33 +530,20 @@ export default function OrbCarousel() {
               id="orbs-products-inside"
             >
               {/* Back navigation header layout */}
-              <div className="flex flex-col sm:flex-row justify-between items-center glass-card-strong p-5 rounded-3xl gap-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-                <div className="flex items-center gap-4 text-left">
-                  {/* Floating miniature category Orb */}
-                  <div className="relative w-16 h-16 rounded-full border border-dashed border-[#c2a35d]/40 flex items-center justify-center shrink-0">
-                    <div className="absolute w-12 h-12 rounded-full overflow-hidden">
-                      <img 
-                        src="https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?q=80&w=150&auto=format&fit=crop" 
-                        alt="Product orb"
-                        className="w-full h-full object-cover rounded-full grayscale opacity-60"
-                        referrerPolicy="no-referrer"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </div>
-                    <ShoppingBag className="w-5 h-5 text-[#c2a35d] relative z-10" />
-                  </div>
+              <div className="flex flex-col sm:flex-row sm:justify-between items-center glass-card-strong p-5 sm:p-6 rounded-3xl gap-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <div className="flex items-center gap-4 text-center sm:text-left flex-col sm:flex-row">
+                  <CategoryOrb variant="products" icon={<ShoppingBag className="w-5 h-5" />} />
                   <div>
-                    <span className="font-mono text-[8.5px] text-[#c2a35d] tracking-widest uppercase font-black block leading-none mb-1.5">VOCÊ ENTROU EM</span>
+                    <span className="font-mono text-[8.5px] text-amber-300/80 tracking-widest uppercase font-black block leading-none mb-1.5">VOCÊ ENTROU EM</span>
                     <h3 className="font-display font-light text-xl text-white uppercase tracking-wider">COSMÉTICOS &amp; PRODUTOS</h3>
-                    <p className="font-sans text-[10.5px] text-zinc-500">Linha selecionada de alta performance para cabelo, barba e barba-terapia</p>
+                    <p className="font-sans text-[10.5px] text-zinc-500 mt-0.5">Linha selecionada de alta performance para cabelo, barba e barba-terapia</p>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setActiveCategory('menu')}
-                  className="font-mono text-[9px] uppercase tracking-widest text-[#c2a35d] hover:text-white py-3.5 px-6 border border-[#c2a35d]/15 rounded-xl hover:border-gold bg-zinc-950/70 transition-all flex items-center gap-2 cursor-pointer"
+                  className="shrink-0 font-mono text-[9px] uppercase tracking-widest text-[#c2a35d] hover:text-white py-3.5 px-6 border border-[#c2a35d]/15 rounded-xl hover:border-gold bg-zinc-950/70 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   Voltar para as Orbes
@@ -656,7 +678,7 @@ export default function OrbCarousel() {
               <div className="flex-1 leading-tight select-none">
                 <h5 className="font-display font-black text-xs uppercase text-zinc-900 tracking-wide">RESERVADO COM SUCESSO!</h5>
                 <p className="font-sans text-[10.5px] text-zinc-650 font-normal leading-normal mt-1">
-                  O item <strong>{reservationSuccess}</strong> foi separado e reservado exclusivamente para você retirar no salão Faria Lima.
+                  O item <strong>{reservationSuccess}</strong> foi separado e reservado exclusivamente para você retirar no salão em Cruzeiro.
                 </p>
               </div>
               <button 
@@ -680,6 +702,20 @@ export default function OrbCarousel() {
         }
         .animate-spin-slow {
           animation: spin-slow 15s linear infinite;
+        }
+        /* Orbe viva do header: flutua de leve e o glow "respira" */
+        @keyframes orb-float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+        @keyframes orb-breathe {
+          0%, 100% { opacity: 0.35; transform: scale(0.95); }
+          50% { opacity: 0.7; transform: scale(1.1); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-spin-slow,
+          [class*="orb-float"],
+          [class*="orb-breathe"] { animation: none !important; }
         }
       `}</style>
     </section>
