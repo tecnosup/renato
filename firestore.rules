@@ -100,6 +100,13 @@ service cloud.firestore {
       allow read, create, update, delete: if request.auth != null;
     }
 
+    // Caixa diário (status fechado/aberto + despesas por dia, doc id = YYYY-MM-DD).
+    // Operação interna do balcão — só admin logado (o acesso à tela já é gated
+    // pela permissão verCaixa nas rotas).
+    match /caixas/{dateKey} {
+      allow read, create, update, delete: if request.auth != null;
+    }
+
     function canManageSchedule(targetBarberId) {
       return request.auth != null
         && (!('perms' in request.auth.token)
