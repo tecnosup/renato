@@ -400,7 +400,7 @@ export default function CaixaPage() {
               const caixaPendente = !isSel && key < hojeKey && (temComanda || temDespesa) && caixas[key]?.status !== "fechado";
               return (
                 <button key={key} onClick={() => setDiaSelecionado(key)}
-                  className={`flex flex-col items-center justify-center aspect-square rounded-xl transition-colors ${
+                  className={`flex flex-col items-center justify-center h-14 rounded-xl transition-colors ${
                     isSel ? "bg-linear-to-br from-[#ece4cb] to-[#c2a35d] text-slate-950" : isToday ? "border border-gold/40 admin-text-primary" : "admin-glass-card-hover admin-text-secondary"
                   }${caixaPendente ? " ring-2 ring-inset ring-amber-500/70" : ""}`}
                 >

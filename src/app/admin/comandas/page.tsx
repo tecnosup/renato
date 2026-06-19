@@ -3,11 +3,13 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Clock, CheckCircle, XCircle, ChevronRight, ChevronLeft, Plus, AlertTriangle, Calendar, FileText } from "lucide-react";
+import { Clock, CheckCircle, XCircle, ChevronRight, ChevronLeft, ChevronDown, Plus, AlertTriangle, Calendar, FileText, Users, Scissors, Package } from "lucide-react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { subscribeToComandasNoDia, subscribeToComandasAbertas, subscribeToMinhasComandas } from "@/lib/comandas";
 import { NovaComandaModal } from "@/components/comandas/NovaComandaModal";
+import { EditarComandaModal } from "@/components/comandas/EditarComandaModal";
 import { DatePicker } from "@/components/ui/DatePicker";
+import { SeletorBarbeiro } from "@/components/admin/SeletorBarbeiro";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { can } from "@/lib/access";
 import type { Comanda } from "@/lib/types";
@@ -36,6 +38,9 @@ function ComandasPageInner() {
   const [novaModal, setNovaModal] = useState(false);
   const [dia, setDia] = useState(() => toKey(new Date()));
   const [mostrarCal, setMostrarCal] = useState(false);
+  const [barbeiroFiltro, setBarbeiroFiltro] = useState("todos");
+  const [retroAberta, setRetroAberta] = useState(false);
+  const [comandaEditando, setComandaEditando] = useState<Comanda | null>(null);
   // Fontes escopadas: dono/gerente usam queries por dia + abertas; barbeiro usa
   // o próprio histórico (where barberId ==) e filtra no cliente.
   const [doDiaTodos, setDoDiaTodos] = useState<Comanda[]>([]);
@@ -75,11 +80,19 @@ function ComandasPageInner() {
   const abertasList = verTodos ? abertasTodos : minhas.filter(ehAberta);
   const doDiaList = verTodos ? doDiaTodos : minhas.filter((c) => toKey(new Date(c.createdAt)) === dia);
 
-  const visiveis =
+  const visiveisBase =
     filtro === "Abertas" ? abertasList
     : filtro === "Pagas" ? doDiaList.filter((c) => c.status === "paga")
     : filtro === "Canceladas" ? doDiaList.filter((c) => c.status === "cancelada")
     : doDiaList; // Todas (do dia)
+
+  // Filtro por barbeiro (só pra quem vê todos): aparece com 2+ barbeiros na
+  // lista atual. Some/reseta se o filtrado anterior não tiver mais comanda aqui.
+  const barbeirosNaLista = Array.from(
+    new Map(visiveisBase.map((c) => [c.barberId, c.barberName])).entries()
+  ).map(([id, name]) => ({ id, name }));
+  const barbeiroAtivo = barbeirosNaLista.some((b) => b.id === barbeiroFiltro) ? barbeiroFiltro : "todos";
+  const visiveis = verTodos && barbeiroAtivo !== "todos" ? visiveisBase.filter((c) => c.barberId === barbeiroAtivo) : visiveisBase;
 
   const hojeKey = toKey(new Date());
   const ehHoje = dia === hojeKey;
@@ -121,18 +134,62 @@ function ComandasPageInner() {
         }
       />
 
-      {/* Alerta compacto: comandas abertas de dias anteriores (impacto no financeiro) */}
+      {/* Alerta compacto: comandas abertas de dias anteriores (impacto no financeiro).
+          Expande na mesma tela (sem navegar) com nome + itens + atalho pra resolver. */}
       {retroativas.length > 0 && (
-        <button
-          onClick={() => setFiltro("Abertas")}
-          className="w-full flex items-center gap-2.5 mb-4 px-3 py-2.5 rounded-xl admin-glass-card border border-amber-500/30 text-left transition-colors hover:border-amber-500/50"
-        >
-          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-          <p className="flex-1 min-w-0 text-sm font-semibold text-amber-400 truncate">
-            {retroativas.length} comanda{retroativas.length > 1 ? "s" : ""} retroativa{retroativas.length > 1 ? "s" : ""} aberta{retroativas.length > 1 ? "s" : ""}
-          </p>
-          <ChevronRight className="w-4 h-4 text-amber-400 shrink-0" />
-        </button>
+        <div className="mb-4 rounded-xl admin-glass-card border border-amber-500/30 overflow-hidden">
+          <button
+            onClick={() => setRetroAberta((o) => !o)}
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left transition-colors hover:bg-white/5"
+          >
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+            <p className="flex-1 min-w-0 text-sm font-semibold text-amber-400 truncate">
+              {retroativas.length} comanda{retroativas.length > 1 ? "s" : ""} retroativa{retroativas.length > 1 ? "s" : ""} aberta{retroativas.length > 1 ? "s" : ""}
+            </p>
+            <ChevronDown className={`w-4 h-4 text-amber-400 shrink-0 transition-transform duration-300 ${retroAberta ? "rotate-180" : ""}`} />
+          </button>
+
+          <div
+            className="grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            style={{ gridTemplateRows: retroAberta ? "1fr" : "0fr" }}
+          >
+            <div className="overflow-hidden">
+              <ul className="px-3 pb-3 space-y-2">
+                {retroativas.map((c) => (
+                  <li key={c.id} className="admin-surface-subtle rounded-lg px-3 py-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold admin-text-primary truncate">{c.customerName}</p>
+                        <p className="text-xs admin-text-secondary truncate">
+                          {c.barberName} · {new Date(c.createdAt).toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}
+                        </p>
+                      </div>
+                      <span className="text-sm font-bold admin-text-primary shrink-0">{brl(c.total)}</span>
+                    </div>
+                    {c.items.length > 0 && (
+                      <ul className="mt-2 pt-2 admin-border-t space-y-1">
+                        {c.items.map((it) => (
+                          <li key={it.id} className="flex items-center gap-2">
+                            <span className={`w-4 h-4 rounded flex items-center justify-center shrink-0 ${it.tipo === "servico" ? "bg-violet-500/15 text-violet-400" : "bg-teal-500/15 text-teal-400"}`}>
+                              {it.tipo === "servico" ? <Scissors className="w-2.5 h-2.5" /> : <Package className="w-2.5 h-2.5" />}
+                            </span>
+                            <span className="flex-1 text-xs admin-text-secondary truncate">{it.qtd > 1 ? `${it.qtd}× ` : ""}{it.nome}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <button
+                      onClick={() => setComandaEditando(c)}
+                      className="w-full mt-2.5 admin-glass-card admin-glass-card-hover text-amber-400 py-2 rounded-lg text-xs font-semibold transition-colors"
+                    >
+                      Resolver agora
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Card único (padrão "Comandas de hoje" do Meu Financeiro): abas +
@@ -160,7 +217,7 @@ function ComandasPageInner() {
           <div className="flex items-center justify-between gap-2">
             <p className="text-[10px] font-semibold admin-text-secondary uppercase tracking-widest min-w-0 truncate">
               {filtro === "Abertas"
-                ? `${abertasList.length} em aberto · qualquer dia`
+                ? `${visiveis.length} em aberto · qualquer dia`
                 : `${visiveis.length} comanda${visiveis.length !== 1 ? "s" : ""}${ehHoje ? " hoje" : ""}`}
             </p>
             {filtro !== "Abertas" && (
@@ -182,6 +239,16 @@ function ComandasPageInner() {
               </div>
             )}
           </div>
+
+          {/* Filtro por barbeiro (só quem vê todos; aparece com 2+ barbeiros na lista) */}
+          {verTodos && barbeirosNaLista.length > 1 && (
+            <SeletorBarbeiro
+              barbeiros={barbeirosNaLista}
+              value={barbeiroAtivo}
+              onChange={setBarbeiroFiltro}
+              extra={{ id: "todos", label: "Todos", icon: Users }}
+            />
+          )}
 
           {/* Calendário expansível pra pular pra qualquer dia */}
           {filtro !== "Abertas" && (
@@ -228,7 +295,7 @@ function ComandasPageInner() {
               const Icon = st.icon;
               const atrasada = ehAberta(c) && toKey(new Date(c.createdAt)) < hojeKey;
               return (
-                <li key={c.id}>
+                <li key={c.id} className={atrasada ? "ring-2 ring-inset ring-amber-500/50" : ""}>
                   <Link href={`/admin/comandas/${c.id}`} className="admin-glass-card-hover flex items-center gap-3 px-4 py-3.5 transition-colors">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold admin-text-primary truncate">{c.customerName}</p>
@@ -250,6 +317,13 @@ function ComandasPageInner() {
       </div>
 
       {novaModal && <NovaComandaModal onClose={() => setNovaModal(false)} />}
+      {comandaEditando && (
+        <EditarComandaModal
+          comanda={comandaEditando}
+          onClose={() => setComandaEditando(null)}
+          iniciarFechando={can(perms, "fecharComandas")}
+        />
+      )}
     </div>
   );
 }

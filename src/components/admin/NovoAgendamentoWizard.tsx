@@ -280,7 +280,7 @@ export function NovoAgendamentoWizard({
                   {/* PASSO 1 — Serviços + Produtos */}
                   {step === 1 && (
                     <div className="space-y-2">
-                      <div className="flex gap-2 sticky top-0 z-10 pb-1">
+                      <div className="flex gap-2 sticky top-0 z-10 -mx-5 px-5 pt-1 pb-2 bg-[var(--admin-modal-bg)] [backdrop-filter:var(--admin-modal-blur)]">
                         {(["servico", "produto"] as ComandaItemTipo[]).map((t) => (
                           <button
                             key={t}

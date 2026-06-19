@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Minus, Scissors, Package, Search } from "lucide-react";
+import { Plus, Minus, Scissors, Package, Search, X } from "lucide-react";
 import { subscribeToServices } from "@/lib/services";
 import { subscribeToProducts } from "@/lib/products";
 import type { ComandaItem, ComandaItemTipo, BarberService, Product } from "@/lib/types";
@@ -33,6 +33,7 @@ export function ItemPicker({
   const [products, setProducts] = useState<Product[]>([]);
   const [tab, setTab] = useState<ComandaItemTipo>("servico");
   const [busca, setBusca] = useState("");
+  const [buscaAberta, setBuscaAberta] = useState(false);
 
   useEffect(() => subscribeToServices((l) => setServices(l.filter((s) => s.active !== false))), []);
   useEffect(() => subscribeToProducts((l) => setProducts(l.filter((p) => p.active))), []);
@@ -58,31 +59,49 @@ export function ItemPicker({
   return (
     <div className={fill ? "flex flex-col flex-1 min-h-0" : ""}>
       {/* ── Abas + busca ── */}
-      <div className={`space-y-2 ${fill ? "px-5 pt-3 pb-2 admin-border-b shrink-0" : ""}`}>
-        <div className="flex gap-2">
-          {(["servico", "produto"] as ComandaItemTipo[]).map((t) => (
+      <div className={fill ? "px-5 pt-2 pb-1.5 admin-border-b shrink-0" : ""}>
+        {buscaAberta ? (
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 admin-text-secondary" />
+            <input
+              autoFocus
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder={`Buscar ${tab === "servico" ? "serviço" : "produto"}…`}
+              className="w-full admin-surface-subtle admin-input border border-transparent rounded-xl pl-9 pr-9 py-1.5 text-sm focus:outline-none focus:border-gold/50 transition-colors"
+            />
             <button
-              key={t}
               type="button"
-              onClick={() => setTab(t)}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-1.5 ${
-                tab === t ? "bg-gold/15 text-gold border border-gold/30" : "admin-surface-subtle admin-text-secondary border border-transparent"
-              }`}
+              onClick={() => { setBusca(""); setBuscaAberta(false); }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 admin-text-secondary hover:text-gold transition-colors"
             >
-              {t === "servico" ? <Scissors className="w-4 h-4" /> : <Package className="w-4 h-4" />}
-              {t === "servico" ? "Serviços" : "Produtos"}
+              <X className="w-4 h-4" />
             </button>
-          ))}
-        </div>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 admin-text-secondary" />
-          <input
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            placeholder={`Buscar ${tab === "servico" ? "serviço" : "produto"}…`}
-            className="w-full admin-surface-subtle admin-input border border-transparent rounded-xl pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-gold/50 transition-colors"
-          />
-        </div>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            {(["servico", "produto"] as ComandaItemTipo[]).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTab(t)}
+                className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-1.5 ${
+                  tab === t ? "bg-gold/15 text-gold border border-gold/30" : "admin-surface-subtle admin-text-secondary border border-transparent"
+                }`}
+              >
+                {t === "servico" ? <Scissors className="w-4 h-4" /> : <Package className="w-4 h-4" />}
+                {t === "servico" ? "Serviços" : "Produtos"}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => setBuscaAberta(true)}
+              className="shrink-0 w-9 rounded-lg admin-surface-subtle admin-text-secondary border border-transparent flex items-center justify-center hover:text-gold transition-colors"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ── Lista do catálogo ── */}
