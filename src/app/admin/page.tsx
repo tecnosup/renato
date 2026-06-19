@@ -15,6 +15,9 @@ import {
 import { subscribeToEmployees } from "@/lib/employees";
 import { addToWaitlist, removeFromWaitlist, subscribeToWaitlist, type WaitlistEntry } from "@/lib/waitlist";
 import { Modal, ModalHeader } from "@/components/ui/Modal";
+import { AdminSelect } from "@/components/admin/AdminSelect";
+import { SeletorBarbeiro } from "@/components/admin/SeletorBarbeiro";
+import { NovoAgendamentoWizard } from "@/components/admin/NovoAgendamentoWizard";
 import { SuccessSplash } from "@/components/ui/SuccessSplash";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { can } from "@/lib/access";
@@ -312,7 +315,6 @@ function ConfigurarGradeModal({
 
 // ─── Constantes ──────────────────────────────────────────────────────────────
 
-const SERVICOS = ["Corte Clássico", "Corte + Barba", "Barba", "Degradê", "Corte Máquina"];
 const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const DIAS_SEMANA_CURTO = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 
@@ -349,10 +351,7 @@ function AgendaPageInner() {
   const [expandido, setExpandido] = useState(false);
   const [slideDir, setSlideDir] = useState<"left" | "right">("right");
   const [calKey, setCalKey] = useState(0);
-  const [modal, setModal] = useState<{ hora: string } | null>(null);
-  const [form, setForm] = useState({ cliente: "", whatsapp: "", servico: "Corte Clássico", preco: "45", barberId: "qualquer", hora: "" });
-  const [salvandoAgend, setSalvandoAgend] = useState(false);
-  const [erroAgend, setErroAgend] = useState("");
+  const [modal, setModal] = useState<{ hora: string; nome?: string; telefone?: string } | null>(null);
   // Horário destacado ao chegar via "Ver na agenda" da notificação.
   const [destaqueHora, setDestaqueHora] = useState<string | null>(null);
 
@@ -541,52 +540,9 @@ function AgendaPageInner() {
     await unblockFullDay(gradeBarberIdEfetivo, diaSelecionado);
   };
 
-  // Abre o modal de agendamento presencial, resetando o form (hora opcional).
+  // Abre o wizard de agendamento presencial (hora opcional, vinda de um slot).
   const abrirNovoAgendamento = (hora: string) => {
-    setForm({ cliente: "", whatsapp: "", servico: SERVICOS[0], preco: "45", barberId: "qualquer", hora });
-    setErroAgend("");
     setModal({ hora });
-  };
-
-  // Salva o agendamento presencial pelo MESMO endpoint da landing — assim o
-  // anti-conflito (servidor) é idêntico nos dois fluxos. Recebe `close` para
-  // animar a saída do modal ao concluir.
-  const salvarAgendamento = async (close: () => void) => {
-    if (salvandoAgend) return;
-    const nome = form.cliente.trim();
-    const hora = form.hora || modal?.hora || "";
-    if (!nome || !hora) return; // validação mínima: cliente + horário
-    setSalvandoAgend(true);
-    setErroAgend("");
-    try {
-      const barbeiro = funcionarios.find((f) => f.id === form.barberId);
-      const res = await fetch("/api/appointments/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          serviceId: form.servico.toLowerCase().replace(/\s+/g, "-"),
-          serviceName: form.servico,
-          servicePrice: Number(form.preco) || 0,
-          barberId: form.barberId,
-          barberName: barbeiro?.name ?? "Qualquer disponível",
-          date: diaSelecionado,
-          time: hora,
-          customerName: nome,
-          customerPhone: form.whatsapp.trim(),
-          origin: "admin",
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        setErroAgend(data.error ?? "Não foi possível concluir o agendamento.");
-        return;
-      }
-      close();
-    } catch {
-      setErroAgend("Falha de conexão. Tente novamente.");
-    } finally {
-      setSalvandoAgend(false);
-    }
   };
 
   // Link público de agendamento (a landing). Em produção será o domínio real.
@@ -613,18 +569,9 @@ function AgendaPageInner() {
     setWaitForm({ nome: "", telefone: "", servico: "" });
   };
 
-  // "Chamar" da fila: abre o agendamento já com os dados do cliente e remove da fila.
+  // "Chamar" da fila: abre o wizard já com os dados do cliente e remove da fila.
   const chamarDaEspera = (entry: WaitlistEntry) => {
-    setForm({
-      cliente: entry.customerName,
-      whatsapp: entry.customerPhone,
-      servico: entry.serviceName || SERVICOS[0],
-      preco: "45",
-      barberId: "qualquer",
-      hora: "",
-    });
-    setErroAgend("");
-    setModal({ hora: "" });
+    setModal({ hora: "", nome: entry.customerName, telefone: entry.customerPhone });
     setWaitlistModal(false);
     removeFromWaitlist(entry.id);
   };
@@ -637,16 +584,6 @@ function AgendaPageInner() {
     : agendDiaTodos;
   const agendPorHora: Record<string, Appointment> = {};
   agendDia.forEach((a) => { agendPorHora[a.time] = a; });
-
-  // Horários livres para o modal de agendamento, conforme o barbeiro escolhido.
-  // "qualquer": livre enquanto nem todos os barbeiros estiverem ocupados.
-  const totalBarbeiros = Math.max(funcionarios.length, 1);
-  const ocupadosCount: Record<string, number> = {};
-  agendDia.forEach((a) => { ocupadosCount[a.time] = (ocupadosCount[a.time] ?? 0) + 1; });
-  const horariosModal = HORARIOS.filter((h) => {
-    if (form.barberId === "qualquer") return (ocupadosCount[h] ?? 0) < totalBarbeiros;
-    return !agendDia.some((a) => a.barberId === form.barberId && a.time === h);
-  });
 
   // Todos os slots do dia (incluindo bloqueados) para os cards de resumo
   const todosSlotsDia = generateSlots(dayConfig);
@@ -852,29 +789,11 @@ function AgendaPageInner() {
 
           {/* Linha 2: pills de barbeiro (só quando pode ver todos e há mais de 1) */}
           {verTodos && funcionarios.length > 1 && (
-            <div className="flex gap-1.5 flex-wrap">
-              {funcionarios.map((f) => {
-                const isActive = f.id === gradeBarberIdAlvo;
-                const initials = f.name.trim().split(" ").slice(0, 2).map((n: string) => n[0] ?? "").join("").toUpperCase();
-                return (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => setGradeBarberIdAlvo(f.id)}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-150 ${
-                      isActive
-                        ? "bg-gold/15 text-gold border border-gold/40"
-                        : "admin-surface-subtle admin-text-secondary border border-white/8 hover:border-white/20 hover:admin-text-primary"
-                    }`}
-                  >
-                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[7px] font-bold shrink-0 ${isActive ? "bg-gold text-slate-950" : "bg-white/10 admin-text-secondary"}`}>
-                      {initials}
-                    </span>
-                    {f.name.split(" ")[0]}
-                  </button>
-                );
-              })}
-            </div>
+            <SeletorBarbeiro
+              barbeiros={funcionarios}
+              value={gradeBarberIdAlvo}
+              onChange={setGradeBarberIdAlvo}
+            />
           )}
 
           <p className="text-xs admin-text-secondary capitalize">{nomeDia} · Clique para agendar ou bloquear</p>
@@ -986,93 +905,17 @@ function AgendaPageInner() {
         onEspera={() => setWaitlistModal(true)}
       />
 
-      {/* Modal novo agendamento */}
+      {/* Wizard de novo agendamento (4 passos, espelha o fluxo do cliente) */}
       {modal && (
-        <Modal onClose={() => setModal(null)}>
-          {(close) => (
-            <>
-              <ModalHeader
-                title="Novo agendamento presencial"
-                subtitle={`${dataSelecionadaObj.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "long" })}${modal.hora ? ` às ${modal.hora}` : ""}`}
-                onClose={close}
-              />
-              <div className="p-5 space-y-3">
-                <div>
-                  <label className="text-xs admin-text-secondary mb-1 block">Nome do cliente</label>
-                  <input type="text" placeholder="Ex: João Silva" value={form.cliente}
-                    onChange={(e) => setForm({ ...form, cliente: e.target.value })}
-                    className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors" />
-                </div>
-                {/* Horário: fixo quando veio de um slot; grade de chips (só livres) quando aberto pelo "+" */}
-                {!modal.hora && (
-                  <div>
-                    <label className="text-xs admin-text-secondary mb-1.5 block">Horário</label>
-                    {horariosModal.length === 0 ? (
-                      <p className="text-xs admin-text-secondary py-2">Nenhum horário livre neste dia para este barbeiro.</p>
-                    ) : (
-                      <div className="grid grid-cols-4 gap-2">
-                        {horariosModal.map((h) => (
-                          <button
-                            key={h}
-                            type="button"
-                            onClick={() => setForm({ ...form, hora: h })}
-                            className={`py-2 rounded-lg text-sm font-mono border transition-colors ${
-                              form.hora === h
-                                ? "bg-gold text-slate-950 border-gold font-semibold"
-                                : "admin-surface-subtle admin-text-primary border-transparent hover:border-gold/40"
-                            }`}
-                          >
-                            {h}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-                <div>
-                  <label className="text-xs admin-text-secondary mb-1 block">WhatsApp (opcional)</label>
-                  <input type="tel" placeholder="11999999999" value={form.whatsapp}
-                    onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-                    className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors" />
-                </div>
-                <div>
-                  <label className="text-xs admin-text-secondary mb-1 block">Serviço</label>
-                  <select value={form.servico} onChange={(e) => setForm({ ...form, servico: e.target.value })}
-                    className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors">
-                    {SERVICOS.map((s) => <option key={s}>{s}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs admin-text-secondary mb-1 block">Preço (R$)</label>
-                  <input type="number" value={form.preco}
-                    onChange={(e) => setForm({ ...form, preco: e.target.value })}
-                    className="w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors" />
-                </div>
-                <div>
-                  <label className="text-xs admin-text-secondary mb-1 block">Barbeiro</label>
-                  <select value={form.barberId} onChange={(e) => setForm({ ...form, barberId: e.target.value, hora: modal.hora ? form.hora : "" })}
-                    className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors">
-                    <option value="qualquer">Qualquer disponível</option>
-                    {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
-                  </select>
-                </div>
-                {erroAgend && (
-                  <p className="text-rose-400 text-xs text-center leading-snug px-2">{erroAgend}</p>
-                )}
-                <div className="flex gap-3 pt-1">
-                  <button onClick={close} className="transform-gpu flex-1 admin-glass-card admin-glass-card-hover admin-text-secondary py-3 rounded-xl text-sm font-semibold transition-colors">Cancelar</button>
-                  <button
-                    onClick={() => salvarAgendamento(close)}
-                    disabled={salvandoAgend || !form.cliente.trim() || !(form.hora || modal.hora)}
-                    className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {salvandoAgend ? "Salvando..." : "Confirmar"}
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-        </Modal>
+        <NovoAgendamentoWizard
+          initialDate={diaSelecionado}
+          initialTime={modal.hora}
+          initialBarberId={gradeBarberIdEfetivo ?? "qualquer"}
+          initialName={modal.nome ?? ""}
+          initialPhone={modal.telefone ?? ""}
+          funcionarios={funcionarios}
+          onClose={() => setModal(null)}
+        />
       )}
 
       {/* Modal: Link de agendamento */}
@@ -1204,10 +1047,11 @@ function AgendaPageInner() {
                     </div>
                     <div>
                       <label className="text-xs admin-text-secondary mb-1 block">Novo horário</label>
-                      <select value={novaHora} onChange={(e) => setNovaHora(e.target.value)}
-                        className="transform-gpu w-full admin-surface-subtle admin-input border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors">
-                        {HORARIOS.map((h) => <option key={h}>{h}</option>)}
-                      </select>
+                      <AdminSelect
+                        value={novaHora}
+                        onChange={setNovaHora}
+                        options={HORARIOS.map((h) => ({ value: h, label: h }))}
+                      />
                     </div>
                     <div className="flex gap-3 pt-1">
                       <button onClick={() => setRemarcando(false)}
