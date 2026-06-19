@@ -320,10 +320,13 @@ function FuncionariosPageInner() {
             </div>
             <button
               onClick={abrirOwner}
-              className="text-xs px-3 py-2 rounded-lg admin-surface-subtle admin-text-secondary hover:text-gold transition-colors shrink-0 flex items-center gap-1.5"
+              title={ownerBarber && ownerBarber.active ? "Editar perfil" : "Atender como barbeiro"}
+              className="text-xs px-2.5 sm:px-3 py-2 rounded-lg admin-surface-subtle admin-text-secondary hover:text-gold transition-colors shrink-0 flex items-center gap-1.5"
             >
-              <Pencil className="w-3.5 h-3.5" />
-              {ownerBarber && ownerBarber.active ? "Editar perfil" : "Atender como barbeiro"}
+              <Pencil className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden sm:inline">
+                {ownerBarber && ownerBarber.active ? "Editar perfil" : "Atender como barbeiro"}
+              </span>
             </button>
           </div>
         </div>
