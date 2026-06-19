@@ -307,16 +307,22 @@ function FuncionariosPageInner() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <p className="text-sm font-bold admin-text-primary truncate">{user?.email ?? "Proprietário"}</p>
+                <p className="text-sm font-bold admin-text-primary truncate">
+                  {ownerBarber?.name || user?.email?.split("@")[0] || "Proprietário"}
+                </p>
                 <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-gold/15 text-gold shrink-0">
                   Proprietário
                 </span>
+                {ownerBarber?.active && (
+                  <span className="flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded-full admin-surface-subtle admin-text-secondary shrink-0">
+                    <Scissors className="w-2.5 h-2.5" />
+                    {categories.find((c) => c.id === ownerBarber.categoryId)?.name ?? "Barbeiro"}
+                  </span>
+                )}
               </div>
-              <p className="text-xs admin-text-secondary mt-0.5">
-                {ownerBarber && ownerBarber.active
-                  ? `Atende como barbeiro · ${categories.find((c) => c.id === ownerBarber.categoryId)?.name ?? "sem categoria"}`
-                  : "Acesso total ao sistema"}
-              </p>
+              {user?.email && (
+                <p className="text-xs admin-text-secondary truncate mt-0.5">{user.email}</p>
+              )}
             </div>
             <button
               onClick={abrirOwner}
