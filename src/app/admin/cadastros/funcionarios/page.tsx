@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { UserPlus, X, Pencil, Trash2, Phone, Scissors, Check, ChevronDown, KeyRound, ShieldCheck, UserCog, Tags, Crown, Calendar } from "lucide-react";
+import { UserPlus, X, Pencil, Trash2, Phone, Scissors, Check, ChevronDown, KeyRound, ShieldCheck, UserCog, Tags, Crown, Calendar, MoreVertical } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
@@ -588,53 +588,128 @@ function CategoriaSecao({
       <div className="transform-gpu rounded-2xl overflow-hidden admin-glass-card">
         <ul className="admin-divide">
           {membros.map((f, i) => (
-            <li key={f.id} className="flex items-center gap-3 px-4 py-3">
-              <Avatar name={f.name} photoUrl={f.photoUrl} colorIndex={i} dim={!f.active} />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium admin-text-primary truncate">{f.name}</p>
-                  {f.authUid && (
-                    <span className="flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-emerald-400/15 text-emerald-400 shrink-0">
-                      <ShieldCheck className="w-2.5 h-2.5" /> Acesso
-                    </span>
-                  )}
-                  {!f.active && (
-                    <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full admin-surface-subtle admin-text-secondary shrink-0">
-                      Inativo
-                    </span>
-                  )}
-                </div>
-                {f.phone && <p className="text-xs admin-text-secondary truncate mt-0.5">{f.phone}</p>}
-              </div>
-              <div className="flex items-center gap-1 shrink-0">
-                <button
-                  onClick={() => onAcesso(f)}
-                  className={`w-8 h-8 rounded-lg admin-glass-card-hover flex items-center justify-center transition-colors ${f.authUid ? "text-emerald-400 hover:text-emerald-300" : "admin-text-secondary hover:text-gold"}`}
-                  aria-label={f.authUid ? "Gerenciar acesso" : "Criar acesso"}
-                  title={f.authUid ? "Gerenciar acesso" : "Criar acesso"}
-                >
-                  {f.authUid ? <ShieldCheck className="w-4 h-4" /> : <KeyRound className="w-4 h-4" />}
-                </button>
-                <button
-                  onClick={() => onEdit(f)}
-                  className="w-8 h-8 rounded-lg admin-glass-card-hover flex items-center justify-center admin-text-secondary hover:text-gold transition-colors"
-                  aria-label="Editar"
-                >
-                  <Pencil className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => onDelete(f)}
-                  className="w-8 h-8 rounded-lg admin-glass-card-hover flex items-center justify-center admin-text-secondary hover:text-red-400 transition-colors"
-                  aria-label="Excluir"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </li>
+            <EmployeeRow
+              key={f.id}
+              f={f}
+              colorIndex={i}
+              onEdit={onEdit}
+              onAcesso={onAcesso}
+              onDelete={onDelete}
+            />
           ))}
         </ul>
       </div>
     </div>
+  );
+}
+
+// Linha de funcionário. Ações: inline (3 botões) no desktop; no mobile um "⋯"
+// que expande a barra de ações ABAIXO (cresce pra baixo dentro do card, sem ser
+// cortado pelo overflow-hidden), liberando a largura toda para o nome.
+function EmployeeRow({
+  f,
+  colorIndex,
+  onEdit,
+  onAcesso,
+  onDelete,
+}: {
+  f: Employee;
+  colorIndex: number;
+  onEdit: (f: Employee) => void;
+  onAcesso: (f: Employee) => void;
+  onDelete: (f: Employee) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const acessoLabel = f.authUid ? "Gerenciar acesso" : "Criar acesso";
+
+  return (
+    <li className="px-4 py-3">
+      <div className="flex items-center gap-3">
+        <Avatar name={f.name} photoUrl={f.photoUrl} colorIndex={colorIndex} dim={!f.active} />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-medium admin-text-primary truncate">{f.name}</p>
+            {f.authUid && (
+              <span className="flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-emerald-400/15 text-emerald-400 shrink-0">
+                <ShieldCheck className="w-2.5 h-2.5" /> Acesso
+              </span>
+            )}
+            {!f.active && (
+              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full admin-surface-subtle admin-text-secondary shrink-0">
+                Inativo
+              </span>
+            )}
+          </div>
+          {f.phone && <p className="text-xs admin-text-secondary truncate mt-0.5">{f.phone}</p>}
+        </div>
+
+        {/* Desktop: ações inline */}
+        <div className="hidden sm:flex items-center gap-1 shrink-0">
+          <button
+            onClick={() => onAcesso(f)}
+            className={`w-8 h-8 rounded-lg admin-glass-card-hover flex items-center justify-center transition-colors ${f.authUid ? "text-emerald-400 hover:text-emerald-300" : "admin-text-secondary hover:text-gold"}`}
+            aria-label={acessoLabel}
+            title={acessoLabel}
+          >
+            {f.authUid ? <ShieldCheck className="w-4 h-4" /> : <KeyRound className="w-4 h-4" />}
+          </button>
+          <button
+            onClick={() => onEdit(f)}
+            className="w-8 h-8 rounded-lg admin-glass-card-hover flex items-center justify-center admin-text-secondary hover:text-gold transition-colors"
+            aria-label="Editar"
+          >
+            <Pencil className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onDelete(f)}
+            className="w-8 h-8 rounded-lg admin-glass-card-hover flex items-center justify-center admin-text-secondary hover:text-red-400 transition-colors"
+            aria-label="Excluir"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Mobile: botão que expande as ações abaixo */}
+        <button
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Ações"
+          aria-expanded={open}
+          className={`sm:hidden w-8 h-8 rounded-lg admin-glass-card-hover flex items-center justify-center transition-colors shrink-0 ${open ? "text-gold" : "admin-text-secondary hover:text-gold"}`}
+        >
+          <MoreVertical className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Mobile: barra de ações expansível (não corta o nome) */}
+      <div
+        className="sm:hidden grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          <div className="flex gap-2 pt-3">
+            <button
+              onClick={() => { onAcesso(f); setOpen(false); }}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg admin-surface-subtle text-xs font-medium transition-colors ${f.authUid ? "text-emerald-400" : "admin-text-secondary hover:text-gold"}`}
+            >
+              {f.authUid ? <ShieldCheck className="w-3.5 h-3.5" /> : <KeyRound className="w-3.5 h-3.5" />}
+              Acesso
+            </button>
+            <button
+              onClick={() => { onEdit(f); setOpen(false); }}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg admin-surface-subtle text-xs font-medium admin-text-secondary hover:text-gold transition-colors"
+            >
+              <Pencil className="w-3.5 h-3.5" /> Editar
+            </button>
+            <button
+              onClick={() => { onDelete(f); setOpen(false); }}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg admin-surface-subtle text-xs font-medium admin-text-secondary hover:text-red-400 transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" /> Excluir
+            </button>
+          </div>
+        </div>
+      </div>
+    </li>
   );
 }
 
