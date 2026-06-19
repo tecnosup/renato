@@ -361,6 +361,7 @@ export function NovoAgendamentoWizard({
                   {/* PASSO 2 — Barbeiro (mesmo seletor da grade de horários) */}
                   {step === 2 && (
                     <SeletorBarbeiro
+                      variant="cards"
                       barbeiros={barbeiros}
                       value={barberId}
                       onChange={(id) => { setBarberId(id); setTime(""); irPara(3); }}
