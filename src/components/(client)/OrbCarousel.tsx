@@ -114,9 +114,11 @@ function GlassOrb({ category, onClick, icon, label, sublabel }: GlassOrbProps) {
           <span className="font-display font-black text-xl md:text-2xl text-white uppercase tracking-wider block drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] select-none">
             {label}
           </span>
-          <span className="font-mono text-[9px] text-[#c2a35d] tracking-widest uppercase font-black block mt-1.5 group-hover:text-white transition-colors duration-300 select-none bg-black/40 px-2.5 py-0.5 rounded-full border border-white/5">
-            {sublabel}
-          </span>
+          {sublabel && (
+            <span className="font-mono text-[9px] text-[#c2a35d] tracking-widest uppercase font-black block mt-1.5 group-hover:text-white transition-colors duration-300 select-none bg-black/40 px-2.5 py-0.5 rounded-full border border-white/5">
+              {sublabel}
+            </span>
+          )}
         </div>
       </div>
     </button>
@@ -206,10 +208,6 @@ export default function OrbCarousel() {
         
         {/* Title Section */}
         <div className="text-center mb-8 flex flex-col items-center">
-          <div className="font-mono text-[9px] text-[#c2a35d] tracking-[0.3em] uppercase mb-2.5 flex items-center gap-1.5 font-bold bg-gold/5 px-3 py-1 border border-gold/15 rounded-full select-none">
-            <Sparkles className="w-3 h-3 text-gold animate-pulse" />
-            <span>[03_ESTILO_E_CUIDADO]</span>
-          </div>
           <h2 className="font-display font-black text-3xl md:text-5xl text-[#e2e2e2] uppercase tracking-tighter leading-none mb-3">
             SERVIÇOS & PRODUTOS
           </h2>
@@ -271,7 +269,7 @@ export default function OrbCarousel() {
                   onClick={() => setActiveCategory('services')}
                   icon={<Compass className="w-5 h-5 animate-spin-slow" />}
                   label="Serviços"
-                  sublabel="LINHA_DE_SERVIÇOS"
+                  sublabel=""
                 />
                 <div className="mt-5 max-w-xs px-2 select-none">
                   <h3 className="font-display font-bold text-[#e1e1e1] uppercase text-xs tracking-wider mb-1 group-hover:text-gold">Corte &amp; Barba</h3>
@@ -288,7 +286,7 @@ export default function OrbCarousel() {
                   onClick={() => setActiveCategory('products')}
                   icon={<ShoppingBag className="w-5 h-5" />}
                   label="Cosméticos"
-                  sublabel="CUIDADO_E_COSMÉTICOS"
+                  sublabel=""
                 />
                 <div className="mt-5 max-w-xs px-2 select-none">
                   <h3 className="font-display font-bold text-[#e1e1e1] uppercase text-xs tracking-wider mb-1 group-hover:text-gold">Produtos &amp; Cosméticos</h3>
@@ -417,10 +415,6 @@ export default function OrbCarousel() {
                         isSelected ? 'bg-amber-500/[0.05]' : ''
                       }`} />
 
-                      {/* Subtle aesthetic backdrop design */}
-                      <div className="absolute right-0 top-0 w-20 h-20 border-l border-b border-white/[0.02] flex items-center justify-center font-mono text-[8px] text-zinc-800 select-none">
-                        {`[0${index + 1}]`}
-                      </div>
 
                       <div className="space-y-3 relative z-10">
                         {/* Foto do serviço — só quando cadastrada (imageUrl).
