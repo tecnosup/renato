@@ -12,11 +12,16 @@ import {
 } from "@/lib/user-theme";
 
 export function useAdminTheme() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [theme, setTheme] = useState<AdminTheme>(getCachedTheme);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Enquanto o Firebase Auth ainda esta resolvendo a sessao, `user` vem
+    // null mesmo para quem esta logado. Nao reseta o tema pro default nesse
+    // meio-tempo, senao da o flash liquid-glass -> tema salvo a cada load.
+    if (authLoading) return;
+
     if (!user) {
       setTheme(DEFAULT_ADMIN_THEME);
       setLoading(false);
@@ -50,7 +55,7 @@ export function useAdminTheme() {
       cancelled = true;
       window.removeEventListener(THEME_UPDATED_EVENT, handleUpdate);
     };
-  }, [user]);
+  }, [user, authLoading]);
 
   return { theme, loading };
 }

@@ -83,7 +83,7 @@ export function NovoAgendamentoWizard({
   useEffect(() => subscribeToProducts((l) => setProducts(l.filter((p) => p.active))), []);
 
   const barbeiros = useMemo(
-    () => funcionarios.filter((f) => f.active && f.role === "barbeiro"),
+    () => funcionarios.filter((f) => f.active && f.bookable),
     [funcionarios]
   );
 
@@ -280,7 +280,7 @@ export function NovoAgendamentoWizard({
                   {/* PASSO 1 — Serviços + Produtos */}
                   {step === 1 && (
                     <div className="space-y-2">
-                      <div className="flex gap-2 sticky top-0 z-10 pb-1">
+                      <div className="flex gap-2 sticky top-0 z-10 -mx-5 px-5 pt-1 pb-2 bg-[var(--admin-modal-bg)] [backdrop-filter:var(--admin-modal-blur)]">
                         {(["servico", "produto"] as ComandaItemTipo[]).map((t) => (
                           <button
                             key={t}
@@ -361,6 +361,7 @@ export function NovoAgendamentoWizard({
                   {/* PASSO 2 — Barbeiro (mesmo seletor da grade de horários) */}
                   {step === 2 && (
                     <SeletorBarbeiro
+                      variant="cards"
                       barbeiros={barbeiros}
                       value={barberId}
                       onChange={(id) => { setBarberId(id); setTime(""); irPara(3); }}

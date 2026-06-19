@@ -123,8 +123,36 @@ export interface Testimonial {
   rating: number;
 }
 
-/** Cargo do funcionário. Tambem usado como preset de permissoes (ver perms). */
+/**
+ * Preset de permissoes. Antes era o "cargo" exibido; agora as categorias
+ * (employeeCategories) sao livres e cada uma aponta para UM destes presets via
+ * `EmployeeCategory.preset`. O campo `Employee.role` permanece como esse preset
+ * efetivo (base dos claims/RBAC), derivado da categoria escolhida.
+ */
 export type EmployeeRole = "barbeiro" | "recepcionista" | "gerente";
+
+/** Dados que o formulário envia ao criar/editar uma categoria de funcionário. */
+export interface EmployeeCategoryInput {
+  /** Rótulo livre exibido nos cards e no select (ex: "Barbeiro", "Caixa"). */
+  name: string;
+  /** Preset base do qual a categoria parte (preenche `perms` rapidamente). */
+  preset: EmployeeRole;
+  /**
+   * Permissões completas da categoria — viram o padrão ao conceder acesso a
+   * alguém dela (ajustável depois por pessoa). Editáveis no "Avançado".
+   */
+  perms: Permissions;
+  /** Agendável = aparece na agenda e como equipe na landing. */
+  bookable: boolean;
+  /** Ordem de exibição/hierarquia (menor primeiro). */
+  order: number;
+}
+
+/** Categoria de funcionário (coleção `employeeCategories`). */
+export interface EmployeeCategory extends EmployeeCategoryInput {
+  id: string;
+  createdAt: number; // epoch ms
+}
 
 /**
  * Permissoes granulares por funcionario. O papel define um preset (ver
@@ -225,9 +253,21 @@ export const FULL_PERMS: Permissions = {
 /** Dados que o formulário envia ao criar/editar um funcionário. */
 export interface EmployeeInput {
   name: string;
+  /** Preset de permissão efetivo, derivado da categoria escolhida. */
   role: EmployeeRole;
   phone: string;
   active: boolean;
+  /** Categoria (employeeCategories) à qual o funcionário pertence. */
+  categoryId?: string | null;
+  /** Foto de perfil (URL pública no R2). Aparece no card e na landing. */
+  photoUrl?: string | null;
+  /**
+   * Agendável = aparece na agenda/comandas/landing como barbeiro. Denormalizado
+   * da categoria (category.bookable) para os consumidores filtrarem direto, sem
+   * juntar categorias. Sincronizado ao salvar o funcionário e ao mudar a flag da
+   * categoria. Legados sem categoria: cai no fallback role === "barbeiro".
+   */
+  bookable?: boolean;
 }
 
 /** Documento de funcionário no Firestore (coleção `barbers`). */
@@ -240,6 +280,12 @@ export interface Employee extends EmployeeInput {
   email?: string | null;
   /** permissoes efetivas (so relevante quando ha acesso). */
   perms?: Permissions;
+  /**
+   * Marca o doc-espelho do PROPRIETÁRIO que também atende como barbeiro.
+   * Não tem login próprio (o owner loga sem claims); serve só para a agenda e
+   * o "Meu Financeiro" dele. Ver docs/rbac-acessos.md e onboarding planejado.
+   */
+  isOwner?: boolean;
 }
 
 export type AppointmentStatus =

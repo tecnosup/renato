@@ -34,11 +34,17 @@ import { NAV_SHORTCUTS_CENTER_INDEX, getMenuItemByHref } from "@/lib/nav-shortcu
 import { canAccessPath } from "@/lib/access";
 import type { Permissions } from "@/lib/types";
 
+// "Meu Financeiro" lista as comandas do próprio barbeiro: só faz sentido com um
+// barberId. O barbeiro tem (claim); o proprietário só quando opta por atender
+// (doc-espelho isOwner). Sem barberId, escondemos o item.
+const REQUIRES_BARBER_ID = "/admin/financeiro/meu-financeiro";
+
 // Filtra a arvore de navegacao pelas permissoes: remove itens-pai/filhos cujas
 // rotas o usuario nao pode acessar; descarta um pai que ficou sem filhos.
-function filterNav(items: NavItem[], perms: Permissions | undefined) {
+function filterNav(items: NavItem[], perms: Permissions | undefined, barberId: string | undefined) {
   return items
     .map((item) => {
+      if (item.href === REQUIRES_BARBER_ID && !barberId) return null;
       if (!item.children) return canAccessPath(perms, item.href) ? item : null;
       const children = item.children.filter((c) => canAccessPath(perms, c.href));
       if (children.length === 0 && !canAccessPath(perms, item.href)) return null;
@@ -250,9 +256,9 @@ function NavLink({
 
 // Sidebar lateral — só aparece em md+
 function DesktopSidebar() {
-  const { user, perms, logout } = useAuth();
+  const { user, perms, barberId, logout } = useAuth();
   const initials = user?.email ? user.email.slice(0, 2).toUpperCase() : "??";
-  const visibleItems = filterNav(navItems, perms);
+  const visibleItems = filterNav(navItems, perms, barberId);
 
   return (
     <aside className="transform-gpu hidden md:flex w-64 admin-glass-card flex-col h-screen sticky top-0">
@@ -303,7 +309,10 @@ function NavBottomItem({
   pathname: string;
   badge?: number;
 }) {
-  const isActive = pathname === href || pathname.startsWith(href + "/");
+  // /admin (Agenda) casa só exato — senão prefixaria todas as rotas /admin/*.
+  const isActive = href === "/admin"
+    ? pathname === "/admin"
+    : pathname === href || pathname.startsWith(href + "/");
 
   const handleClick = () => {
     if (isActive) {
@@ -346,10 +355,15 @@ function MobileBottomNav() {
   const pathname = usePathname();
   const { unread } = useNotifications();
   const { shortcuts } = useNavShortcuts();
-  const centerHref = shortcuts[NAV_SHORTCUTS_CENTER_INDEX];
-  const centerItem = getMenuItemByHref(centerHref);
+  // Resolve o atalho central contra os itens conhecidos; se vier vazio/inválido,
+  // cai para a Agenda (/admin). Sem isso, um centerHref "" faria startsWith("/")
+  // — sempre verdadeiro — e o botão central ficaria dourado em toda tela.
+  const centerItem = getMenuItemByHref(shortcuts[NAV_SHORTCUTS_CENTER_INDEX]);
+  const centerHref = centerItem?.href ?? "/admin";
   const CenterIcon = centerItem?.icon ?? Calendar;
-  const isCenterActive = centerHref === "/admin" ? pathname === "/admin" : pathname === centerHref || pathname.startsWith(centerHref + "/");
+  const isCenterActive = centerHref === "/admin"
+    ? pathname === "/admin"
+    : pathname === centerHref || pathname.startsWith(centerHref + "/");
 
   return (
     <nav className="fixed bottom-3 left-3 right-3 z-30 md:hidden">

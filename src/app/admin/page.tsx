@@ -5,7 +5,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import {
   ChevronLeft, ChevronRight, RefreshCw, Calendar, Ban, X, Plus, Link2,
   FileText, ListOrdered, ChevronDown, MessageCircle, CalendarClock, Trash2,
-  Check, Settings2, Unlock, Copy, Clock, UserPlus,
+  Check, Settings2, Unlock, Copy, Clock, UserPlus, History,
 } from "lucide-react";
 import { subscribeToDay, cancelAppointment, rescheduleAppointment } from "@/lib/appointments";
 import {
@@ -411,7 +411,7 @@ function AgendaPageInner() {
   // Carrega os barbeiros ativos (seletor da grade e do agendamento presencial).
   useEffect(() => {
     return subscribeToEmployees((lista) => {
-      const ativos = lista.filter((e) => e.active && e.role === "barbeiro");
+      const ativos = lista.filter((e) => e.active && e.bookable);
       setFuncionarios(ativos);
       if (!gradeBarberIdAlvo && ativos.length > 0) setGradeBarberIdAlvo(ativos[0].id);
     });
@@ -600,6 +600,11 @@ function AgendaPageInner() {
   const diasNoMes = new Date(ano, mes + 1, 0).getDate();
   const celulas = Array(primeiroDia).fill(null).concat(Array.from({ length: diasNoMes }, (_, i) => i + 1));
   const hojeKey = toKey(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  // Horários já passados (só quando o dia selecionado é hoje). Compara "HH:mm"
+  // como string (zero-padded) — slot vazio passado não é mais agendável.
+  const ehHoje = diaSelecionado === hojeKey;
+  const agoraHHmm = `${String(hoje.getHours()).padStart(2, "0")}:${String(hoje.getMinutes()).padStart(2, "0")}`;
+  const horaPassada = (hora: string) => ehHoje && hora < agoraHHmm;
 
   // Nome do barbeiro alvo para exibir no header da grade
   const barberNameAlvo = verTodos
@@ -862,6 +867,30 @@ function AgendaPageInner() {
                     <span className={`text-[10px] font-semibold px-2 py-1 rounded-full ${isConc ? "bg-emerald-400/15 text-emerald-400" : "bg-gold/15 text-gold"}`}>
                       {isConc ? "Concluído" : "Agendado"}
                     </span>
+                  </li>
+                );
+              }
+
+              // Slot vazio cujo horário já passou (hoje): não é agendamento normal,
+              // mas continua clicável para registro RETROATIVO (walk-in lançado
+              // depois). Fica esmaecido, sem o "Disponível" verde.
+              if (horaPassada(hora)) {
+                const destacado = destaqueHora === hora;
+                return (
+                  <li
+                    key={hora}
+                    id={`slot-${hora}`}
+                    onClick={() => setModal({ hora })}
+                    className={`admin-glass-card-hover flex items-center gap-4 px-4 py-3 transition-colors cursor-pointer opacity-60 ${destacado ? "ring-2 ring-gold ring-inset animate-pulse" : ""}`}
+                  >
+                    <div className="w-12 shrink-0">
+                      <p className="text-sm font-mono font-semibold admin-text-secondary">{hora}</p>
+                      <p className="text-[10px] admin-text-secondary">0/1</p>
+                    </div>
+                    <p className="text-sm admin-text-secondary flex-1">Encerrado</p>
+                    <button className="flex items-center gap-1.5 admin-surface-subtle admin-text-secondary text-xs px-3 py-1.5 rounded-lg hover:bg-gold/15 hover:text-gold transition-colors">
+                      <History className="w-3 h-3" /> Retroativo
+                    </button>
                   </li>
                 );
               }

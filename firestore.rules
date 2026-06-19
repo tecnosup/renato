@@ -16,6 +16,14 @@ service cloud.firestore {
       allow create, update, delete: if request.auth != null;
     }
 
+    // Categorias de funcionário (Barbeiro, Recepcionista, Caixa, ...). A landing
+    // lê para agrupar a equipe e saber quem é agendável -> leitura pública. Só o
+    // admin logado pode criar/editar/excluir (a tela já é gated por gerenciarFuncionarios).
+    match /employeeCategories/{id} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null;
+    }
+
     // Serviços (catálogo). A landing precisa LER para montar o passo de
     // seleção no agendamento e a vitrine, então leitura é pública. Só o admin
     // logado com permissão gerenciarCadastros pode criar/editar/excluir.

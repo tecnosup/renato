@@ -5,6 +5,7 @@ import { onIdTokenChanged, signOut, type User } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
+import { subscribeToOwnerBarber } from "@/lib/employees";
 import type { Permissions } from "@/lib/types";
 
 interface AuthContextValue {
@@ -46,6 +47,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [perms, setPerms] = useState<Permissions | undefined>(undefined);
   const [role, setRole] = useState<string | undefined>(undefined);
   const [barberId, setBarberId] = useState<string | undefined>(undefined);
+  // barberId do PROPRIETÁRIO que também atende: o owner loga sem claims, então
+  // o barberId dele não vem no token — vem do doc-espelho `isOwner` (ver
+  // upsertOwnerBarber/docs rbac). Só usado quando perms é undefined (owner-raiz).
+  const [ownerBarberId, setOwnerBarberId] = useState<string | undefined>(undefined);
   const router = useRouter();
 
   useEffect(() => {
@@ -87,13 +92,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   }, [user, barberId]);
 
+  // Owner-raiz (logado sem claims de perms): resolve o barberId pelo doc-espelho
+  // `isOwner`, se ele optou por atender como barbeiro (doc ativo). Para funcionário
+  // comum, perms vem definido e o barberId já chega no token — não escuta nada.
+  const isOwnerRoot = !!user && perms === undefined;
+  useEffect(() => {
+    // Só o owner-raiz escuta o doc-espelho; funcionário comum nem assina (cleanup
+    // do efeito anterior desfaz a assinatura). ownerBarberId fica obsoleto quando
+    // não-owner, mas é ignorado no cálculo do barberId efetivo abaixo.
+    if (!isOwnerRoot) return;
+    return subscribeToOwnerBarber((ownerDoc) => {
+      setOwnerBarberId(ownerDoc && ownerDoc.active ? ownerDoc.id : undefined);
+    });
+  }, [isOwnerRoot]);
+
   const logout = async () => {
     await signOut(auth);
     router.push("/login");
   };
 
+  // barberId efetivo: claim do funcionário, ou (só para o owner) o doc-espelho.
+  const effectiveBarberId = barberId ?? (isOwnerRoot ? ownerBarberId : undefined);
+
   return (
-    <AuthContext.Provider value={{ user, loading, perms, role, barberId, logout }}>
+    <AuthContext.Provider value={{ user, loading, perms, role, barberId: effectiveBarberId, logout }}>
       {children}
     </AuthContext.Provider>
   );

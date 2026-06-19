@@ -9,20 +9,7 @@ import {
   revokeEmployeeAccess,
 } from "@/lib/employees";
 import { ROLE_PRESETS, FULL_PERMS, type Employee, type Permissions } from "@/lib/types";
-
-// Rotulos amigaveis de cada permissao (na ordem de exibicao).
-const PERM_LABELS: { key: keyof Permissions; label: string; desc: string }[] = [
-  { key: "verAgendaPropria", label: "Agenda própria", desc: "Ver os agendamentos dele" },
-  { key: "verAgendaTodos", label: "Agenda de todos", desc: "Ver a agenda de todos os barbeiros" },
-  { key: "verCaixa", label: "Caixa", desc: "Abrir, conferir e fechar o caixa" },
-  { key: "verFinanceiroProprio", label: "Meu Financeiro", desc: "Ver as próprias comandas, atendimentos e comissão" },
-  { key: "verFinanceiroGeral", label: "Financeiro geral", desc: "Faturamento da barbearia inteira" },
-  { key: "fecharComandas", label: "Registrar pagamento", desc: "Pode fechar comandas e registrar forma de pagamento" },
-  { key: "escolherBarbeiroComanda", label: "Comanda p/ qualquer barbeiro", desc: "Ao abrir comanda, escolher para qual barbeiro (atendimento presencial)" },
-  { key: "gerenciarFuncionarios", label: "Gerenciar funcionários", desc: "Criar e editar acessos" },
-  { key: "gerenciarCadastros", label: "Cadastros", desc: "Serviços, produtos, clientes, cupons" },
-  { key: "gerenciarGrade", label: "Configurar grade", desc: "Editar horários e bloqueios da própria agenda" },
-];
+import { PERM_LABELS } from "@/lib/perms";
 
 function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
   return (
@@ -38,9 +25,12 @@ function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
 
 export function AccessModal({
   employee,
+  defaultPerms,
   onClose,
 }: {
   employee: Employee;
+  /** Permissões iniciais ao CRIAR acesso (vêm da categoria do funcionário). */
+  defaultPerms?: Permissions;
   onClose: () => void;
 }) {
   // Modo: gerenciar (ja tem login) vs criar (primeiro acesso).
@@ -49,9 +39,10 @@ export function AccessModal({
   const [email, setEmail] = useState(employee.email ?? "");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
-  // Ao gerenciar, parte das permissoes atuais; ao criar, do preset do cargo.
+  // Ao gerenciar, parte das permissoes atuais; ao criar, das permissões da
+  // categoria (defaultPerms) ou, na falta, do preset do cargo.
   const [perms, setPerms] = useState<Permissions>(
-    employee.perms ? { ...employee.perms } : { ...ROLE_PRESETS[employee.role] }
+    employee.perms ? { ...employee.perms } : { ...(defaultPerms ?? ROLE_PRESETS[employee.role]) }
   );
   const [saving, setSaving] = useState(false);
   const [erro, setErro] = useState("");

@@ -45,7 +45,7 @@ export function NovaComandaModal({
   const [items, setItems] = useState<ComandaItem[]>([]);
   const [stage, setStage] = useState<"form" | "salvando" | "ok">("form");
 
-  useEffect(() => subscribeToEmployees((l) => setBarbeiros(l.filter((e) => e.active && e.role === "barbeiro"))), []);
+  useEffect(() => subscribeToEmployees((l) => setBarbeiros(l.filter((e) => e.active && e.bookable))), []);
 
   const total = calcularTotal(items);
   // Exige barbeiro responsável (base da comissão) e ao menos 1 item. O nome
@@ -86,7 +86,7 @@ export function NovaComandaModal({
           <ModalHeader title="Nova comanda" onClose={close} />
 
           {/* ── Fixo: dados do cliente + barbeiro ── */}
-          <div className="shrink-0 px-5 pt-3 space-y-2.5">
+          <div className="shrink-0 px-5 pt-2.5 space-y-2">
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 admin-text-secondary" />
               <input
@@ -96,7 +96,7 @@ export function NovaComandaModal({
                 onFocus={(e) => { if (e.target.value === NOME_PADRAO) setNome(""); }}
                 onBlur={(e) => { if (!e.target.value.trim()) setNome(NOME_PADRAO); }}
                 placeholder="Nome do cliente"
-                className="w-full admin-surface-subtle admin-input border border-transparent rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors"
+                className="w-full admin-surface-subtle admin-input border border-transparent rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:border-gold/50 transition-colors"
               />
             </div>
             <div className="relative">
@@ -106,16 +106,16 @@ export function NovaComandaModal({
                 value={telefone}
                 onChange={(e) => setTelefone(e.target.value)}
                 placeholder="WhatsApp (opcional)"
-                className="w-full admin-surface-subtle admin-input border border-transparent rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-gold/50 transition-colors"
+                className="w-full admin-surface-subtle admin-input border border-transparent rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:border-gold/50 transition-colors"
               />
             </div>
             {podeEscolherBarbeiro && (
               <div>
-                <p className="text-xs admin-text-secondary mb-1.5">Barbeiro responsável</p>
+                <p className="text-xs admin-text-secondary mb-1">Barbeiro responsável</p>
                 {barbeiros.length === 0 ? (
                   <p className="text-sm admin-text-secondary py-1">Nenhum barbeiro ativo cadastrado.</p>
                 ) : (
-                  <div className="flex gap-2 overflow-x-auto pb-1">
+                  <div className="flex gap-1.5 overflow-x-auto pb-1">
                     {barbeiros.map((b) => {
                       const sel = b.id === barberId;
                       const iniciais = b.name.trim().split(" ").slice(0, 2).map((n) => n[0] ?? "").join("").toUpperCase();
@@ -124,11 +124,11 @@ export function NovaComandaModal({
                           key={b.id}
                           type="button"
                           onClick={() => setBarberId(b.id)}
-                          className={`shrink-0 flex items-center gap-2 rounded-xl px-3 py-2 border transition-colors ${
+                          className={`shrink-0 flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 border transition-colors ${
                             sel ? "bg-gold/10 border-gold/40" : "admin-surface-subtle border-transparent hover:border-white/15"
                           }`}
                         >
-                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 ${sel ? "bg-gold text-slate-950" : "bg-white/10 admin-text-secondary"}`}>
+                          <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold shrink-0 ${sel ? "bg-gold text-slate-950" : "bg-white/10 admin-text-secondary"}`}>
                             {iniciais}
                           </span>
                           <span className={`text-sm font-medium ${sel ? "text-gold" : "admin-text-primary"}`}>{b.name.split(" ")[0]}</span>
@@ -146,19 +146,19 @@ export function NovaComandaModal({
           <ItemPicker items={items} onChange={setItems} fill />
 
           {/* ── Fixo: total + ações ── */}
-          <div className="shrink-0 px-5 pt-3 pb-6 sm:pb-4 admin-border-t space-y-2.5">
+          <div className="shrink-0 px-5 pt-2 pb-5 sm:pb-3 admin-border-t space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm admin-text-secondary">{items.length} {items.length === 1 ? "item" : "itens"}</span>
               <span className="text-lg font-bold admin-text-primary">{brl(total)}</span>
             </div>
             <div className="flex gap-3">
-              <button onClick={close} className="flex-1 admin-glass-card admin-glass-card-hover admin-text-secondary py-3 rounded-xl text-sm font-semibold transition-colors">
+              <button onClick={close} className="flex-1 admin-glass-card admin-glass-card-hover admin-text-secondary py-2.5 rounded-xl text-sm font-semibold transition-colors">
                 Cancelar
               </button>
               <button
                 onClick={() => salvar(close)}
                 disabled={!podeSalvar}
-                className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex-1 bg-linear-to-br from-[#ece4cb] to-[#c2a35d] hover:brightness-110 text-slate-950 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {stage === "salvando" ? "Criando…" : "Abrir comanda"}
               </button>

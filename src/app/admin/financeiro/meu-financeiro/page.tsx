@@ -9,6 +9,7 @@ import { EditarComandaModal } from "@/components/comandas/EditarComandaModal";
 import { NovaComandaModal } from "@/components/comandas/NovaComandaModal";
 import { subscribeToMinhasComandas, finalizarComanda, pagarComanda } from "@/lib/comandas";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { can } from "@/lib/access";
 import type { Comanda } from "@/lib/types";
 
 type Period = "todo" | "7d" | "30d" | "mesAtual" | "mesAnterior";
@@ -599,7 +600,7 @@ export default function MeuFinanceiroPage() {
                               </button>
                             )}
                             {(c.status === "aberta" || c.status === "pagamento_pendente") &&
-                              perms?.fecharComandas && (
+                              can(perms, "fecharComandas") && (
                                 <button
                                   onClick={() => {
                                     setComandaParaFechar(c);
