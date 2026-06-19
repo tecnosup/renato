@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { SERVICES } from "@/lib/data";
+import { serviceCategoryId } from "@/lib/categories";
 import type { BarberService, ServiceCategory, ServiceInput } from "@/lib/types";
 
 const COLLECTION = "services";
@@ -35,6 +36,10 @@ export async function seedServicesIfEmpty(): Promise<number> {
         duration: s.duration,
         description: s.description,
         category: s.category,
+        // Grava o categoryId determinístico já no seed (a migração vira só
+        // fallback para serviços antigos sem o campo). Evita depender da ordem
+        // seed -> migração na tela.
+        categoryId: serviceCategoryId(s.category),
         active: true,
         order: index,
         createdAt: serverTimestamp(),
@@ -66,6 +71,7 @@ export function subscribeToServices(
         category: (data.category as ServiceCategory) ?? "cabelo",
         active: data.active ?? true,
         order: data.order ?? 0,
+        imageUrl: data.imageUrl ?? undefined,
       };
     });
     callback(list);

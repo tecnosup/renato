@@ -45,6 +45,8 @@ export interface BarberService {
   active?: boolean;
   /** Ordem de exibição (menor primeiro). Opcional pelo mesmo motivo. */
   order?: number;
+  /** Foto do serviço (Cloudflare R2). Opcional — nem todo serviço tem foto. */
+  imageUrl?: string;
 }
 
 /** Dados que o formulário envia ao criar/editar um serviço. */
@@ -57,6 +59,7 @@ export interface ServiceInput {
   categoryId?: string;
   active: boolean;
   order: number;
+  imageUrl?: string;
 }
 
 /**
