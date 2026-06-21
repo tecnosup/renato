@@ -182,14 +182,14 @@ export default function Header() {
       <div className="w-full fixed top-0 left-0 right-0 z-40 flex flex-col" id="header-fixed-wrapper">
         {/* Top micro ticker (very Swiss, Clean & Architectural) - collapses elegantly on scroll */}
         <div 
-          className={`w-full bg-black/40 backdrop-blur-md text-zinc-455 text-[8.5px] font-mono px-4 md:px-8 flex justify-between items-center transition-all duration-300 overflow-hidden border-b border-white/5 ${
+          className={`w-full bg-black/85 backdrop-blur-2xl text-zinc-455 text-[8.5px] font-mono px-4 md:px-8 flex justify-between items-center transition-all duration-300 overflow-hidden border-b border-white/10 ${
             scrolled ? 'h-0 py-0 opacity-0 border-b-0' : 'h-8 py-2 opacity-100'
           }`}
           style={{ transitionProperty: 'all' }}
         >
           <div className="flex items-center gap-5">
             <span className="flex items-center gap-2 tracking-[0.08em] font-medium text-zinc-400">
-              <span className="inline-block w-1.5 h-1.5 bg-[#c2a35d]/85 rounded-full" />
+              <span className="inline-block w-1.5 h-1.5 bg-[#c8ccd4]/85 rounded-full" />
               VAGAS HOJE DISPONÍVEIS
             </span>
             <span className="hidden sm:inline-block text-zinc-800">•</span>
@@ -203,25 +203,22 @@ export default function Header() {
         <header
           className={`w-full transition-all duration-350 ${
             scrolled 
-              ? 'bg-black/60 backdrop-blur-2xl py-3 border-b border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.5)]' 
+              ? 'bg-black/60 backdrop-blur-2xl py-3 border-b border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
               : 'bg-transparent py-5 border-b border-transparent'
           }`}
           id="app-header"
         >
         <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
-          {/* Brand Logo & Est - Classic luxury serif and sans pairing */}
-          <a href="#" className="flex items-center gap-3.5 group" id="header-brand-logo">
-            <div className="w-8.5 h-8.5 rounded-lg border border-gold/20 group-hover:border-gold/50 flex items-center justify-center transition-all duration-500 bg-gold/10 shadow-[inset_0_0_10px_rgba(194,163,93,0.15)]">
-              <Scissors className="w-3.5 h-3.5 text-[#c2a35d] transition-transform duration-500 group-hover:-rotate-12" />
-            </div>
-            <div className="flex flex-col text-left">
-              <span className="font-display font-medium text-lg md:text-xl tracking-[0.16em] text-white leading-none">
-                SÉCULO XXI
-              </span>
-              <span className="font-sans text-[8.5px] font-bold text-[#c2a35d]/85 tracking-[0.32em] mt-1 leading-none uppercase">
-                Estética do Cuidado
-              </span>
-            </div>
+          {/* Brand Logo (graffiti) com leve glow claro para destacar do header preto */}
+          <a href="#" className="relative flex items-center group shrink-0" id="header-brand-logo" aria-label="Barbearia Século XXI — início">
+            <span className="absolute inset-0 -z-10 blur-xl bg-white/15 rounded-full scale-90 group-hover:bg-white/20 transition-colors duration-500" aria-hidden="true" />
+            <img
+              src="/img/logo.webp"
+              alt="Barbearia Século XXI"
+              className="h-9 md:h-11 w-auto object-contain select-none transition-transform duration-500 group-hover:scale-[1.03]"
+              loading="eager"
+              decoding="async"
+            />
           </a>
 
           {/* Desktop Navigation */}
@@ -233,7 +230,7 @@ export default function Header() {
                 className="font-sans text-[10px] font-semibold tracking-[0.22em] text-zinc-400 hover:text-white transition-colors duration-300 relative group py-2"
               >
                 {item.label}
-                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#c2a35d]/60 transition-all duration-300 group-hover:w-full" />
+                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#c8ccd4]/60 transition-all duration-300 group-hover:w-full" />
               </a>
             ))}
           </nav>
@@ -245,9 +242,9 @@ export default function Header() {
               className="flex items-center gap-2 font-sans text-[10px] font-semibold tracking-[0.22em] text-zinc-400 hover:text-white transition-all cursor-pointer py-2 group/client"
               id="header-client-area-btn"
             >
-              <User className="w-3.5 h-3.5 text-[#c2a35d] group-hover/client:scale-110 transition-transform" />
+              <User className="w-3.5 h-3.5 text-[#c8ccd4] group-hover/client:scale-110 transition-transform" />
               <span>ÁREA DO CLIENTE</span>
-              <span className="font-mono text-[7px] text-[#c2a35d] border border-[#c2a35d]/30 px-1 py-0.5 rounded ml-0.5 font-bold uppercase shrink-0">
+              <span className="font-mono text-[7px] text-[#c8ccd4] border border-[#c8ccd4]/30 px-1 py-0.5 rounded ml-0.5 font-bold uppercase shrink-0">
                 CLUBE
               </span>
             </button>
@@ -256,7 +253,7 @@ export default function Header() {
               onClick={() => {
                 window.dispatchEvent(new CustomEvent('select-service', { detail: '' }));
               }}
-              className="bg-linear-to-r from-[#ece4cb] to-[#c2a35d] hover:opacity-90 text-slate-950 font-sans text-[9px] font-black tracking-[0.24em] px-6 py-3 border border-transparent transition-all duration-300 uppercase rounded-xl shadow-[0_0_15px_rgba(194,163,93,0.3)] transform hover:scale-[1.02] cursor-pointer"
+              className="bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] hover:brightness-110 btn-game btn-game-sm text-xs px-6 py-3 border-2 border-black/55 transition-all duration-300 uppercase rounded-xl shadow-[0_4px_14px_rgba(0,0,0,0.45)] transform hover:scale-[1.02] cursor-pointer"
               id="cta-reservar-button"
             >
               Agendar Horário
@@ -282,7 +279,7 @@ export default function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="absolute top-full left-0 w-full bg-black/80 backdrop-blur-3xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)] md:hidden overflow-hidden flex flex-col z-50"
+              className="absolute top-full left-0 w-full bg-black/95 backdrop-blur-3xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.6)] md:hidden overflow-hidden flex flex-col z-50"
               id="mobile-nav-panel"
             >
               <div className="px-6 py-8 flex flex-col gap-6">
@@ -291,7 +288,7 @@ export default function Header() {
                     key={item.label}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="font-sans text-[11px] font-bold tracking-[0.22em] text-zinc-400 hover:text-[#c2a35d] transition-colors py-2 border-b border-zinc-950 uppercase"
+                    className="font-sans text-[11px] font-bold tracking-[0.22em] text-zinc-100 hover:text-[#c8ccd4] transition-colors py-2 border-b border-white/10 uppercase"
                   >
                     {item.label}
                   </a>
@@ -304,10 +301,10 @@ export default function Header() {
                     setIsOpen(false);
                     setShowClientArea(true);
                   }}
-                  className="font-sans text-[11px] font-bold tracking-[0.22em] text-[#c2a35d] hover:text-white transition-colors py-2 border-b border-zinc-950 uppercase text-left flex items-center justify-between"
+                  className="font-sans text-[11px] font-bold tracking-[0.22em] text-[#c8ccd4] hover:text-white transition-colors py-2 border-b border-white/10 uppercase text-left flex items-center justify-between"
                 >
                   <span>ÁREA DO CLIENTE (ASSINANTES)</span>
-                  <span className="font-mono text-[7px] text-[#c2a35d] border border-[#c2a35d]/30 px-1 py-0.5 rounded font-black uppercase">
+                  <span className="font-mono text-[7px] text-[#c8ccd4] border border-[#c8ccd4]/30 px-1 py-0.5 rounded font-black uppercase">
                     ENTRAR
                   </span>
                 </button>
@@ -318,16 +315,16 @@ export default function Header() {
                     setIsOpen(false);
                     window.dispatchEvent(new CustomEvent('select-service', { detail: '' }));
                   }}
-                  className="bg-[#c2a35d] text-zinc-950 text-center font-sans text-[10px] font-bold tracking-[0.22em] py-4 mt-2 rounded-xl w-full flex items-center justify-center gap-2.5 uppercase shadow-lg shadow-gold/15 active:scale-95 transition-all cursor-pointer font-bold"
+                  className="bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] btn-game btn-game-sm text-sm py-4 mt-2 rounded-xl w-full flex items-center justify-center gap-2.5 uppercase border-2 border-black/55 shadow-[0_4px_14px_rgba(0,0,0,0.45)] active:scale-95 transition-all cursor-pointer"
                 >
-                  <Calendar className="w-3.5 h-3.5 animate-pulse" />
+                  <Calendar className="w-3.5 h-3.5 animate-pulse text-[#f0ebe4]" />
                   AGENDAR HORÁRIO
                 </button>
 
                 {/* Info block */}
-                <div className="flex flex-col gap-2 font-mono text-[9px] text-[#c2a35d]/60 pt-4 border-t border-zinc-900">
+                <div className="flex flex-col gap-2 font-mono text-[9px] text-[#c8ccd4]/60 pt-4 border-t border-zinc-900">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-[#c2a35d]/85" />
+                    <MapPin className="w-3.5 h-3.5 text-[#c8ccd4]/85" />
                     <span>R. Dr. José Rodrigues Alves Sobrinho, 351 - Cruzeiro, SP</span>
                   </div>
                   <div className="pl-5">Segunda a Sábado: 08:30 às 21:00</div>
@@ -365,7 +362,7 @@ export default function Header() {
               id="client-portal-modal"
             >
               {/* Refraction ambient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[#c2a35d]/5 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#c8ccd4]/5 to-transparent pointer-events-none" />
 
               {/* Close Button */}
               {!portalSuccess && (
@@ -385,17 +382,17 @@ export default function Header() {
               {/* SUCCESS LOADING ANIMATION STATE */}
               {portalSuccess ? (
                 <div className="py-12 text-center flex flex-col items-center justify-center space-y-4 select-none animate-fade-in">
-                  <div className="w-14 h-14 bg-[#c2a35d]/10 border border-[#c2a35d]/45 text-[#c2a35d] rounded-full flex items-center justify-center animate-bounce">
+                  <div className="w-14 h-14 bg-[#c8ccd4]/10 border border-[#c8ccd4]/45 text-[#c8ccd4] rounded-full flex items-center justify-center animate-bounce">
                     <CheckCircle2 className="w-7 h-7" />
                   </div>
                   <h3 className="font-display font-medium text-[#e2e2e2] text-xl uppercase tracking-widest mt-2 leading-none">
                     Acesso Permitido
                   </h3>
                   <p className="font-sans text-xs text-zinc-400 max-w-xs leading-relaxed">
-                    Sincronizando credenciais. Carregando cockpit seguro da assinatura <strong className="text-gold">SÉCULO XXI</strong>...
+                    Sincronizando credenciais. Carregando cockpit seguro da assinatura <strong className="text-[#c8ccd4]">SÉCULO XXI</strong>...
                   </p>
                   <div className="w-24 h-1 bg-[#111214] mt-2 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#c2a35d] w-1/2 animate-[progress_1.2s_ease-in-out_infinite]" />
+                    <div className="h-full bg-[#c8ccd4] w-1/2 animate-[progress_1.2s_ease-in-out_infinite]" />
                   </div>
                 </div>
               ) : currentLoggedMember ? (
@@ -443,8 +440,8 @@ export default function Header() {
                             onClick={() => setSimulationPlan(pOpt.plan as any)}
                             className={`p-2.5 border rounded-xl text-left font-mono tracking-tight cursor-pointer transition-all flex flex-col justify-between ${
                               simulationPlan === pOpt.plan
-                                ? 'bg-gold/10 border-gold shadow-[inset_0_0_15px_rgba(194,163,93,0.15)] text-gold'
-                                : 'bg-white/5 backdrop-blur-md border-white/10 text-slate-500 hover:border-gold/30 hover:bg-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]'
+                                ? 'bg-[#c8ccd4]/10 border-[#c8ccd4] shadow-[inset_0_0_15px_rgba(200, 204, 212,0.15)] text-[#c8ccd4]'
+                                : 'bg-white/5 backdrop-blur-md border-white/10 text-slate-500 hover:border-[#c8ccd4]/30 hover:bg-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]'
                             }`}
                           >
                             <span className="text-[9px] font-bold block">{pOpt.plan}</span>
@@ -468,7 +465,7 @@ export default function Header() {
                           setSimulationName(e.target.value);
                           if (portalError) setPortalError('');
                         }}
-                        className="w-full bg-white/5 backdrop-blur-md border border-white/10 focus:border-gold/50 focus:bg-white/10 focus:outline-none text-slate-100 font-sans text-xs rounded-xl px-4 py-3 tracking-wider placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all"
+                        className="w-full bg-white/5 backdrop-blur-md border border-white/10 focus:border-[#c8ccd4]/50 focus:bg-white/10 focus:outline-none text-slate-100 font-sans text-xs rounded-xl px-4 py-3 tracking-wider placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all"
                         name="simName"
                         required
                       />
@@ -487,7 +484,7 @@ export default function Header() {
                       </button>
                       <button
                         type="submit"
-                        className="flex-1 bg-linear-to-r from-[#ece4cb] to-[#c2a35d] text-slate-950 hover:opacity-90 font-sans text-[9px] font-black tracking-[0.24em] uppercase py-3.5 rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(194,163,93,0.3)]"
+                        className="flex-1 bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] text-slate-950 hover:opacity-90 font-sans text-[9px] font-black tracking-[0.24em] uppercase py-3.5 rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(200, 204, 212,0.3)]"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
                         Ativar &amp; Entrar
@@ -500,8 +497,8 @@ export default function Header() {
                 <div className="space-y-6 animate-fade-in" id="portal-login-credentials-panel">
                   {/* Header info */}
                   <div className="space-y-2">
-                    <div className="inline-flex items-center gap-1.5 font-mono text-[8px] text-[#c2a35d] tracking-widest uppercase bg-[#c2a35d]/5 border border-[#c2a35d]/15 px-2.5 py-1 rounded-full">
-                      <Lock className="w-3 h-3 text-[#c2a35d]" />
+                    <div className="inline-flex items-center gap-1.5 font-mono text-[8px] text-[#c8ccd4] tracking-widest uppercase bg-[#c8ccd4]/5 border border-[#c8ccd4]/15 px-2.5 py-1 rounded-full">
+                      <Lock className="w-3 h-3 text-[#c8ccd4]" />
                       <span>PORTAL EXCLUSIVO PARA ASSINANTES</span>
                     </div>
                     <h3 className="font-display font-medium text-xl text-white uppercase tracking-wider leading-none">
@@ -527,7 +524,7 @@ export default function Header() {
                           setSubscriberId(e.target.value);
                           if (portalError) setPortalError('');
                         }}
-                        className="w-full bg-white/5 backdrop-blur-md border border-white/10 focus:border-gold/50 focus:bg-white/10 focus:outline-none text-slate-100 font-mono text-xs rounded-xl px-4 py-3.5 tracking-wider placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all"
+                        className="w-full bg-white/5 backdrop-blur-md border border-white/10 focus:border-[#c8ccd4]/50 focus:bg-white/10 focus:outline-none text-slate-100 font-mono text-xs rounded-xl px-4 py-3.5 tracking-wider placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all"
                         name="memberId"
                       />
                       {portalError && (
@@ -539,7 +536,7 @@ export default function Header() {
 
                     <button
                       type="submit"
-                      className="w-full bg-linear-to-r from-[#ece4cb] to-[#c2a35d] hover:opacity-90 text-slate-950 font-sans text-[9px] font-black tracking-[0.24em] uppercase py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(194,163,93,0.3)]"
+                      className="w-full bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] hover:opacity-90 text-slate-950 font-sans text-[9px] font-black tracking-[0.24em] uppercase py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(200, 204, 212,0.3)]"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
                       Entrar no Cockpit
@@ -548,7 +545,7 @@ export default function Header() {
 
                   {/* Preloaded credentials hint block - Classic Bauhaus architectural detail */}
                   <div className="bg-black/30 p-3 border border-white/5 rounded-xl space-y-1.5">
-                    <span className="font-mono text-[7px] text-[#c2a35d] uppercase block font-bold">[TESTE_SALAO_DEMO]</span>
+                    <span className="font-mono text-[7px] text-[#c8ccd4] uppercase block font-bold">[TESTE_SALAO_DEMO]</span>
                     <p className="font-sans text-[10px] text-zinc-400 leading-normal">
                       Insira <strong className="text-zinc-200">123</strong> para acessar como <strong className="text-zinc-200">Lincon Cardoso</strong> (Legend Black) ou insira qualquer CPF/ID para simular sua própria ativação VIP!
                     </p>
@@ -561,7 +558,7 @@ export default function Header() {
                       <a 
                         href="#assinaturas" 
                         onClick={() => setShowClientArea(false)}
-                        className="font-sans text-[9px] font-bold text-[#c2a35d] hover:text-white hover:underline transition-colors mt-0.5 block uppercase tracking-wider"
+                        className="font-sans text-[9px] font-bold text-[#c8ccd4] hover:text-white hover:underline transition-colors mt-0.5 block uppercase tracking-wider"
                       >
                         Conhecer Clubes →
                       </a>

@@ -1,5 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+
+/* Fonte de display da marca (cartoon/comic) — CC That's All Folks Bold, hospedada
+   localmente. Usada nos títulos/CTAs via .font-toon. */
+@font-face {
+  font-family: "CC Thats All Folks";
+  src: url("/fonts/CCThatsAllFolks-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --background: #ffffff;
@@ -13,11 +23,20 @@
   --font-mono: "JetBrains Mono", var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
   --font-display: "Playfair Display", serif;
   --font-serif: "Playfair Display", serif;
+  /* Fonte de identidade da LANDING (não usar no admin) */
+  --font-brand: "Bricolage Grotesque", "Inter", sans-serif;
 
   --color-gold: #c2a35d;
   --color-gold-light: #ece4cb;
   --color-sleek-dark: #090a0a;
   --color-card-dark: #121314;
+
+  /* Identidade tricolor da marca (logo graffiti vermelho/azul/branco) */
+  --color-brand-red: #e23a2e;
+  --color-brand-red-deep: #b81e16;
+  --color-brand-blue: #2b4fb8;
+  --color-brand-blue-deep: #1d3585;
+  --color-brand-cream: #f4f4f2;
 }
 
 /* Tokens do tema do painel admin (Configurações > Tema).
@@ -149,6 +168,121 @@ body {
 }
 
 @layer utilities {
+  /* Tipografia de identidade da LANDING: dentro de .landing-fonts, os títulos
+     (font-display) e os textos serifados (font-serif) passam a usar a
+     Bricolage Grotesque. O admin não usa esta classe, então fica intocado. */
+  .landing-fonts .font-display,
+  .landing-fonts .font-serif {
+    font-family: var(--font-brand) !important;
+  }
+
+  /* ASPECTO "LOGO DE JOGO" (anydesign sobre a logo): fonte spray + contorno preto
+     GROSSO atrás do fill (paint-order) + sombra dupla. O contorno é 47% da arte da
+     logo — é ele que dá a cara de pichação. Ver docs/element-logo-cta.md.
+
+     .btn-game  → só o EFEITO (fill creme padrão), reutilizável em qualquer botão,
+                  preservando a cor/gradiente que o botão já tem no fundo.
+     .font-graffiti → alias mantido para os CTAs do hero (mesmo efeito). */
+  /* Fonte cartoon/comic da marca (CC That's All Folks) — display dos títulos/CTAs.
+     Diferente da Rubik Spray Paint, ela é legível mesmo em tamanho menor. */
+  .font-toon {
+    font-family: "CC Thats All Folks", var(--font-brand), sans-serif !important;
+    font-style: normal !important;
+    letter-spacing: 0.01em;
+  }
+
+  /* Lettering tricolor da logo: 2 camadas sobrepostas (gradiente NÃO convive com
+     duplo contorno na mesma camada — por isso separamos).
+     - ::before  = camada de baixo: o MESMO texto, opaco, só com os contornos
+       (preto fino por dentro + dourado por fora via text-shadow) + profundidade.
+     - elemento  = camada de cima: o gradiente vertical branco→azul→branco→vermelho
+       clipado no texto, cobrindo o miolo e deixando só os contornos aparecerem.
+     Requer atributo data-text com o mesmo texto. Tudo CSS — não pesa. */
+  .text-logo-3d {
+    position: relative;
+    display: inline-block;
+    /* 4 faixas sólidas branco→azul→branco→vermelho, proporção 20/30/15/35,
+       transição mínima entre elas (~1.5%). */
+    background-image: linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #ffffff 19%,
+      #5a93de 21%,
+      #5a93de 49%,
+      #f4f1ea 51%,
+      #f4f1ea 64%,
+      #e23a2e 66%,
+      #e23a2e 100%
+    ) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+  }
+  .text-logo-3d::before {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    color: #000; /* miolo opaco da camada de baixo (some atrás do gradiente) */
+    -webkit-text-fill-color: #000;
+    /* preto fino por dentro + prata por fora (contornos discretos, distância
+       reduzida para não fechar hastes finas como a cedilha do "ç")
+       + halo escuro difuso que "apaga" o fundo atrás do texto (legibilidade). */
+    text-shadow:
+      -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000,
+      -1px 0 0 #c8ccd4, 1px 0 0 #c8ccd4, 0 -1px 0 #c8ccd4, 0 1px 0 #c8ccd4,
+      0 0 8px rgba(0, 0, 0, 0.9), 0 0 16px rgba(0, 0, 0, 0.8), 0 3px 10px rgba(0, 0, 0, 0.7);
+  }
+
+  .btn-game,
+  .font-graffiti {
+    font-family: "CC Thats All Folks", var(--font-brand), sans-serif !important;
+    color: #f0ebe4 !important;
+    paint-order: stroke fill;
+    -webkit-text-stroke: 2px #000000;
+    text-shadow:
+      0 2px 0 rgba(0, 0, 0, 0.7),
+      0 3px 8px rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.02em;
+  }
+  /* CTAs grandes do hero levam contorno mais grosso; botões menores (.btn-game-sm)
+     ficam com stroke fino para não fechar as letras. */
+  @media (min-width: 640px) {
+    .font-graffiti {
+      -webkit-text-stroke: 4px #000000;
+    }
+    .btn-game {
+      -webkit-text-stroke: 2.5px #000000;
+    }
+  }
+  .btn-game-sm {
+    -webkit-text-stroke: 1.5px #000000 !important;
+  }
+  /* Gradiente de TEXTO da marca (tons da logo): azul dessaturado → vinho médio.
+     Limpo, sem contorno — fonte spray/contorno só funciona em texto grande (botões),
+     em título fino vira borrão ilegível. */
+  .text-grad-logo {
+    background-image: linear-gradient(to right, #7cc6e6 0%, #e23a2e 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    /* Sombra escura sutil para destacar as letras do fundo (contraste). */
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.85));
+  }
+
+  /* Variante para botão de FUNDO CLARO (ex: prata): fill escuro + contorno
+     branco, para o aspecto de jogo "invertido" ainda contrastar. */
+  .btn-game-light {
+    color: #16245c !important;
+    -webkit-text-stroke: 2px #ffffff !important;
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.7),
+      0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
   /* Cards/painéis do admin, adaptados por tema via tokens em [data-theme] */
   .admin-glass-card {
     background-color: var(--admin-card-bg);
@@ -297,23 +431,70 @@ body {
      antigos (ex.: iPhone 8) e trava a página. A partir de 768px volta o
      vidro translúcido com blur. Use estas classes em vez de
      "bg-white/5 backdrop-blur-*" nos componentes de (client). */
+  /* Cards da landing no estilo COMIC/GAME (alinhado ao lettering de pixação):
+     borda preta marcada (2px) + sombra média mais "encorpada" que o vidro etéreo.
+     Fundo mais sólido (menos translúcido) para dar peso de placa urbana. */
   .glass-card {
-    background-color: rgba(10, 10, 11, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(14, 14, 17, 0.92);
+    border: 2px solid #f0ebe4 !important;
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.85), 0 8px 20px rgba(0, 0, 0, 0.5) !important;
   }
   .glass-card-strong {
-    background-color: rgba(7, 7, 8, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(10, 10, 12, 0.95);
+    border: 2px solid #f0ebe4 !important;
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.85), 0 10px 24px rgba(0, 0, 0, 0.55) !important;
   }
   @media (min-width: 768px) {
     .glass-card {
-      background-color: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(16px);
+      background-color: rgba(16, 16, 19, 0.9);
     }
     .glass-card-strong {
-      background-color: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(20px);
+      background-color: rgba(10, 10, 12, 0.92);
     }
+  }
+
+  /* === Vocabulário visual GTA/street (HUD) reutilizável ===
+     hud-card     : painel com borda creme + sombra dura (sticker). Cantos retos.
+     hud-shadow   : só a sombra dura deslocada (para aplicar em outros elementos).
+     hud-stripe   : faixa zebrada dourada (fita de obra) — usar como faixa fina. */
+  .hud-card {
+    background-color: rgba(14, 14, 17, 0.94);
+    border: 2px solid #f0ebe4 !important;
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.85), 0 10px 24px rgba(0, 0, 0, 0.5) !important;
+  }
+  .hud-shadow {
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.85), 0 10px 24px rgba(0, 0, 0, 0.5) !important;
+  }
+  .hud-stripe {
+    background-image: repeating-linear-gradient(45deg, #c8ccd4 0 14px, #0b0b0d 14px 28px);
+  }
+  /* Fundo de TIJOLO da seção (mesma parede do hero), escurecido por uma camada
+     sobreposta para legibilidade. Aplicar na <section> + position:relative. */
+  .bg-tijolo {
+    position: relative;
+    isolation: isolate;
+  }
+  .bg-tijolo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background-image: url("/img/fundohero.webp");
+    background-size: cover;
+    background-position: center;
+    opacity: 0.2;
+    filter: grayscale(1) contrast(1.2);
+  }
+  .bg-tijolo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      circle at 50% 40%,
+      rgba(11, 11, 13, 0.72) 0%,
+      rgba(7, 7, 9, 0.93) 100%
+    );
   }
 
   /* Glow decorativo borrado (blur-2xl/3xl atrás de cards/orbs). Caro no

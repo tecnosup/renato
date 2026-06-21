@@ -70,9 +70,9 @@ export default function Memberships() {
         "Atendimento com Especialista"
       ],
       gradient: "from-[#0d0d0a] via-zinc-950 to-[#0d0d0a]",
-      borderColor: "border-[#c2a35d]/20",
-      badgeBg: "bg-[#c2a35d]/5 text-[#c2a35d] border-[#c2a35d]/10",
-      textColor: "text-white group-hover/club:text-gold"
+      borderColor: "border-[#c8ccd4]/20",
+      badgeBg: "bg-[#c8ccd4]/5 text-[#c8ccd4] border-[#c8ccd4]/10",
+      textColor: "text-white group-hover/club:text-[#c8ccd4]"
     },
     {
       id: "dark-club",
@@ -164,11 +164,11 @@ export default function Memberships() {
   return (
     <section 
       ref={sectionRef} 
-      className="w-full bg-transparent py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-12 border-t border-white/5 relative overflow-hidden scroll-mt-20 md:scroll-mt-24" 
+      className="w-full bg-[#0b0b0d] bg-tijolo py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-12 border-t-2 border-black relative overflow-hidden scroll-mt-20 md:scroll-mt-24"
       id="assinaturas"
     >
       {/* Background Graphic elements matching luxury look */}
-      <div className="glow-decor absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-gold/5 blur-[160px] rounded-full pointer-events-none" />
+      <div className="glow-decor absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-brand-blue/8 blur-[160px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center">
         
@@ -181,11 +181,11 @@ export default function Memberships() {
           className="text-left mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4 w-full"
         >
           <div className="space-y-1 sm:space-y-2">
-            <div className="font-sans text-[8px] sm:text-[9px] text-[#c2a35d] tracking-[0.25em] uppercase flex items-center gap-2 font-bold select-none">
+            <div className="font-sans text-[8px] sm:text-[9px] text-brand-blue tracking-[0.25em] uppercase flex items-center gap-2 font-bold select-none">
               SÉCULO XXI • CLUBE PRIVADO
             </div>
-            <h2 className="font-display font-light text-2xl sm:text-3xl md:text-5xl text-[#faf9f6] tracking-[0.05em] leading-tight uppercase">
-              CLUBE DE <span className="text-[#c2a35d] font-serif italic">ASSINATURAS</span>
+            <h2 className="text-2xl sm:text-3xl md:text-5xl tracking-[0.05em] leading-tight uppercase">
+              <span className="font-toon text-logo-3d" data-text="CLUBE DE ASSINATURAS">CLUBE DE ASSINATURAS</span>
             </h2>
           </div>
           <p className="font-serif italic text-zinc-400 text-xs sm:text-sm md:text-base max-w-md text-left md:text-right leading-relaxed">
@@ -195,7 +195,7 @@ export default function Memberships() {
 
         {/* Subtle instructions for carousel interaction - placed statically with safe spacing */}
         <div className="font-mono text-[8.5px] text-zinc-500 uppercase tracking-widest flex items-center justify-center gap-1.5 mb-6 md:mb-8 select-none pointer-events-none">
-          <Sparkles className="w-3 h-3 text-gold/60 animate-pulse" />
+          <Sparkles className="w-3 h-3 text-brand-blue/70 animate-pulse" />
           <span>Arraste ou clique nas laterais para orbitar as assinaturas</span>
         </div>
 
@@ -218,7 +218,7 @@ export default function Memberships() {
               style={{
                 background: activeIndex === 2 
                   ? "radial-gradient(circle, rgba(147,51,234,0.18) 0%, rgba(0,0,0,0) 70%)" // Black/Purple vibe for Club Legend
-                  : "radial-gradient(circle, rgba(194,163,93,0.18) 0%, rgba(0,0,0,0) 70%)", // Gold vibe for Royal / Silver
+                  : "radial-gradient(circle, rgba(200, 204, 212,0.18) 0%, rgba(0,0,0,0) 70%)", // Gold vibe for Royal / Silver
               }}
               className="absolute left-[15%] right-[15%] top-0 bottom-0 blur-[60px] rounded-full"
             />
@@ -304,15 +304,15 @@ export default function Memberships() {
                 >
                   <ThreeDTiltCard intensity={matchesSelection ? 4 : 0} className="w-full flex group/club h-full">
                     <div 
-                      className={`w-full bg-[#0a0a0b]/85 md:bg-white/5 md:backdrop-blur-xl p-4 sm:p-5 md:p-6 flex flex-col justify-between text-left relative rounded-[20px] sm:rounded-[24px] transition-shadow duration-500 h-full overflow-hidden border ${
-                        matchesSelection 
-                          ? 'shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_60px_rgba(0,0,0,0.8)] border-white/20' 
-                          : 'border-white/10 opacity-90'
+                      className={`w-full bg-[#0e0e11] p-4 sm:p-5 md:p-6 flex flex-col justify-between text-left relative rounded-xl transition-all duration-300 h-full overflow-hidden border-2 ${
+                        matchesSelection
+                          ? 'border-[#c8ccd4] shadow-[0_6px_0_rgba(0,0,0,0.9),0_14px_34px_rgba(0,0,0,0.6)]'
+                          : 'border-[#f0ebe4]/40 opacity-90 shadow-[0_4px_0_rgba(0,0,0,0.8)]'
                       }`}
                     >
                       {/* Luxe Golden Contour Highlight for Selected card */}
                       {matchesSelection && (
-                        <div className="absolute inset-0 rounded-[20px] sm:rounded-[24px] pointer-events-none z-35 border border-gold/30 shadow-[0_0_15px_rgba(194,163,93,0.1)]" />
+                        <div className="absolute inset-0 rounded-[20px] sm:rounded-[24px] pointer-events-none z-35 border border-[#c8ccd4]/30 shadow-[0_0_15px_rgba(200, 204, 212,0.1)]" />
                       )}
 
                       {/* Glass Specular Gloss Highlight top layer */}
@@ -328,12 +328,12 @@ export default function Memberships() {
                             Tier {plan.tier}
                           </span>
                           {matchesSelection ? (
-                            <span className="font-mono text-[7px] sm:text-[8px] bg-gradient-to-r from-amber-500 to-[#c2a35d] text-zinc-950 px-2 py-0.5 font-bold uppercase tracking-wider flex items-center gap-1 rounded shadow-sm">
+                            <span className="font-mono text-[7px] sm:text-[8px] bg-gradient-to-r from-amber-500 to-[#c8ccd4] text-zinc-950 px-2 py-0.5 font-bold uppercase tracking-wider flex items-center gap-1 rounded shadow-sm">
                               <CheckCircle className="w-2.5 h-2.5 fill-current" />
                               Ativo
                             </span>
                           ) : plan.popular ? (
-                            <span className="font-mono text-[7px] sm:text-[8px] bg-gold text-black px-2 py-0.5 font-bold uppercase tracking-wider flex items-center gap-1 rounded">
+                            <span className="font-mono text-[7px] sm:text-[8px] bg-[#c8ccd4] text-black px-2 py-0.5 font-bold uppercase tracking-wider flex items-center gap-1 rounded">
                               <Flame className="w-2.5 h-2.5 fill-current" />
                               Desejado
                             </span>
@@ -369,7 +369,7 @@ export default function Memberships() {
                             <li key={bIdx} className="flex gap-1.5 items-start text-[9.5px] sm:text-[10.5px] text-zinc-350">
                               <div className={`w-3 h-3 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
                                   plan.popular 
-                                    ? 'bg-[#c2a35d]/20 text-[#c2a35d]' 
+                                    ? 'bg-[#c8ccd4]/20 text-[#c8ccd4]' 
                                     : 'bg-white/10 text-slate-300'
                                 }`}>
                                 <Check className="w-1.5 h-1.5" />
@@ -392,13 +392,7 @@ export default function Memberships() {
                             }
                             handleSubscribe(plan.name, e);
                           }}
-                          className={`relative overflow-hidden w-full py-2 sm:py-2.5 text-[8.5px] sm:text-[9.5px] font-display font-bold uppercase tracking-widest rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 transform active:scale-[0.98] group/btn-subs ${
-                            plan.popular
-                              ? 'bg-[#c2a35d] text-zinc-950 hover:bg-white hover:shadow-lg shadow-sm shadow-gold/5'
-                              : plan.tier === 'Black'
-                                ? 'bg-transparent text-white border border-purple-500/20 hover:border-purple-500 hover:text-purple-300 hover:bg-purple-950/10'
-                                : 'bg-transparent text-white border border-zinc-800 hover:border-slate-450 hover:text-slate-300 hover:bg-slate-950/10'
-                          }`}
+                          className="relative overflow-hidden w-full py-3 sm:py-3.5 btn-game btn-game-sm text-xs sm:text-sm uppercase rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 transform active:scale-[0.98] hover:scale-[1.02] border-2 border-black/55 group/btn-subs bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] hover:brightness-110 shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
                           aria-label={matchesSelection ? `Inscrever-se no ${plan.name}` : `Orbitar ${plan.name}`}
                         >
                           <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full group-hover/club:animate-shimmer" />
@@ -444,7 +438,7 @@ export default function Memberships() {
                 onClick={() => handleCardClick(idx)}
                 className={`w-2 h-2 rounded-full transition-all duration-500 ${
                   activeIndex === idx 
-                    ? 'w-6 bg-gold shadow-[0_0_8px_rgba(194,163,93,0.5)]' 
+                    ? 'w-6 bg-brand-blue shadow-[0_0_8px_rgba(43,79,184,0.6)]'
                     : 'bg-zinc-800 hover:bg-zinc-700'
                 }`}
                 aria-label={`Visualizar plano ${idx + 1}`}
@@ -470,12 +464,12 @@ export default function Memberships() {
           className="mt-10 sm:mt-12 md:mt-14 glass-card p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-3 font-sans text-[10px] sm:text-xs text-slate-300 w-full md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
         >
           <div className="flex items-center gap-2 text-left">
-            <div className="w-5 h-5 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center text-gold shrink-0">
+            <div className="w-5 h-5 rounded-full bg-brand-blue/10 border border-brand-blue/25 flex items-center justify-center text-brand-blue shrink-0">
               <Shield className="w-3 h-3" />
             </div>
             <span>Cobrança recorrente segura processada via Stripe. Cancele online quando quiser sem taxas adicionais.</span>
           </div>
-          <div className="flex items-center gap-1 text-[#c2a35d] font-mono text-[9px] font-bold shrink-0">
+          <div className="flex items-center gap-1 text-emerald-400 font-mono text-[9px] font-bold shrink-0">
             <Gift className="w-3 h-3 mr-0.5" />
             <span>BRINDE EXCLUSIVO DISPONÍVEL ESTE MÊS</span>
           </div>

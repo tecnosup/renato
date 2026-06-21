@@ -46,3 +46,6 @@ next-env.d.ts
 .claude/
 printappbarber/
 PROPOSTA-CONTRATO-RENATO.md
+
+# Skills locais do Claude (não compartilhar)
+.claude/skills/
