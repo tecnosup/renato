@@ -115,7 +115,7 @@ function GlassOrb({ category, onClick, icon, label, sublabel }: GlassOrbProps) {
             {label}
           </span>
           {sublabel && (
-            <span className="font-mono text-[9px] text-[#c2a35d] tracking-widest uppercase font-black block mt-1.5 group-hover:text-white transition-colors duration-300 select-none bg-black/40 px-2.5 py-0.5 rounded-full border border-white/5">
+            <span className="font-mono text-[9px] text-brand-blue tracking-widest uppercase font-black block mt-1.5 group-hover:text-white transition-colors duration-300 select-none bg-black/40 px-2.5 py-0.5 rounded-full border border-white/5">
               {sublabel}
             </span>
           )}
@@ -243,7 +243,7 @@ export default function OrbCarousel() {
       id="servicos"
     >
       {/* Dynamic Ambient Background Glows */}
-      <div className="glow-decor absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[140px] pointer-events-none" />
+      <div className="glow-decor absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-blue/8 rounded-full blur-[140px] pointer-events-none" />
       
       <div className="max-w-7xl mx-auto relative z-10">
         
@@ -263,7 +263,7 @@ export default function OrbCarousel() {
             onClick={() => setActiveCategory('menu')}
             className={`px-4 py-2 rounded-xl font-sans text-[9px] sm:text-[10px] tracking-widest uppercase border transition-all duration-300 font-bold ${
               activeCategory === 'menu'
-                ? 'bg-[#c2a35d] text-zinc-950 border-[#c2a35d] shadow-[0_0_20px_rgba(194,163,93,0.3)]'
+                ? 'bg-brand-blue text-white border-brand-blue shadow-[0_0_20px_rgba(43,79,184,0.35)]'
                 : 'bg-white/[0.06] md:backdrop-blur-md text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
             }`}
           >
@@ -273,7 +273,7 @@ export default function OrbCarousel() {
             onClick={() => setActiveCategory('services')}
             className={`px-4 py-2 rounded-xl font-sans text-[9px] sm:text-[10px] tracking-widest uppercase border transition-all duration-300 font-bold ${
               activeCategory === 'services'
-                ? 'bg-[#c2a35d] text-zinc-950 border-[#c2a35d] shadow-[0_0_20px_rgba(194,163,93,0.3)]'
+                ? 'bg-brand-blue text-white border-brand-blue shadow-[0_0_20px_rgba(43,79,184,0.35)]'
                 : 'bg-white/[0.06] md:backdrop-blur-md text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
             }`}
           >
@@ -283,7 +283,7 @@ export default function OrbCarousel() {
             onClick={() => setActiveCategory('products')}
             className={`px-4 py-2 rounded-xl font-sans text-[9px] sm:text-[10px] tracking-widest uppercase border transition-all duration-300 font-bold ${
               activeCategory === 'products'
-                ? 'bg-[#c2a35d] text-zinc-950 border-[#c2a35d] shadow-[0_0_20px_rgba(194,163,93,0.3)]'
+                ? 'bg-brand-blue text-white border-brand-blue shadow-[0_0_20px_rgba(43,79,184,0.35)]'
                 : 'bg-white/[0.06] md:backdrop-blur-md text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
             }`}
           >
@@ -313,7 +313,7 @@ export default function OrbCarousel() {
                   sublabel=""
                 />
                 <div className="mt-5 max-w-xs px-2 select-none">
-                  <h3 className="font-display font-bold text-[#e1e1e1] uppercase text-xs tracking-wider mb-1 group-hover:text-gold">Corte &amp; Barba</h3>
+                  <h3 className="font-display font-bold text-[#e1e1e1] uppercase text-xs tracking-wider mb-1 group-hover:text-brand-blue">Corte &amp; Barba</h3>
                   <p className="font-sans text-[11px] text-zinc-500 leading-normal">
                     Serviços completos de cabelo, barba clássica com toalhas aquecidas e designs modernos.
                   </p>
@@ -330,7 +330,7 @@ export default function OrbCarousel() {
                   sublabel=""
                 />
                 <div className="mt-5 max-w-xs px-2 select-none">
-                  <h3 className="font-display font-bold text-[#e1e1e1] uppercase text-xs tracking-wider mb-1 group-hover:text-gold">Produtos &amp; Cosméticos</h3>
+                  <h3 className="font-display font-bold text-[#e1e1e1] uppercase text-xs tracking-wider mb-1 group-hover:text-brand-blue">Produtos &amp; Cosméticos</h3>
                   <p className="font-sans text-[11px] text-zinc-500 leading-normal">
                     Insumos biológicos, pomadas veganas ricas em ceras de abelha e shampoos enriquecidos antiqueda.
                   </p>
@@ -424,14 +424,14 @@ export default function OrbCarousel() {
                       transition={{ duration: 0.3, delay: index * 0.05 }}
                       onClick={() => setSelectedServiceId(srv.id)}
                       className={`group glass-card p-6 rounded-[24px] flex flex-col justify-between text-left transition-all duration-500 relative overflow-hidden cursor-pointer select-none shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_10px_rgba(0,0,0,0.3)] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_40px_rgba(0,0,0,0.5)] md:group-hover:shadow-[0_20px_45px_-12px_rgba(16,185,129,0.22)] ${
-                        isSelected 
-                          ? 'shadow-[0_0_15px_rgba(194,163,93,0.35)] ring-2 ring-[#c2a35d]' 
+                        isSelected
+                          ? 'shadow-[0_0_15px_rgba(43,79,184,0.4)] ring-2 ring-brand-blue'
                           : 'border border-white/10 hover:border-emerald-500/40'
                       }`}
                     >
-                      {/* Glowing Luxe Golden Contour when Selected */}
+                      {/* Contorno azul da marca quando selecionado */}
                       {isSelected && (
-                        <div className="absolute inset-0 rounded-[24px] pointer-events-none z-30 border-2 border-[#c2a35d] shadow-[0_0_25px_rgba(194,163,93,0.4),_inset_0_0_12px_rgba(194,163,93,0.2)]" />
+                        <div className="absolute inset-0 rounded-[24px] pointer-events-none z-30 border-2 border-brand-blue shadow-[0_0_25px_rgba(43,79,184,0.45),_inset_0_0_12px_rgba(43,79,184,0.22)]" />
                       )}
 
                       {/* Glass Specular Gloss Highlight Reflection top bar */}
@@ -477,7 +477,7 @@ export default function OrbCarousel() {
                         </div>
 
                         <h4 className={`font-display font-black text-base uppercase leading-tight transition-colors ${
-                          isSelected ? 'text-[#c2a35d]' : 'text-zinc-200 group-hover:text-emerald-300'
+                          isSelected ? 'text-brand-blue' : 'text-zinc-200 group-hover:text-emerald-300'
                         }`}>
                           {srv.name}
                         </h4>
@@ -500,9 +500,9 @@ export default function OrbCarousel() {
                             handleBookService(srv.id);
                           }}
                           className={`relative overflow-hidden font-display text-[10px] font-black uppercase tracking-wider py-3.5 px-5 rounded-xl transition-all flex items-center gap-2 cursor-pointer active:scale-95 group/srv-btn transform hover:scale-[1.03] ${
-                            isSelected 
-                              ? 'bg-amber-400 text-zinc-950 shadow-lg shadow-amber-400/20' 
-                              : 'bg-[#c2a35d] text-zinc-950 shadow-lg shadow-gold/15 hover:bg-white'
+                            isSelected
+                              ? 'bg-brand-blue-deep text-white shadow-lg shadow-brand-blue/25'
+                              : 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20 hover:bg-brand-blue-deep'
                           }`}
                         >
                           <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover/srv-btn:animate-shimmer" />
@@ -543,7 +543,7 @@ export default function OrbCarousel() {
                 <button
                   type="button"
                   onClick={() => setActiveCategory('menu')}
-                  className="shrink-0 font-mono text-[9px] uppercase tracking-widest text-[#c2a35d] hover:text-white py-3.5 px-6 border border-[#c2a35d]/15 rounded-xl hover:border-gold bg-zinc-950/70 transition-all flex items-center gap-2 cursor-pointer"
+                  className="shrink-0 font-mono text-[9px] uppercase tracking-widest text-brand-blue hover:text-white py-3.5 px-6 border border-brand-blue/20 rounded-xl hover:border-brand-blue bg-zinc-950/70 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   Voltar para as Orbes

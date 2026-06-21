@@ -203,8 +203,8 @@ export default function Header() {
         <header
           className={`w-full transition-all duration-350 ${
             scrolled 
-              ? 'bg-black/80 backdrop-blur-2xl py-3 border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
-              : 'bg-black/85 backdrop-blur-2xl py-5 border-b border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.25)]'
+              ? 'bg-black/60 backdrop-blur-2xl py-3 border-b border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
+              : 'bg-transparent py-5 border-b border-transparent'
           }`}
           id="app-header"
         >

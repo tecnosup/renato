@@ -29,7 +29,7 @@ const MARCOS: Marco[] = [
     titulo: 'Missão',
     icone: '/img/tesoura.png',
     conteudo: (
-      <p className="font-serif italic text-zinc-600 text-sm sm:text-base leading-relaxed font-light">
+      <p className="font-serif italic text-zinc-300 text-sm sm:text-base leading-relaxed font-light">
         Oferecer uma experiência de cuidado masculino que une tradição e
         modernidade, proporcionando estilo, bem-estar e confiança a cada cliente.
       </p>
@@ -41,7 +41,7 @@ const MARCOS: Marco[] = [
     titulo: 'Visão',
     icone: '/img/lampada.png',
     conteudo: (
-      <p className="font-serif italic text-zinc-600 text-sm sm:text-base leading-relaxed font-light">
+      <p className="font-serif italic text-zinc-300 text-sm sm:text-base leading-relaxed font-light">
         Ser referência em barbearia contemporânea, reconhecida pela excelência no
         atendimento, inovação nos serviços e valorização do estilo masculino em
         todas as gerações.
@@ -64,8 +64,8 @@ const MARCOS: Marco[] = [
         ].map(([titulo, desc]) => (
           <li key={titulo} className="flex gap-2.5 items-start">
             <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gradient-to-r from-brand-red to-brand-blue shrink-0" />
-            <span className="font-sans text-[13px] sm:text-sm text-zinc-700 leading-snug">
-              <strong className="font-semibold text-zinc-900">{titulo}:</strong> {desc}
+            <span className="font-sans text-[13px] sm:text-sm text-zinc-300 leading-snug">
+              <strong className="font-semibold text-white">{titulo}:</strong> {desc}
             </span>
           </li>
         ))}
@@ -86,11 +86,11 @@ export default function JornadaSobre() {
   return (
     <section
       id="sobre-nos"
-      className="relative isolate w-full overflow-hidden py-16 sm:py-24 px-4 md:px-8 scroll-mt-20 md:scroll-mt-24 bg-[linear-gradient(180deg,#f6f5f2_0%,#eef0f5_100%)]"
+      className="relative isolate w-full overflow-hidden py-16 sm:py-24 px-4 md:px-8 scroll-mt-20 md:scroll-mt-24 bg-[linear-gradient(180deg,#0a0a0c_0%,#070708_100%)]"
     >
       {/* Glows tricolor sutis */}
-      <div className="absolute top-[10%] right-[6%] w-80 h-80 bg-brand-blue/8 rounded-full blur-[120px] -z-10 pointer-events-none" />
-      <div className="absolute bottom-[12%] left-[4%] w-72 h-72 bg-brand-red/8 rounded-full blur-[110px] -z-10 pointer-events-none" />
+      <div className="absolute top-[10%] right-[6%] w-80 h-80 bg-brand-blue/12 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-[12%] left-[4%] w-72 h-72 bg-brand-red/12 rounded-full blur-[110px] -z-10 pointer-events-none" />
 
       {/* Cabeçalho */}
       <div className="max-w-3xl mx-auto text-center mb-14 sm:mb-20">
@@ -107,14 +107,14 @@ export default function JornadaSobre() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="font-display font-medium text-3xl sm:text-5xl text-zinc-900 tracking-tight"
+          className="font-display font-medium text-3xl sm:text-5xl text-zinc-50 tracking-tight"
         >
           Sobre a{' '}
           <span className="font-serif italic bg-gradient-to-r from-brand-red to-brand-blue bg-clip-text text-transparent">
             Século XXI
           </span>
         </motion.h2>
-        <p className="font-serif italic text-zinc-500 text-sm sm:text-base mt-4 font-light">
+        <p className="font-serif italic text-zinc-400 text-sm sm:text-base mt-4 font-light">
           Uma jornada de tradição, visão e propósito — passo a passo até a excelência.
         </p>
       </div>
@@ -140,7 +140,7 @@ export default function JornadaSobre() {
           {/* Trilha base (apagada) */}
           <path
             d="M20 0 C 36 160, 4 320, 20 500 S 36 840, 20 1000"
-            stroke="#d6d3cd"
+            stroke="#2a2a2e"
             strokeWidth="4"
             strokeLinecap="round"
             strokeDasharray="2 14"
@@ -193,7 +193,7 @@ export default function JornadaSobre() {
                     <span className="font-display font-bold text-2xl bg-gradient-to-r from-brand-red to-brand-blue bg-clip-text text-transparent">
                       {marco.numero}
                     </span>
-                    <h3 className="font-display font-semibold text-xl sm:text-2xl text-zinc-900 uppercase tracking-wide">
+                    <h3 className="font-display font-semibold text-xl sm:text-2xl text-zinc-50 uppercase tracking-wide">
                       {marco.titulo}
                     </h3>
                   </div>

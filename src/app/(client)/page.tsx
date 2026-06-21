@@ -97,11 +97,11 @@ export default function App() {
           className="absolute inset-0 -z-20 bg-cover bg-center"
           style={{ backgroundImage: "url('/img/fundohero.jpeg')" }}
         />
-        {/* Overlay claro para garantir contraste do texto escuro */}
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,0.68)_0%,rgba(244,244,242,0.6)_50%,rgba(233,235,242,0.7)_100%)]" />
+        {/* Overlay escuro (parede à noite) para contraste do texto claro */}
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_35%_30%,rgba(8,8,10,0.78)_0%,rgba(5,5,7,0.86)_55%,rgba(2,2,3,0.94)_100%)]" />
         {/* Glows tricolor suaves */}
-        <div className="absolute top-[8%] left-[8%] w-[420px] h-[420px] bg-brand-red/10 rounded-full blur-[130px] -z-10 pointer-events-none" />
-        <div className="absolute bottom-[6%] right-[6%] w-[460px] h-[460px] bg-brand-blue/10 rounded-full blur-[140px] -z-10 pointer-events-none" />
+        <div className="absolute top-[8%] left-[8%] w-[420px] h-[420px] bg-brand-red/15 rounded-full blur-[130px] -z-10 pointer-events-none" />
+        <div className="absolute bottom-[6%] right-[6%] w-[460px] h-[460px] bg-brand-blue/15 rounded-full blur-[140px] -z-10 pointer-events-none" />
 
         <div className="max-w-7xl w-full mx-auto grid grid-cols-12 gap-3 sm:gap-6 items-center">
 
@@ -125,7 +125,7 @@ export default function App() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="font-display font-medium text-lg sm:text-3xl xl:text-5xl text-zinc-900 tracking-tight leading-[1.05] mt-3 sm:mt-6 pb-2 sm:pb-3 border-b-2 border-dotted border-brand-red"
+              className="font-display font-medium text-lg sm:text-3xl xl:text-5xl text-zinc-50 tracking-tight leading-[1.05] mt-3 sm:mt-6 pb-2 sm:pb-3 border-b-2 border-dotted border-brand-red"
             >
               MAESTRIA EM <span className="font-serif italic font-semibold bg-gradient-to-r from-brand-red to-brand-blue bg-clip-text text-transparent">Cada Corte</span>
             </motion.h1>
@@ -135,7 +135,7 @@ export default function App() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="font-serif italic text-zinc-600 text-[11px] sm:text-base max-w-md mt-3 mb-5 sm:mt-5 sm:mb-8 leading-snug sm:leading-relaxed font-light"
+              className="font-serif italic text-zinc-300 text-[11px] sm:text-base max-w-md mt-3 mb-5 sm:mt-5 sm:mb-8 leading-snug sm:leading-relaxed font-light"
             >
               Uma experiência sob medida de autocuidado masculino com a tradicional navalha italiana e alta harmonização estética do visagismo.
             </motion.p>
@@ -168,15 +168,15 @@ export default function App() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="hidden sm:flex flex-wrap items-center justify-start gap-x-4 gap-y-1.5 font-mono text-[9px] text-zinc-500 font-semibold mt-7 select-none"
+              className="hidden sm:flex flex-wrap items-center justify-start gap-x-4 gap-y-1.5 font-mono text-[9px] text-zinc-400 font-semibold mt-7 select-none"
             >
               <span className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                 AGENDAMENTO EM 1 MINUTO
               </span>
-              <span className="hidden sm:inline-block text-zinc-300">•</span>
+              <span className="hidden sm:inline-block text-zinc-600">•</span>
               <span>PAGAMENTO APENAS NO SALÃO</span>
-              <span className="hidden sm:inline-block text-zinc-300">•</span>
+              <span className="hidden sm:inline-block text-zinc-600">•</span>
               <span className="text-brand-red font-bold">POUCAS VAGAS HOJE</span>
             </motion.div>
           </div>
