@@ -53,7 +53,7 @@ export default function LocationMap() {
             SÉCULO XXI • LOCALIZAÇÃO
           </span>
           <h2 className="text-3xl md:text-5xl uppercase tracking-wide">
-            <span className="font-toon text-logo-3d" data-text="Visite o Nosso Templo">Visite o Nosso Templo</span>
+            <span className="font-toon text-logo-3d" data-text="Venha nos Visitar">Venha nos Visitar</span>
           </h2>
         </motion.div>
 
@@ -107,7 +107,7 @@ export default function LocationMap() {
           >
             {/* Header do painel HUD */}
             <div className="bg-[#c8ccd4] px-5 py-2.5 flex items-center justify-between border-b-2 border-[#f0ebe4]">
-              <span className="font-mono text-[10px] text-black uppercase tracking-[0.2em] font-black">// FICHA DA UNIDADE</span>
+              <span className="font-mono text-[10px] text-black uppercase tracking-[0.2em] font-black">NOSSO ENDEREÇO</span>
               <span className="w-2.5 h-2.5 rounded-full bg-black/70" />
             </div>
 

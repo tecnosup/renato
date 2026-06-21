@@ -479,11 +479,13 @@ body {
     position: absolute;
     inset: 0;
     z-index: -2;
-    background-image: url("/img/fundohero.webp");
+    /* Versão já pré-processada (cinza + contraste) — evita aplicar
+       filter: grayscale()/contrast() em runtime numa camada cover de tela
+       inteira, que causava repaints pesados no iOS durante o scroll. */
+    background-image: url("/img/fundohero-tijolo.webp");
     background-size: cover;
     background-position: center;
     opacity: 0.2;
-    filter: grayscale(1) contrast(1.2);
   }
   .bg-tijolo::after {
     content: "";
@@ -505,9 +507,65 @@ body {
   }
 }
 
+/* ===== Reveal "in" (CSS puro) =====
+   Anima fade + slide ao entrar na viewport. O JS (componente Reveal) só
+   adiciona .is-visible via um IntersectionObserver compartilhado — nada roda
+   por frame. Apenas opacity/transform (GPU) e will-change só enquanto oculto. */
+.reveal {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal[data-reveal="up"] {
+  transform: translate3d(0, 24px, 0);
+}
+.reveal[data-reveal="down"] {
+  transform: translate3d(0, -24px, 0);
+}
+.reveal[data-reveal="left"] {
+  transform: translate3d(-28px, 0, 0);
+}
+.reveal[data-reveal="right"] {
+  transform: translate3d(28px, 0, 0);
+}
+.reveal[data-reveal="fade"] {
+  transform: none;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
+}
+/* Acessibilidade: quem pede menos movimento vê tudo de cara, sem slide. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
 /* Custom smooth scroll */
 html {
   scroll-behavior: smooth;
+}
+
+/* Respeita "reduzir movimento" do sistema (iOS: Ajustes > Acessibilidade).
+   Mata os loops infinitos (spins das orbes, marquees, floats, pulses) que,
+   mesmo fora da viewport, mantêm o compositor ativo e drenam bateria/CPU
+   no celular. Cobre as animações utilitárias arbitrárias do Tailwind
+   (animate-[spin_30s...], animate-[marquee...]) que não tinham guarda. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Trava scroll horizontal em qualquer tela */

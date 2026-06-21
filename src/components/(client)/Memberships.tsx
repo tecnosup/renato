@@ -35,18 +35,18 @@ export default function Memberships() {
   const plans: Plan[] = [
     {
       id: "silver-club",
-      name: "Club Executive",
+      name: "Plano Executivo",
       price: 140,
       period: "mês",
       tier: "Silver",
       popular: false,
-      tagline: "Para profissionais que mantêm seu visual quinzenalmente.",
+      tagline: "Para quem corta o cabelo a cada 15 dias.",
       benefits: [
-        "2 Cortes de Assinatura por mês",
-        "Lavagem capilar com massagem relaxante",
-        "Atendimento com barbeiro à escolha",
-        "Finalização premium com pomadas importadas",
-        "Cancelamento flexível sem multas"
+        "2 cortes por mês",
+        "Lavagem de cabelo com massagem relaxante",
+        "Atendimento com o barbeiro que você escolher",
+        "Finalização com pomadas de qualidade",
+        "Pode cancelar quando quiser, sem multa"
       ],
       gradient: "from-zinc-950/98 via-zinc-900 to-zinc-950/98",
       borderColor: "border-zinc-800",
@@ -55,19 +55,19 @@ export default function Memberships() {
     },
     {
       id: "gold-club",
-      name: "Club Royal",
+      name: "Plano Ouro",
       price: 240,
       period: "mês",
       tier: "Gold",
       popular: true,
-      tagline: "Nosso clube mais requisitado com assinatura de impacto.",
+      tagline: "O nosso plano mais procurado.",
       benefits: [
-        "Cortes de cabelo ILIMITADOS",
-        "1 Serviço completo de barba premium/mês",
-        "Lavagem profunda detox em cada visita",
-        "10% de desconto em cosméticos",
-        "Fila Expressa (Acesso prioritário)",
-        "Atendimento com Especialista"
+        "Cortes de cabelo SEM LIMITE",
+        "1 barba completa por mês",
+        "Lavagem caprichada em toda visita",
+        "10% de desconto nos produtos",
+        "Atendimento mais rápido, sem fila",
+        "Atendimento com barbeiro especialista"
       ],
       gradient: "from-[#0d0d0a] via-zinc-950 to-[#0d0d0a]",
       borderColor: "border-[#c8ccd4]/20",
@@ -76,19 +76,19 @@ export default function Memberships() {
     },
     {
       id: "dark-club",
-      name: "Club Legend",
+      name: "Plano Lendário",
       price: 360,
       period: "mês",
       tier: "Black",
       popular: false,
-      tagline: "Para cavalheiros que demandam excelência impecável sem limites.",
+      tagline: "Para quem quer o melhor, sem limites.",
       benefits: [
-        "CORTES E BARBARIA ILIMITADOS",
-        "Espuma quente e massagem facial",
-        "Frigobar de cervejas artesanais líbero",
-        "Atendimento exclusivo prioritário",
-        "1 Kit Anual de cuidados capilares",
-        "Hidratação capilar antiestresse inclusa"
+        "CORTES E BARBA SEM LIMITE",
+        "Espuma quente e massagem no rosto",
+        "Cervejas artesanais à vontade",
+        "Atendimento exclusivo e prioritário",
+        "1 kit de produtos para cabelo por ano",
+        "Hidratação de cabelo relaxante inclusa"
       ],
       gradient: "from-[#08090a]/95 via-zinc-950 to-[#08090a]/95",
       borderColor: "border-zinc-900",
@@ -196,7 +196,7 @@ export default function Memberships() {
         {/* Subtle instructions for carousel interaction - placed statically with safe spacing */}
         <div className="font-mono text-[8.5px] text-zinc-500 uppercase tracking-widest flex items-center justify-center gap-1.5 mb-6 md:mb-8 select-none pointer-events-none">
           <Sparkles className="w-3 h-3 text-brand-blue/70 animate-pulse" />
-          <span>Arraste ou clique nas laterais para orbitar as assinaturas</span>
+          <span>Arraste para os lados ou clique para ver cada plano</span>
         </div>
 
         {/* Outer 3D Carousel Stage - set to overflow-visible to prevent card cropping */}
@@ -325,7 +325,7 @@ export default function Memberships() {
                         {/* Header Row */}
                         <div className="flex justify-between items-center gap-2">
                           <span className={`font-mono text-[7px] sm:text-[8px] font-bold px-2 py-0.5 rounded-full border uppercase ${plan.badgeBg}`}>
-                            Tier {plan.tier}
+                            Nível {plan.tier === 'Silver' ? 'Prata' : plan.tier === 'Gold' ? 'Ouro' : 'Preto'}
                           </span>
                           {matchesSelection ? (
                             <span className="font-mono text-[7px] sm:text-[8px] bg-gradient-to-r from-amber-500 to-[#c8ccd4] text-zinc-950 px-2 py-0.5 font-bold uppercase tracking-wider flex items-center gap-1 rounded shadow-sm">
@@ -339,7 +339,7 @@ export default function Memberships() {
                             </span>
                           ) : (
                             <span className="font-mono text-[6.5px] text-zinc-500 px-1 py-0.5 uppercase border border-zinc-800 rounded flex items-center gap-0.5">
-                              <Eye className="w-2 h-2" /> Orbitar
+                              <Eye className="w-2 h-2" /> Ver
                             </span>
                           )}
                         </div>
@@ -393,20 +393,20 @@ export default function Memberships() {
                             handleSubscribe(plan.name, e);
                           }}
                           className="relative overflow-hidden w-full py-3 sm:py-3.5 btn-game btn-game-sm text-xs sm:text-sm uppercase rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 transform active:scale-[0.98] hover:scale-[1.02] border-2 border-black/55 group/btn-subs bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] hover:brightness-110 shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
-                          aria-label={matchesSelection ? `Inscrever-se no ${plan.name}` : `Orbitar ${plan.name}`}
+                          aria-label={matchesSelection ? `Assinar o ${plan.name}` : `Ver o ${plan.name}`}
                         >
                           <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full group-hover/club:animate-shimmer" />
                           {matchesSelection ? (
                             plan.popular ? (
                               <>
                                 <Crown className="w-3 h-3 fill-current" />
-                                Assinar Club Royal
+                                Assinar o Plano Ouro
                               </>
                             ) : (
-                              `Entrar para o ${plan.name}`
+                              `Assinar o ${plan.name}`
                             )
                           ) : (
-                            `Orbitar ${plan.name}`
+                            `Ver o ${plan.name}`
                           )}
                         </button>
                       </div>
@@ -467,11 +467,11 @@ export default function Memberships() {
             <div className="w-5 h-5 rounded-full bg-brand-blue/10 border border-brand-blue/25 flex items-center justify-center text-brand-blue shrink-0">
               <Shield className="w-3 h-3" />
             </div>
-            <span>Cobrança recorrente segura processada via Stripe. Cancele online quando quiser sem taxas adicionais.</span>
+            <span>Pagamento mensal seguro. Você pode cancelar quando quiser, sem taxas extras.</span>
           </div>
           <div className="flex items-center gap-1 text-emerald-400 font-mono text-[9px] font-bold shrink-0">
             <Gift className="w-3 h-3 mr-0.5" />
-            <span>BRINDE EXCLUSIVO DISPONÍVEL ESTE MÊS</span>
+            <span>BRINDE ESPECIAL ESTE MÊS</span>
           </div>
         </motion.div>
 

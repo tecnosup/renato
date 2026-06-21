@@ -5,7 +5,7 @@ import { Flame, Scissors, Wind, ChevronLeft, ChevronRight, ImageIcon } from 'luc
 
 type HairType = 'liso' | 'afro';
 const HAIR_ORDER: HairType[] = ['liso', 'afro'];
-const HAIR_LABEL: Record<HairType, string> = { liso: 'Liso', afro: 'Afro' };
+const HAIR_LABEL: Record<HairType, string> = { liso: 'Liso', afro: 'Crespo' };
 
 interface TrendingCut {
   id: string;
@@ -147,26 +147,26 @@ export default function ShowcaseBanner() {
     {
       id: "americano",
       name: "Americano",
-      type: "Taper Fade",
+      type: "Degradê nas laterais",
       images: {
-        liso: "/cortes/americano-liso.png",
-        afro: "/cortes/americano-afro.png",
+        liso: "/cortes/americano-liso.webp",
+        afro: "/cortes/americano-afro.webp",
       },
       popularity: "95%",
-      styling: "Pó Texturizador + Pomada Matte",
-      description: "Topo texturizado curto com degradê limpo nas laterais e nuca. O queridinho versátil — cai bem em qualquer rosto."
+      styling: "Acabamento com pomada sem brilho",
+      description: "Cabelo mais curto no topo e degradê limpo nas laterais e na nuca. Combina com qualquer tipo de rosto."
     },
     {
       id: "midfade",
-      name: "Mid Fade com Volume",
-      type: "Degradê Médio",
+      name: "Degradê com Volume",
+      type: "Volume no topo",
       images: {
-        liso: "/cortes/midfade-liso.png",
-        afro: "/cortes/midfade-afro.png",
+        liso: "/cortes/midfade-liso.webp",
+        afro: "/cortes/midfade-afro.webp",
       },
       popularity: "92%",
-      styling: "Pomada Modeladora + Secador",
-      description: "Volume jogado para cima com transição na altura da orelha. Moderno, imponente e fácil de manter no dia a dia."
+      styling: "Acabamento com pomada e secador",
+      description: "Volume jogado para cima e degradê na altura da orelha. Moderno e fácil de manter no dia a dia."
     }
   ];
 
@@ -214,13 +214,13 @@ export default function ShowcaseBanner() {
           className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 text-left"
         >
           <div className="space-y-2">
-            <span className="font-sans text-[8px] text-[#c8ccd4] tracking-[0.25em] uppercase flex items-center gap-2 font-bold select-none">SÉCULO XXI • GALERIA VISUAL</span>
+            <span className="font-sans text-[8px] text-[#c8ccd4] tracking-[0.25em] uppercase flex items-center gap-2 font-bold select-none">SÉCULO XXI • NOSSOS CORTES</span>
             <h2 className="text-3xl md:text-5xl uppercase tracking-wide">
-              <span className="font-toon text-logo-3d" data-text="Estilo & Harmonia Visual">Estilo &amp; Harmonia Visual</span>
+              <span className="font-toon text-logo-3d" data-text="Nossos Cortes">Nossos Cortes</span>
             </h2>
           </div>
           <p className="font-serif italic text-zinc-400 text-sm md:text-base max-w-sm font-light leading-relaxed">
-            Retratos de atitude e excelência técnica esculpidos no templo da <strong>Século XXI</strong>. Visuais que ditam as tendências e representam sofisticação em Cruzeiro.
+            Veja alguns dos cortes feitos na <strong>Século XXI</strong>. Trabalho caprichado, do clássico ao moderno, aqui em Cruzeiro.
           </p>
         </motion.div>
       </div>
@@ -237,7 +237,7 @@ export default function ShowcaseBanner() {
             <div key={i} className="h-[200px] md:h-[260px] aspect-[4/3] overflow-hidden relative border border-[#c8ccd4]/15 rounded-xl flex-shrink-0 bg-gradient-to-br from-[#15151a] to-[#0c0c0f] flex items-center justify-center">
               <ImageIcon className="w-9 h-9 text-[#c8ccd4]/25" strokeWidth={1.5} />
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
-                <span className="font-mono text-[9px] text-[#c8ccd4]/45 uppercase">CENA_{i + 1}</span>
+                <span className="font-mono text-[9px] text-[#c8ccd4]/45 uppercase">Foto em breve</span>
               </div>
             </div>
           ))}
@@ -252,7 +252,7 @@ export default function ShowcaseBanner() {
             <div key={i} className="h-[140px] md:h-[180px] aspect-[4/3] overflow-hidden relative border border-[#c8ccd4]/15 rounded-xl flex-shrink-0 bg-gradient-to-br from-[#15151a] to-[#0c0c0f] flex items-center justify-center">
               <ImageIcon className="w-7 h-7 text-[#c8ccd4]/25" strokeWidth={1.5} />
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
-                <span className="font-mono text-[9px] text-[#c8ccd4]/45 uppercase">DECOR_{i + 1}</span>
+                <span className="font-mono text-[9px] text-[#c8ccd4]/45 uppercase">Foto em breve</span>
               </div>
             </div>
           ))}
@@ -265,9 +265,9 @@ export default function ShowcaseBanner() {
         {/* Carousel title indicator */}
         <div className="flex items-center gap-3 mb-12 select-none">
           <Flame className="w-5 h-5 text-[#c8ccd4] animate-bounce" />
-          <span className="font-mono text-[10px] text-white uppercase tracking-[0.3em] font-extrabold whitespace-nowrap">CORTES EM ALTA</span>
+          <span className="font-mono text-[10px] text-white uppercase tracking-[0.3em] font-extrabold whitespace-nowrap">CORTES MAIS PEDIDOS</span>
           <div className="h-[1.5px] bg-[#c8ccd4]/15 flex-1" />
-          <span className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold hidden md:block whitespace-nowrap">Arraste ou use as setas • Liso / Afro</span>
+          <span className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold hidden md:block whitespace-nowrap">Use as setas para ver • Cabelo liso ou crespo</span>
         </div>
 
         {/* Vitrine: cabeças flutuantes sem moldura, carrossel liso/afro por corte */}
@@ -310,7 +310,7 @@ export default function ShowcaseBanner() {
             href="#reservar"
             className="inline-flex items-center gap-2 font-display text-[11px] font-bold tracking-widest text-[#c8ccd4] hover:text-white border-b border-dashed border-[#c8ccd4]/25 hover:border-white py-2 uppercase transition-all"
           >
-            quero agendar um destes modelos
+quero agendar um corte destes
             <Scissors className="w-3.5 h-3.5" />
           </a>
         </div>

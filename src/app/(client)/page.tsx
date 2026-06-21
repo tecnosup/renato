@@ -5,9 +5,11 @@
  */
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Scissors, Sparkle, ArrowDown, MapPin, Phone, ShieldCheck, Mail, ArrowUpRight, Award, Camera, Video, MessageCircle, Share2 } from 'lucide-react';
 import Header from '@/components/(client)/Header';
+import Reveal from '@/components/(client)/Reveal';
 import ThreeDText from '@/components/(client)/ThreeDText';
 import JornadaSobre from '@/components/(client)/JornadaSobre';
 import BookingForm from '@/components/(client)/BookingForm';
@@ -101,16 +103,22 @@ export default function App() {
           <div className="col-span-7 flex flex-col items-start text-left">
 
             {/* Logo */}
-            <motion.img
+            <motion.div
               initial={{ opacity: 0, scale: 0.92, y: 12 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-              src="/img/logo.webp"
-              alt="Barbearia Século XXI"
-              className="w-full max-w-[280px] sm:max-w-[440px] lg:max-w-[520px] h-auto object-contain select-none drop-shadow-[0_16px_40px_rgba(0,0,0,0.18)]"
-              loading="eager"
-              decoding="async"
-            />
+              className="w-full max-w-[280px] sm:max-w-[440px] lg:max-w-[520px] select-none"
+            >
+              <Image
+                src="/img/logo.webp"
+                alt="Barbearia Século XXI"
+                width={1200}
+                height={427}
+                priority
+                sizes="(max-width: 640px) 280px, (max-width: 1024px) 440px, 520px"
+                className="w-full h-auto object-contain drop-shadow-[0_16px_40px_rgba(0,0,0,0.18)]"
+              />
+            </motion.div>
 
             {/* Headline com underline pontilhado vermelho */}
             <motion.h1
@@ -129,7 +137,7 @@ export default function App() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="font-serif italic text-zinc-300 text-[11px] sm:text-base max-w-md mt-3 mb-5 sm:mt-5 sm:mb-8 leading-snug sm:leading-relaxed font-light"
             >
-              Uma experiência sob medida de autocuidado masculino com a tradicional navalha italiana e alta harmonização estética do visagismo.
+              Corte e barba feitos com capricho e a barba na navalha, do jeito tradicional. Um visual que combina com você.
             </motion.p>
 
             {/* Dois botões empilhados — gradientes invertidos */}
@@ -187,12 +195,14 @@ export default function App() {
                 className="absolute bottom-1 w-[55%] h-4 sm:h-5 bg-black/40 rounded-[100%] blur-md"
               />
               {/* Personagem (sem animação) */}
-              <img
+              <Image
                 src="/img/personagemrenato.webp"
                 alt="Renato — Barbearia Século XXI"
+                width={180}
+                height={464}
+                priority
+                sizes="(max-width: 640px) 40vw, (max-width: 1024px) 30vw, 25vw"
                 className="relative z-10 w-full h-auto max-h-[42vh] sm:max-h-[56vh] lg:max-h-[72vh] object-contain drop-shadow-[0_24px_40px_rgba(0,0,0,0.35)]"
-                loading="eager"
-                decoding="async"
               />
             </motion.div>
           </div>
@@ -222,7 +232,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-start text-left">
           
           {/* Brand Column */}
-          <div className="md:col-span-4 space-y-4">
+          <Reveal as="div" className="md:col-span-4 space-y-4">
             <div className="flex items-center gap-2 select-none">
               <div className="w-8 h-8 bg-[#c8ccd4] text-black rounded-full flex items-center justify-center font-display font-medium shadow-md shadow-[#c8ccd4]/5">
                 <Scissors className="w-3.5 h-3.5" />
@@ -231,7 +241,7 @@ export default function App() {
             </div>
             
             <p className="font-sans text-xs text-zinc-550 leading-relaxed font-normal max-w-sm">
-              Visagismo avançado, rituais térmicos aromatizados com óleos essenciais de eucalipto e atendimento estético redesenhados sob a ótica da alta-costura contemporânea masculina.
+              Corte, barba e cuidados masculinos com capricho e atendimento de primeira. Tradição e estilo moderno em Cruzeiro.
             </p>
  
             <div className="flex gap-3 pt-2" id="social-networks-block">
@@ -284,24 +294,24 @@ export default function App() {
             <p className="font-sans text-[9px] text-[#c8ccd4]/40 select-none pt-4 tracking-wider uppercase font-bold">
               © SÉCULO XXI ESTÉTICA S/A. TODOS OS DIREITOS RESERVADOS.
             </p>
-          </div>
+          </Reveal>
 
           {/* Quick Access Links */}
-          <div className="md:col-span-2 space-y-3 font-display text-xs">
-            <h4 className="font-mono text-[9px] text-[#c8ccd4]/60 block uppercase tracking-widest font-bold">[LINKS_ACESSO]</h4>
+          <Reveal as="div" delay={80} className="md:col-span-2 space-y-3 font-display text-xs">
+            <h4 className="font-mono text-[9px] text-[#c8ccd4]/60 block uppercase tracking-widest font-bold">LINKS</h4>
             <ul className="space-y-2 font-medium text-zinc-400">
               <li><a href="#hero-section" className="hover:text-[#c8ccd4] transition-colors">Início</a></li>
-              <li><a href="#sobre-nos" className="hover:text-[#c8ccd4] transition-colors">Sobre Nós & Manifesto</a></li>
+              <li><a href="#sobre-nos" className="hover:text-[#c8ccd4] transition-colors">Sobre Nós</a></li>
               <li><a href="#servicos" className="hover:text-[#c8ccd4] transition-colors">Serviços & Produtos</a></li>
-              <li><a href="#assinaturas" className="hover:text-[#c8ccd4] transition-colors">Assinaturas VIP</a></li>
-              <li><a href="#portfolio" className="hover:text-[#c8ccd4] transition-colors">Aesthetics & Cortes</a></li>
+              <li><a href="#assinaturas" className="hover:text-[#c8ccd4] transition-colors">Assinaturas</a></li>
+              <li><a href="#portfolio" className="hover:text-[#c8ccd4] transition-colors">Nossos Cortes</a></li>
               <li><a href="#localizacao" className="hover:text-[#c8ccd4] transition-colors">Como Chegar</a></li>
             </ul>
-          </div>
+          </Reveal>
 
           {/* Location details */}
-          <div className="md:col-span-3 space-y-3 font-mono text-[10px] text-zinc-400">
-            <h4 className="text-[9px] text-[#c8ccd4]/60 block uppercase tracking-widest font-bold">[O_SALÃO_SÃO_PAULO]</h4>
+          <Reveal as="div" delay={160} className="md:col-span-3 space-y-3 font-mono text-[10px] text-zinc-400">
+            <h4 className="text-[9px] text-[#c8ccd4]/60 block uppercase tracking-widest font-bold">O SALÃO</h4>
             <div className="flex gap-2 items-start text-[11px] leading-relaxed">
               <MapPin className="w-4 h-4 text-[#c8ccd4] shrink-0 mt-0.5" />
               <div>
@@ -314,11 +324,11 @@ export default function App() {
               <Phone className="w-4 h-4 text-[#c8ccd4] shrink-0" />
               <a href="tel:+5512996555081" className="text-white font-sans font-medium hover:underline">+55 (12) 99655-5081</a>
             </div>
-          </div>
+          </Reveal>
 
           {/* Operating hours */}
-          <div className="md:col-span-3 space-y-3 font-mono text-[10px] text-zinc-400">
-            <h4 className="text-[9px] text-[#c8ccd4]/60 block uppercase tracking-widest font-bold">[CRONOMETRAGEM]</h4>
+          <Reveal as="div" delay={240} className="md:col-span-3 space-y-3 font-mono text-[10px] text-zinc-400">
+            <h4 className="text-[9px] text-[#c8ccd4]/60 block uppercase tracking-widest font-bold">HORÁRIOS</h4>
             <div className="space-y-1">
               <div className="flex justify-between border-b border-[#c8ccd4]/5 pb-1">
                 <span>Segunda a Sábado</span>
@@ -338,13 +348,13 @@ export default function App() {
                 Voltar ao topo ↑
               </a>
             </div>
-          </div>
+          </Reveal>
 
         </div>
-        
+
         {/* Bottom grid specs indicator row */}
         <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-zinc-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-zinc-650 font-sans text-[8px] select-none uppercase tracking-wider">
-          <span>ATENDIMENTO PRIVADO EXCLUSIVAMENTE SOB AGENDAMENTO PRÉVIO VIA PLATAFORMA</span>
+          <span>ATENDIMENTO COM HORA MARCADA</span>
           <span className="bg-black px-3 py-1.5 text-[#c8ccd4]/60 border border-zinc-850 font-bold rounded">SÉCULO XXI • CRUZEIRO/SP</span>
         </div>
       </footer>

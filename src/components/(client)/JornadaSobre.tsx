@@ -301,7 +301,7 @@ export default function JornadaSobre() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                className="group relative flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm p-5 sm:p-6 transition-all duration-400 hover:border-brand-blue/40 hover:bg-white/[0.05] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+                className="group relative flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.03] md:backdrop-blur-sm p-5 sm:p-6 transition-all duration-400 hover:border-brand-blue/40 hover:bg-white/[0.05] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
               >
                 {/* Badge do ícone (trocar por <img src={item.foto}/> quando houver foto) */}
                 <div className="shrink-0 grid place-items-center w-12 h-12 rounded-xl bg-gradient-to-br from-brand-red/15 to-brand-blue/15 border border-white/10 text-zinc-100 group-hover:from-brand-red/25 group-hover:to-brand-blue/25 transition-all duration-400">

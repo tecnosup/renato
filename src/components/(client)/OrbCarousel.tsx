@@ -253,7 +253,7 @@ export default function OrbCarousel() {
             <span className="font-toon text-logo-3d" data-text="SERVIÇOS & PRODUTOS">SERVIÇOS & PRODUTOS</span>
           </h2>
           <p className="font-serif italic text-zinc-400 text-xs md:text-base max-w-xl text-center leading-relaxed">
-            Selecione uma categoria abaixo ou clique nas orbes interativas para explorar as nossas opções premium e agendar seu atendimento.
+            Escolha uma opção abaixo ou toque nos círculos para ver nossos serviços e produtos e agendar seu horário.
           </p>
         </div>
 
@@ -267,7 +267,7 @@ export default function OrbCarousel() {
                 : 'bg-[#0e0e11] text-zinc-300 border-[#f0ebe4]/40 hover:border-[#f0ebe4] hover:text-white shadow-[0_3px_0_rgba(0,0,0,0.7)]'
             }`}
           >
-            Início / Categorias
+            Início
           </button>
           <button
             onClick={() => setActiveCategory('services')}
@@ -277,7 +277,7 @@ export default function OrbCarousel() {
                 : 'bg-[#0e0e11] text-zinc-300 border-[#f0ebe4]/40 hover:border-[#f0ebe4] hover:text-white shadow-[0_3px_0_rgba(0,0,0,0.7)]'
             }`}
           >
-            Serviços Exclusivos
+            Serviços
           </button>
           <button
             onClick={() => setActiveCategory('products')}
@@ -315,7 +315,7 @@ export default function OrbCarousel() {
                 <div className="mt-5 max-w-xs px-2 select-none">
                   <h3 className="font-display font-bold text-[#e1e1e1] uppercase text-xs tracking-wider mb-1 group-hover:text-brand-blue">Corte &amp; Barba</h3>
                   <p className="font-sans text-[11px] text-zinc-500 leading-normal">
-                    Serviços completos de cabelo, barba clássica com toalhas aquecidas e designs modernos.
+                    Corte de cabelo, barba com toalha quente e estilos modernos.
                   </p>
                 </div>
               </div>
@@ -332,7 +332,7 @@ export default function OrbCarousel() {
                 <div className="mt-5 max-w-xs px-2 select-none">
                   <h3 className="font-display font-bold text-[#e1e1e1] uppercase text-xs tracking-wider mb-1 group-hover:text-brand-blue">Produtos</h3>
                   <p className="font-sans text-[11px] text-zinc-500 leading-normal">
-                    Insumos biológicos, pomadas veganas ricas em ceras de abelha e shampoos enriquecidos antiqueda.
+                    Pomadas, shampoos e produtos de qualidade para cuidar do cabelo e da barba em casa.
                   </p>
                 </div>
               </div>
@@ -356,9 +356,9 @@ export default function OrbCarousel() {
                 <div className="flex items-center gap-4 text-center sm:text-left flex-col sm:flex-row">
                   <CategoryOrb variant="services" icon={<Compass className="w-5 h-5 animate-spin-slow" />} />
                   <div>
-                    <span className="font-mono text-[8.5px] text-sky-300/80 tracking-widest uppercase font-black block leading-none mb-1.5">VOCÊ ENTROU EM</span>
-                    <h3 className="font-display font-light text-xl text-white uppercase tracking-wider">SERVIÇOS EXCLUSIVOS</h3>
-                    <p className="font-sans text-[10.5px] text-zinc-500 mt-0.5">Nossa linha completa de cabelo, barba e tratamentos</p>
+                    <span className="font-mono text-[8.5px] text-sky-300/80 tracking-widest uppercase font-black block leading-none mb-1.5">VOCÊ ESTÁ VENDO</span>
+                    <h3 className="font-display font-light text-xl text-white uppercase tracking-wider">SERVIÇOS</h3>
+                    <p className="font-sans text-[10.5px] text-zinc-500 mt-0.5">Cortes de cabelo, barba e tratamentos</p>
                   </div>
                 </div>
 
@@ -368,7 +368,7 @@ export default function OrbCarousel() {
                   className="shrink-0 font-sans text-[9px] uppercase tracking-widest font-bold text-slate-300 hover:text-white py-3.5 px-6 border border-white/10 rounded-xl hover:border-white/30 bg-white/5 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  Voltar para as Orbes
+                  Voltar
                 </button>
               </div>
 
@@ -489,7 +489,7 @@ export default function OrbCarousel() {
 
                       <div className="border-t border-zinc-850 pt-5 mt-5 flex justify-between items-center relative z-10">
                         <div>
-                          <span className="font-mono text-[8px] text-zinc-500 uppercase block">INVESTIMENTO</span>
+                          <span className="font-mono text-[8px] text-zinc-500 uppercase block">PREÇO</span>
                           <span className="font-display font-bold text-lg text-sky-400">R$ {srv.price},00</span>
                         </div>
 
@@ -534,9 +534,9 @@ export default function OrbCarousel() {
                 <div className="flex items-center gap-4 text-center sm:text-left flex-col sm:flex-row">
                   <CategoryOrb variant="products" icon={<ShoppingBag className="w-5 h-5" />} />
                   <div>
-                    <span className="font-mono text-[8.5px] text-blue-300/80 tracking-widest uppercase font-black block leading-none mb-1.5">VOCÊ ENTROU EM</span>
+                    <span className="font-mono text-[8.5px] text-blue-300/80 tracking-widest uppercase font-black block leading-none mb-1.5">VOCÊ ESTÁ VENDO</span>
                     <h3 className="font-display font-light text-xl text-white uppercase tracking-wider">PRODUTOS</h3>
-                    <p className="font-sans text-[10.5px] text-zinc-500 mt-0.5">Linha selecionada de alta performance para cabelo, barba e barba-terapia</p>
+                    <p className="font-sans text-[10.5px] text-zinc-500 mt-0.5">Produtos de qualidade para cabelo e barba</p>
                   </div>
                 </div>
 
@@ -546,7 +546,7 @@ export default function OrbCarousel() {
                   className="shrink-0 font-mono text-[9px] uppercase tracking-widest text-brand-blue hover:text-white py-3.5 px-6 border border-brand-blue/20 rounded-xl hover:border-brand-blue bg-zinc-950/70 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  Voltar para as Orbes
+                  Voltar
                 </button>
               </div>
 
@@ -651,7 +651,7 @@ export default function OrbCarousel() {
                       >
                         <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover/prod-btn:animate-shimmer" />
                         <ShoppingBag className="w-3.5 h-3.5" />
-                        Reservar Item
+Reservar
                       </button>
                     </div>
                   </motion.div>
@@ -676,7 +676,7 @@ export default function OrbCarousel() {
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <div className="flex-1 leading-tight select-none">
-                <h5 className="font-display font-black text-xs uppercase text-zinc-900 tracking-wide">RESERVADO COM SUCESSO!</h5>
+                <h5 className="font-display font-black text-xs uppercase text-zinc-900 tracking-wide">PRODUTO RESERVADO!</h5>
                 <p className="font-sans text-[10.5px] text-zinc-650 font-normal leading-normal mt-1">
                   O item <strong>{reservationSuccess}</strong> foi separado e reservado exclusivamente para você retirar no salão em Cruzeiro.
                 </p>
