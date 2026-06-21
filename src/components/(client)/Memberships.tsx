@@ -168,7 +168,7 @@ export default function Memberships() {
       id="assinaturas"
     >
       {/* Background Graphic elements matching luxury look */}
-      <div className="glow-decor absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-gold/5 blur-[160px] rounded-full pointer-events-none" />
+      <div className="glow-decor absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-brand-blue/8 blur-[160px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center">
         
@@ -181,11 +181,11 @@ export default function Memberships() {
           className="text-left mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4 w-full"
         >
           <div className="space-y-1 sm:space-y-2">
-            <div className="font-sans text-[8px] sm:text-[9px] text-[#c2a35d] tracking-[0.25em] uppercase flex items-center gap-2 font-bold select-none">
+            <div className="font-sans text-[8px] sm:text-[9px] text-brand-blue tracking-[0.25em] uppercase flex items-center gap-2 font-bold select-none">
               SÉCULO XXI • CLUBE PRIVADO
             </div>
             <h2 className="font-display font-light text-2xl sm:text-3xl md:text-5xl text-[#faf9f6] tracking-[0.05em] leading-tight uppercase">
-              CLUBE DE <span className="text-[#c2a35d] font-serif italic">ASSINATURAS</span>
+              CLUBE DE <span className="font-serif italic bg-gradient-to-r from-brand-red to-brand-blue bg-clip-text text-transparent">ASSINATURAS</span>
             </h2>
           </div>
           <p className="font-serif italic text-zinc-400 text-xs sm:text-sm md:text-base max-w-md text-left md:text-right leading-relaxed">
@@ -195,7 +195,7 @@ export default function Memberships() {
 
         {/* Subtle instructions for carousel interaction - placed statically with safe spacing */}
         <div className="font-mono text-[8.5px] text-zinc-500 uppercase tracking-widest flex items-center justify-center gap-1.5 mb-6 md:mb-8 select-none pointer-events-none">
-          <Sparkles className="w-3 h-3 text-gold/60 animate-pulse" />
+          <Sparkles className="w-3 h-3 text-brand-blue/70 animate-pulse" />
           <span>Arraste ou clique nas laterais para orbitar as assinaturas</span>
         </div>
 
@@ -392,13 +392,7 @@ export default function Memberships() {
                             }
                             handleSubscribe(plan.name, e);
                           }}
-                          className={`relative overflow-hidden w-full py-2 sm:py-2.5 text-[8.5px] sm:text-[9.5px] font-display font-bold uppercase tracking-widest rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 transform active:scale-[0.98] group/btn-subs ${
-                            plan.popular
-                              ? 'bg-[#c2a35d] text-zinc-950 hover:bg-white hover:shadow-lg shadow-sm shadow-gold/5'
-                              : plan.tier === 'Black'
-                                ? 'bg-transparent text-white border border-purple-500/20 hover:border-purple-500 hover:text-purple-300 hover:bg-purple-950/10'
-                                : 'bg-transparent text-white border border-zinc-800 hover:border-slate-450 hover:text-slate-300 hover:bg-slate-950/10'
-                          }`}
+                          className="relative overflow-hidden w-full py-3 sm:py-3.5 text-[9px] sm:text-[10.5px] font-display font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 transform active:scale-[0.98] hover:scale-[1.02] border border-white/10 group/btn-subs bg-gradient-to-r from-brand-red to-brand-blue text-white shadow-[0_8px_24px_rgba(43,79,184,0.4)] hover:shadow-[0_10px_30px_rgba(43,79,184,0.55)]"
                           aria-label={matchesSelection ? `Inscrever-se no ${plan.name}` : `Orbitar ${plan.name}`}
                         >
                           <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full group-hover/club:animate-shimmer" />
@@ -444,7 +438,7 @@ export default function Memberships() {
                 onClick={() => handleCardClick(idx)}
                 className={`w-2 h-2 rounded-full transition-all duration-500 ${
                   activeIndex === idx 
-                    ? 'w-6 bg-gold shadow-[0_0_8px_rgba(194,163,93,0.5)]' 
+                    ? 'w-6 bg-brand-blue shadow-[0_0_8px_rgba(43,79,184,0.6)]'
                     : 'bg-zinc-800 hover:bg-zinc-700'
                 }`}
                 aria-label={`Visualizar plano ${idx + 1}`}
@@ -470,12 +464,12 @@ export default function Memberships() {
           className="mt-10 sm:mt-12 md:mt-14 glass-card p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-3 font-sans text-[10px] sm:text-xs text-slate-300 w-full md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
         >
           <div className="flex items-center gap-2 text-left">
-            <div className="w-5 h-5 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center text-gold shrink-0">
+            <div className="w-5 h-5 rounded-full bg-brand-blue/10 border border-brand-blue/25 flex items-center justify-center text-brand-blue shrink-0">
               <Shield className="w-3 h-3" />
             </div>
             <span>Cobrança recorrente segura processada via Stripe. Cancele online quando quiser sem taxas adicionais.</span>
           </div>
-          <div className="flex items-center gap-1 text-[#c2a35d] font-mono text-[9px] font-bold shrink-0">
+          <div className="flex items-center gap-1 text-brand-red font-mono text-[9px] font-bold shrink-0">
             <Gift className="w-3 h-3 mr-0.5" />
             <span>BRINDE EXCLUSIVO DISPONÍVEL ESTE MÊS</span>
           </div>
