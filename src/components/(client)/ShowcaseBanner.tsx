@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
-import { Flame, Scissors, Wind, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Flame, Scissors, Wind, ChevronLeft, ChevronRight, ImageIcon } from 'lucide-react';
 
 type HairType = 'liso' | 'afro';
 const HAIR_ORDER: HairType[] = ['liso', 'afro'];
@@ -170,18 +170,14 @@ export default function ShowcaseBanner() {
     }
   ];
 
-  const aestheticImages = [
-    "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1593702295094-aec22597af05?q=80&w=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=400&auto=format&fit=crop"
-  ];
+  // Galeria sem fotos: slots de mockup com ícone de foto (placeholder).
+  // Trocar por imagens reais quando a barbearia enviar o material.
+  const gallerySlots = [0, 1, 2, 3, 4];
 
   return (
     <section 
       ref={containerRef}
-      className="w-full bg-transparent py-12 sm:py-20 md:py-24 border-t border-white/5 overflow-hidden relative scroll-mt-20 md:scroll-mt-24" 
+      className="w-full bg-[#0b0b0d] bg-tijolo py-12 sm:py-20 md:py-24 border-t-2 border-black overflow-hidden relative scroll-mt-20 md:scroll-mt-24"
       id="portfolio"
     >
       {/* Glowing atmospheric dust over the tracks */}
@@ -219,8 +215,8 @@ export default function ShowcaseBanner() {
         >
           <div className="space-y-2">
             <span className="font-sans text-[8px] text-[#c8ccd4] tracking-[0.25em] uppercase flex items-center gap-2 font-bold select-none">SÉCULO XXI • GALERIA VISUAL</span>
-            <h2 className="font-display font-light text-3xl md:text-5xl text-white uppercase tracking-wide">
-              Estilo &amp; <span className="text-[#c8ccd4] italic font-serif font-light">Harmonia Visual</span>
+            <h2 className="text-3xl md:text-5xl uppercase tracking-wide">
+              <span className="font-toon text-logo-3d" data-text="Estilo & Harmonia Visual">Estilo &amp; Harmonia Visual</span>
             </h2>
           </div>
           <p className="font-serif italic text-zinc-400 text-sm md:text-base max-w-sm font-light leading-relaxed">
@@ -232,77 +228,31 @@ export default function ShowcaseBanner() {
       {/* Sliding Parallax Panorama Track (Immersive Scroll Effect) */}
       <div className="w-full relative overflow-hidden py-6 select-none bg-black/30 md:backdrop-blur-md border-y border-white/5 mb-24">
         
-        {/* Track 1: Moving left to right */}
-        <motion.div 
+        {/* Track 1: Moving left to right — slots de mockup (sem foto) */}
+        <motion.div
           style={isMobile ? undefined : { x: smoothLeftX }}
           className={`flex gap-4 w-max mb-4 ${isMobile ? 'animate-[marqueeImagesLeft_35s_linear_infinite]' : 'md:w-[150%]'}`}
         >
-          {[...aestheticImages, ...aestheticImages].map((src, i) => (
-            <div key={i} className="h-[200px] md:h-[260px] aspect-[4/3] overflow-hidden grayscale hover:grayscale-0 relative border border-[#c8ccd4]/10 hover:border-[#c8ccd4]/35 rounded-xl transition-all duration-500 flex-shrink-0">
-              <img 
-                src={src} 
-                className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 pointer-events-none" 
-                alt="Aesthetic Barbershop Capture" 
-                referrerPolicy="no-referrer"
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                <span className="font-mono text-[9px] text-[#c8ccd4]/60 uppercase">CENA_{i + 1}_PREMIUM</span>
-              </div>
-            </div>
-          ))}
-          {/* Duplicate for infinite glide wrap */}
-          {aestheticImages.map((src, i) => (
-            <div key={`dup1-${i}`} className="h-[200px] md:h-[260px] aspect-[4/3] overflow-hidden grayscale hover:grayscale-0 relative border border-[#c8ccd4]/10 hover:border-[#c8ccd4]/35 rounded-xl transition-all duration-500 flex-shrink-0">
-              <img 
-                src={src} 
-                className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 pointer-events-none" 
-                alt="Aesthetic Barbershop Capture duplication" 
-                referrerPolicy="no-referrer"
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                <span className="font-mono text-[9px] text-[#c8ccd4]/60 uppercase">CENA_{i + 11}_PREMIUM</span>
+          {[...gallerySlots, ...gallerySlots, ...gallerySlots].map((_, i) => (
+            <div key={i} className="h-[200px] md:h-[260px] aspect-[4/3] overflow-hidden relative border border-[#c8ccd4]/15 rounded-xl flex-shrink-0 bg-gradient-to-br from-[#15151a] to-[#0c0c0f] flex items-center justify-center">
+              <ImageIcon className="w-9 h-9 text-[#c8ccd4]/25" strokeWidth={1.5} />
+              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
+                <span className="font-mono text-[9px] text-[#c8ccd4]/45 uppercase">CENA_{i + 1}</span>
               </div>
             </div>
           ))}
         </motion.div>
 
-        {/* Track 2: Moving right to left */}
-        <motion.div 
+        {/* Track 2: Moving right to left — slots de mockup (sem foto) */}
+        <motion.div
           style={isMobile ? undefined : { x: smoothRightX }}
           className={`flex gap-4 w-max justify-end ${isMobile ? 'animate-[marqueeImagesRight_30s_linear_infinite]' : 'md:w-[150%]'}`}
         >
-          {[...aestheticImages, ...aestheticImages].reverse().map((src, i) => (
-            <div key={i} className="h-[140px] md:h-[180px] aspect-[4/3] overflow-hidden grayscale hover:grayscale-0 relative border border-[#c8ccd4]/10 hover:border-[#c8ccd4]/35 rounded-xl transition-all duration-500 flex-shrink-0">
-              <img 
-                src={src} 
-                className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 pointer-events-none" 
-                alt="Aesthetic Detail Shot" 
-                referrerPolicy="no-referrer"
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                <span className="font-mono text-[9px] text-[#c8ccd4]/60 uppercase">DECOR_{i + 1}_VINTAGE</span>
-              </div>
-            </div>
-          ))}
-          {/* Duplicate for infinite glide wrap */}
-          {[...aestheticImages].reverse().map((src, i) => (
-            <div key={`dup2-${i}`} className="h-[140px] md:h-[180px] aspect-[4/3] overflow-hidden grayscale hover:grayscale-0 relative border border-[#c8ccd4]/10 hover:border-[#c8ccd4]/35 rounded-xl transition-all duration-500 flex-shrink-0">
-              <img 
-                src={src} 
-                className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 pointer-events-none" 
-                alt="Aesthetic Detail Shot duplication" 
-                referrerPolicy="no-referrer"
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                <span className="font-mono text-[9px] text-[#c8ccd4]/60 uppercase">DECOR_{i + 11}_VINTAGE</span>
+          {[...gallerySlots, ...gallerySlots, ...gallerySlots].map((_, i) => (
+            <div key={i} className="h-[140px] md:h-[180px] aspect-[4/3] overflow-hidden relative border border-[#c8ccd4]/15 rounded-xl flex-shrink-0 bg-gradient-to-br from-[#15151a] to-[#0c0c0f] flex items-center justify-center">
+              <ImageIcon className="w-7 h-7 text-[#c8ccd4]/25" strokeWidth={1.5} />
+              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
+                <span className="font-mono text-[9px] text-[#c8ccd4]/45 uppercase">DECOR_{i + 1}</span>
               </div>
             </div>
           ))}

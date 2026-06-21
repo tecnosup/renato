@@ -164,7 +164,7 @@ export default function Memberships() {
   return (
     <section 
       ref={sectionRef} 
-      className="w-full bg-transparent py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-12 border-t border-white/5 relative overflow-hidden scroll-mt-20 md:scroll-mt-24" 
+      className="w-full bg-[#0b0b0d] bg-tijolo py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-12 border-t-2 border-black relative overflow-hidden scroll-mt-20 md:scroll-mt-24"
       id="assinaturas"
     >
       {/* Background Graphic elements matching luxury look */}
@@ -184,8 +184,8 @@ export default function Memberships() {
             <div className="font-sans text-[8px] sm:text-[9px] text-brand-blue tracking-[0.25em] uppercase flex items-center gap-2 font-bold select-none">
               SÉCULO XXI • CLUBE PRIVADO
             </div>
-            <h2 className="font-display font-light text-2xl sm:text-3xl md:text-5xl text-[#faf9f6] tracking-[0.05em] leading-tight uppercase">
-              CLUBE DE <span className="font-serif italic bg-gradient-to-r from-brand-red to-brand-blue bg-clip-text text-transparent">ASSINATURAS</span>
+            <h2 className="text-2xl sm:text-3xl md:text-5xl tracking-[0.05em] leading-tight uppercase">
+              <span className="font-toon text-logo-3d" data-text="CLUBE DE ASSINATURAS">CLUBE DE ASSINATURAS</span>
             </h2>
           </div>
           <p className="font-serif italic text-zinc-400 text-xs sm:text-sm md:text-base max-w-md text-left md:text-right leading-relaxed">
@@ -304,10 +304,10 @@ export default function Memberships() {
                 >
                   <ThreeDTiltCard intensity={matchesSelection ? 4 : 0} className="w-full flex group/club h-full">
                     <div 
-                      className={`w-full bg-[#0a0a0b]/85 md:bg-white/5 md:backdrop-blur-xl p-4 sm:p-5 md:p-6 flex flex-col justify-between text-left relative rounded-[20px] sm:rounded-[24px] transition-shadow duration-500 h-full overflow-hidden border ${
-                        matchesSelection 
-                          ? 'shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_60px_rgba(0,0,0,0.8)] border-white/20' 
-                          : 'border-white/10 opacity-90'
+                      className={`w-full bg-[#0e0e11] p-4 sm:p-5 md:p-6 flex flex-col justify-between text-left relative rounded-xl transition-all duration-300 h-full overflow-hidden border-2 ${
+                        matchesSelection
+                          ? 'border-[#c8ccd4] shadow-[0_6px_0_rgba(0,0,0,0.9),0_14px_34px_rgba(0,0,0,0.6)]'
+                          : 'border-[#f0ebe4]/40 opacity-90 shadow-[0_4px_0_rgba(0,0,0,0.8)]'
                       }`}
                     >
                       {/* Luxe Golden Contour Highlight for Selected card */}
@@ -392,7 +392,7 @@ export default function Memberships() {
                             }
                             handleSubscribe(plan.name, e);
                           }}
-                          className="relative overflow-hidden w-full py-3 sm:py-3.5 text-[9px] sm:text-[10.5px] font-display font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 transform active:scale-[0.98] hover:scale-[1.02] border border-white/10 group/btn-subs bg-gradient-to-r from-brand-red to-brand-blue text-white shadow-[0_8px_24px_rgba(43,79,184,0.4)] hover:shadow-[0_10px_30px_rgba(43,79,184,0.55)]"
+                          className="relative overflow-hidden w-full py-3 sm:py-3.5 btn-game btn-game-sm text-xs sm:text-sm uppercase rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 transform active:scale-[0.98] hover:scale-[1.02] border-2 border-black/55 group/btn-subs bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] hover:brightness-110 shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
                           aria-label={matchesSelection ? `Inscrever-se no ${plan.name}` : `Orbitar ${plan.name}`}
                         >
                           <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full group-hover/club:animate-shimmer" />

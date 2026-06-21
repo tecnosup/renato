@@ -28,7 +28,7 @@ const MARCOS: Marco[] = [
     id: 'missao',
     numero: '01',
     titulo: 'Missão',
-    icone: '/img/tesoura.png',
+    icone: '/img/tesoura.webp',
     conteudo: (
       <p className="font-serif italic text-zinc-300 text-sm sm:text-base leading-relaxed font-light">
         Oferecer uma experiência de cuidado masculino que une tradição e
@@ -40,7 +40,7 @@ const MARCOS: Marco[] = [
     id: 'visao',
     numero: '02',
     titulo: 'Visão',
-    icone: '/img/lampada.png',
+    icone: '/img/lampada.webp',
     conteudo: (
       <p className="font-serif italic text-zinc-300 text-sm sm:text-base leading-relaxed font-light">
         Ser referência em barbearia contemporânea, reconhecida pela excelência no
@@ -53,7 +53,7 @@ const MARCOS: Marco[] = [
     id: 'valores',
     numero: '03',
     titulo: 'Valores',
-    icone: '/img/selo.png',
+    icone: '/img/selo.webp',
     conteudo: (
       <ul className="flex flex-col gap-2.5 text-left">
         {[
@@ -134,7 +134,7 @@ export default function JornadaSobre() {
   return (
     <section
       id="sobre-nos"
-      className="relative isolate w-full overflow-hidden py-16 sm:py-24 px-4 md:px-8 scroll-mt-20 md:scroll-mt-24 bg-[linear-gradient(180deg,#0a0a0c_0%,#070708_100%)]"
+      className="relative isolate w-full overflow-hidden py-16 sm:py-24 px-4 md:px-8 scroll-mt-20 md:scroll-mt-24 bg-[#0b0b0d] bg-tijolo border-t-2 border-black"
     >
       {/* Glows tricolor sutis */}
       <div className="absolute top-[10%] right-[6%] w-80 h-80 bg-brand-blue/12 rounded-full blur-[120px] -z-10 pointer-events-none" />
@@ -155,12 +155,9 @@ export default function JornadaSobre() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="font-display font-medium text-3xl sm:text-5xl text-zinc-50 tracking-tight"
+          className="text-3xl sm:text-5xl tracking-tight"
         >
-          Sobre a{' '}
-          <span className="font-serif italic bg-gradient-to-r from-brand-red to-brand-blue bg-clip-text text-transparent">
-            Século XXI
-          </span>
+          <span className="font-toon text-logo-3d" data-text="Sobre a Século XXI">Sobre a Século XXI</span>
         </motion.h2>
         <p className="font-serif italic text-zinc-400 text-sm sm:text-base mt-4 font-light">
           Uma jornada de tradição, visão e propósito — passo a passo até a excelência.
@@ -238,7 +235,7 @@ export default function JornadaSobre() {
                   className={`flex flex-col text-left items-start ${iconeEsquerda ? 'sm:order-2 sm:text-left sm:items-start' : 'sm:order-1 sm:text-right sm:items-end'}`}
                 >
                   <div className="flex items-baseline gap-2 mb-2">
-                    <span className="font-display font-bold text-2xl bg-gradient-to-r from-brand-red to-brand-blue bg-clip-text text-transparent">
+                    <span className="font-toon text-logo-3d text-2xl" data-text={marco.numero}>
                       {marco.numero}
                     </span>
                     <h3 className="font-display font-semibold text-xl sm:text-2xl text-zinc-50 uppercase tracking-wide">
@@ -262,7 +259,7 @@ export default function JornadaSobre() {
         >
           <div className="absolute inset-x-0 -top-4 mx-auto w-44 h-44 bg-[#c8ccd4]/20 blur-[60px] rounded-full -z-10" />
           <img
-            src="/img/cadeiradourada.png"
+            src="/img/cadeiradourada.webp"
             alt="Cadeira de barbeiro — o destino da Século XXI"
             className="w-40 h-40 sm:w-52 sm:h-52 object-contain drop-shadow-[0_20px_34px_rgba(0,0,0,0.28)]"
             loading="lazy"
@@ -283,12 +280,9 @@ export default function JornadaSobre() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-display font-medium text-2xl sm:text-4xl text-zinc-50 tracking-tight"
+            className="text-2xl sm:text-4xl tracking-tight"
           >
-            Enquanto você se cuida,{' '}
-            <span className="font-serif italic bg-gradient-to-r from-brand-red to-brand-blue bg-clip-text text-transparent">
-              a família se diverte
-            </span>
+            <span className="font-toon text-logo-3d" data-text="Enquanto você se cuida, a família se diverte">Enquanto você se cuida, a família se diverte</span>
           </motion.h2>
           <p className="font-serif italic text-zinc-400 text-sm sm:text-base mt-4 font-light">
             Traga a criançada. Aqui a espera vira lazer: um espaço de

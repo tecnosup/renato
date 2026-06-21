@@ -213,7 +213,7 @@ export default function Header() {
           <a href="#" className="relative flex items-center group shrink-0" id="header-brand-logo" aria-label="Barbearia Século XXI — início">
             <span className="absolute inset-0 -z-10 blur-xl bg-white/15 rounded-full scale-90 group-hover:bg-white/20 transition-colors duration-500" aria-hidden="true" />
             <img
-              src="/img/logo.png"
+              src="/img/logo.webp"
               alt="Barbearia Século XXI"
               className="h-9 md:h-11 w-auto object-contain select-none transition-transform duration-500 group-hover:scale-[1.03]"
               loading="eager"
@@ -253,7 +253,7 @@ export default function Header() {
               onClick={() => {
                 window.dispatchEvent(new CustomEvent('select-service', { detail: '' }));
               }}
-              className="bg-linear-to-r from-brand-red to-brand-blue hover:opacity-90 text-white font-sans text-[9px] font-black tracking-[0.24em] px-6 py-3 border border-white/10 transition-all duration-300 uppercase rounded-xl shadow-[0_0_15px_rgba(43,79,184,0.3)] transform hover:scale-[1.02] cursor-pointer"
+              className="bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] hover:brightness-110 btn-game btn-game-sm text-xs px-6 py-3 border-2 border-black/55 transition-all duration-300 uppercase rounded-xl shadow-[0_4px_14px_rgba(0,0,0,0.45)] transform hover:scale-[1.02] cursor-pointer"
               id="cta-reservar-button"
             >
               Agendar Horário
@@ -315,9 +315,9 @@ export default function Header() {
                     setIsOpen(false);
                     window.dispatchEvent(new CustomEvent('select-service', { detail: '' }));
                   }}
-                  className="bg-linear-to-r from-brand-red to-brand-blue text-white text-center font-sans text-[10px] font-bold tracking-[0.22em] py-4 mt-2 rounded-xl w-full flex items-center justify-center gap-2.5 uppercase shadow-lg shadow-brand-blue/20 active:scale-95 transition-all cursor-pointer"
+                  className="bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] btn-game btn-game-sm text-sm py-4 mt-2 rounded-xl w-full flex items-center justify-center gap-2.5 uppercase border-2 border-black/55 shadow-[0_4px_14px_rgba(0,0,0,0.45)] active:scale-95 transition-all cursor-pointer"
                 >
-                  <Calendar className="w-3.5 h-3.5 animate-pulse" />
+                  <Calendar className="w-3.5 h-3.5 animate-pulse text-[#f0ebe4]" />
                   AGENDAR HORÁRIO
                 </button>
 

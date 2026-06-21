@@ -57,18 +57,8 @@ export default function App() {
   return (
     <div className="landing-fonts relative min-h-screen bg-[#050505] text-[#e2e2e2] antialiased overflow-x-hidden selection:bg-[#c8ccd4] selection:text-black" id="main-layout">
       
-      {/* Immersive Dark Refractive Background Layer */}
-      <div className="fixed inset-0 z-0 select-none pointer-events-none">
-        <img
-          src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=1000&auto=format&fit=crop"
-          alt="Aesthetic Dark Background"
-          className="w-full h-full object-cover opacity-[0.06] grayscale"
-          referrerPolicy="no-referrer"
-          loading="lazy"
-          decoding="async"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#020202]/95 via-[#080808]/90 to-[#020202]/98" />
-      </div>
+      {/* Base escura global — a textura de tijolo agora vem por seção (.bg-tijolo). */}
+      <div className="fixed inset-0 z-0 select-none pointer-events-none bg-[#0a0a0b]" />
 
       {/* Decorative Background Glows — tricolor da marca (azul + vermelho) */}
       <div className="fixed top-[-10%] right-[-15%] w-[700px] h-[700px] bg-brand-blue/8 rounded-full blur-[140px] pointer-events-none hidden md:block" id="decorative-glow-1"></div>
@@ -95,7 +85,7 @@ export default function App() {
         {/* Fundo do hero: parede de tijolinhos (cobre o background escuro global) */}
         <div
           className="absolute inset-0 -z-20 bg-cover bg-center"
-          style={{ backgroundImage: "url('/img/fundohero.jpeg')" }}
+          style={{ backgroundImage: "url('/img/fundohero.webp')" }}
         />
         {/* Overlay escuro (parede à noite) para contraste do texto claro */}
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_35%_30%,rgba(8,8,10,0.78)_0%,rgba(5,5,7,0.86)_55%,rgba(2,2,3,0.94)_100%)]" />
@@ -115,7 +105,7 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.92, y: 12 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-              src="/img/logo.png"
+              src="/img/logo.webp"
               alt="Barbearia Século XXI"
               className="w-full max-w-[280px] sm:max-w-[440px] lg:max-w-[520px] h-auto object-contain select-none drop-shadow-[0_16px_40px_rgba(0,0,0,0.18)]"
               loading="eager"
@@ -129,7 +119,7 @@ export default function App() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="font-display font-medium text-lg sm:text-3xl xl:text-5xl text-zinc-50 tracking-tight leading-[1.05] mt-3 sm:mt-6 pb-2 sm:pb-3 border-b-2 border-dotted border-brand-red"
             >
-              MAESTRIA EM <span className="font-serif italic font-semibold bg-gradient-to-r from-brand-red to-brand-blue bg-clip-text text-transparent">Cada Corte</span>
+              MAESTRIA EM <span className="font-toon text-logo-3d" data-text="Cada Corte">Cada Corte</span>
             </motion.h1>
 
             {/* Parágrafo curto */}
@@ -151,15 +141,15 @@ export default function App() {
             >
               <button
                 onClick={() => setIsBookingOpen(true)}
-                className="relative overflow-hidden h-10 sm:h-13 bg-linear-to-r from-brand-red to-brand-blue text-white font-sans text-[11px] sm:text-sm font-black tracking-[0.12em] rounded-xl sm:rounded-2xl border border-white/10 hover:opacity-90 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-[0_8px_24px_rgba(43,79,184,0.28)] active:scale-[0.98] hover:scale-[1.01] group/hero-btn uppercase"
+                className="relative overflow-hidden h-12 sm:h-15 bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] font-graffiti text-base sm:text-xl rounded-xl sm:rounded-2xl border-2 border-black/60 hover:brightness-110 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-[0_8px_24px_rgba(0,0,0,0.45)] active:scale-[0.98] hover:scale-[1.01] group/hero-btn uppercase"
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover/hero-btn:animate-shimmer" />
                 Agendar
-                <Scissors className="w-3.5 h-3.5 rotate-45 text-white group-hover/hero-btn:rotate-90 transition-transform duration-300" />
+                <Scissors className="w-3.5 h-3.5 rotate-45 text-[#f0ebe4] group-hover/hero-btn:rotate-90 transition-transform duration-300" />
               </button>
               <a
                 href="#servicos"
-                className="relative overflow-hidden h-10 sm:h-13 bg-linear-to-r from-brand-blue to-brand-red text-white font-sans text-[11px] sm:text-sm font-black tracking-[0.12em] rounded-xl sm:rounded-2xl border border-white/10 hover:opacity-90 transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_8px_24px_rgba(226,58,46,0.24)] active:scale-[0.98] hover:scale-[1.01] uppercase"
+                className="relative overflow-hidden h-12 sm:h-15 bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] font-graffiti text-sm sm:text-lg rounded-xl sm:rounded-2xl border-2 border-black/60 hover:brightness-110 transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_8px_24px_rgba(0,0,0,0.45)] active:scale-[0.98] hover:scale-[1.01] uppercase"
               >
                 Serviços / Produtos
               </a>
@@ -198,7 +188,7 @@ export default function App() {
               />
               {/* Personagem (sem animação) */}
               <img
-                src="/img/personagemrenato.png"
+                src="/img/personagemrenato.webp"
                 alt="Renato — Barbearia Século XXI"
                 className="relative z-10 w-full h-auto max-h-[42vh] sm:max-h-[56vh] lg:max-h-[72vh] object-contain drop-shadow-[0_24px_40px_rgba(0,0,0,0.35)]"
                 loading="eager"
@@ -382,11 +372,11 @@ export default function App() {
               
               <button
                 onClick={() => setIsBookingOpen(true)}
-                className="relative overflow-hidden bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] hover:opacity-90 active:scale-95 text-slate-950 font-sans text-[10px] font-black tracking-widest py-3.5 px-6 rounded-xl flex items-center gap-2.5 shadow-[0_0_20px_rgba(200, 204, 212,0.3)] cursor-pointer"
+                className="relative overflow-hidden bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] hover:brightness-110 active:scale-95 font-graffiti text-sm py-3 px-6 rounded-xl flex items-center gap-2.5 border-2 border-black/60 shadow-[0_8px_24px_rgba(0,0,0,0.45)] cursor-pointer uppercase"
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full animate-shimmer" />
                 AGENDAR AGORA
-                <Scissors className="w-3.5 h-3.5 rotate-45 text-slate-950" />
+                <Scissors className="w-3.5 h-3.5 rotate-45 text-[#f0ebe4]" />
               </button>
             </div>
           </motion.div>

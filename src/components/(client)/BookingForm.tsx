@@ -934,7 +934,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                           <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full py-3.5 bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] text-slate-950 hover:opacity-90 font-sans text-xs font-bold uppercase tracking-widest rounded-2xl transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 shadow-[0_0_20px_rgba(200, 204, 212,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="w-full py-3.5 bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] btn-game btn-game-light hover:brightness-105 text-sm uppercase rounded-2xl transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 border-2 border-white/70 shadow-[0_4px_14px_rgba(0,0,0,0.25)] disabled:opacity-60 disabled:cursor-not-allowed"
                             id="submit-booking-action"
                           >
                             {isSubmitting ? (
