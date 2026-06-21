@@ -469,7 +469,7 @@ export default function Memberships() {
             </div>
             <span>Cobrança recorrente segura processada via Stripe. Cancele online quando quiser sem taxas adicionais.</span>
           </div>
-          <div className="flex items-center gap-1 text-brand-red font-mono text-[9px] font-bold shrink-0">
+          <div className="flex items-center gap-1 text-emerald-400 font-mono text-[9px] font-bold shrink-0">
             <Gift className="w-3 h-3 mr-0.5" />
             <span>BRINDE EXCLUSIVO DISPONÍVEL ESTE MÊS</span>
           </div>

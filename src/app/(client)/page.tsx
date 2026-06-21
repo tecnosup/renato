@@ -102,6 +102,8 @@ export default function App() {
         {/* Glows tricolor suaves */}
         <div className="absolute top-[8%] left-[8%] w-[420px] h-[420px] bg-brand-red/15 rounded-full blur-[130px] -z-10 pointer-events-none" />
         <div className="absolute bottom-[6%] right-[6%] w-[460px] h-[460px] bg-brand-blue/15 rounded-full blur-[140px] -z-10 pointer-events-none" />
+        {/* Fade da base: dissolve os tijolos no dark da próxima seção (#0a0a0c) */}
+        <div className="absolute inset-x-0 bottom-0 h-40 sm:h-56 -z-10 pointer-events-none bg-gradient-to-b from-transparent to-[#0a0a0c]" />
 
         <div className="max-w-7xl w-full mx-auto grid grid-cols-12 gap-3 sm:gap-6 items-center">
 

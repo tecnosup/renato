@@ -6,6 +6,7 @@
 
 import { useRef } from 'react';
 import { motion, useScroll } from 'framer-motion';
+import { PartyPopper, CircleDot, Blocks, Joystick, Gamepad2, type LucideIcon } from 'lucide-react';
 
 /**
  * Seção "Sobre a Século XXI" — Missão / Visão / Valores apresentados como uma
@@ -71,6 +72,53 @@ const MARCOS: Marco[] = [
         ))}
       </ul>
     ),
+  },
+];
+
+/**
+ * Diferencial da Século XXI: área de entretenimento para a família esperar
+ * (e as crianças se divertirem) enquanto o cliente é atendido.
+ * Cada card nasce com ícone; quando houver fotos boas, basta trocar o badge
+ * do ícone por um <img src={item.foto} /> (campo opcional já previsto).
+ */
+interface ItemEntretenimento {
+  id: string;
+  nome: string;
+  descricao: string;
+  icone: LucideIcon;
+  foto?: string; // preparado para receber foto real depois
+}
+
+const ENTRETENIMENTO: ItemEntretenimento[] = [
+  {
+    id: 'cama-elastica',
+    nome: 'Cama elástica',
+    descricao: 'Pula-pula infantil para gastar a energia da criançada.',
+    icone: PartyPopper,
+  },
+  {
+    id: 'piscina-bolinhas',
+    nome: 'Piscina de bolinhas',
+    descricao: 'Diversão garantida para os pequenos enquanto você relaxa.',
+    icone: CircleDot,
+  },
+  {
+    id: 'area-kids',
+    nome: 'Área kids',
+    descricao: 'Cantinho com brinquedos pensado para as crianças.',
+    icone: Blocks,
+  },
+  {
+    id: 'fliperama',
+    nome: 'Fliperama',
+    descricao: 'Máquina do Subway Surfers para encarar o desafio.',
+    icone: Joystick,
+  },
+  {
+    id: 'playstation',
+    nome: 'PlayStation 4',
+    descricao: 'Videogame liberado para a espera virar partida.',
+    icone: Gamepad2,
   },
 ];
 
@@ -224,6 +272,59 @@ export default function JornadaSobre() {
             O destino: excelência
           </p>
         </motion.div>
+      </div>
+
+      {/* DIFERENCIAL: Espaço de entretenimento (família + crianças) */}
+      <div className="relative max-w-5xl mx-auto mt-24 sm:mt-32">
+        {/* Cabeçalho do bloco */}
+        <div className="max-w-2xl mx-auto text-center mb-12 sm:mb-16">
+          <motion.h2
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="font-display font-medium text-2xl sm:text-4xl text-zinc-50 tracking-tight"
+          >
+            Enquanto você se cuida,{' '}
+            <span className="font-serif italic bg-gradient-to-r from-brand-red to-brand-blue bg-clip-text text-transparent">
+              a família se diverte
+            </span>
+          </motion.h2>
+          <p className="font-serif italic text-zinc-400 text-sm sm:text-base mt-4 font-light">
+            Traga a criançada. Aqui a espera vira lazer: um espaço de
+            entretenimento pensado para todas as idades.
+          </p>
+        </div>
+
+        {/* Grid de cards (3 + 2 no desktop, 1 por linha no mobile) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          {ENTRETENIMENTO.map((item, i) => {
+            const Icone = item.icone;
+            return (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                className="group relative flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm p-5 sm:p-6 transition-all duration-400 hover:border-brand-blue/40 hover:bg-white/[0.05] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+              >
+                {/* Badge do ícone (trocar por <img src={item.foto}/> quando houver foto) */}
+                <div className="shrink-0 grid place-items-center w-12 h-12 rounded-xl bg-gradient-to-br from-brand-red/15 to-brand-blue/15 border border-white/10 text-zinc-100 group-hover:from-brand-red/25 group-hover:to-brand-blue/25 transition-all duration-400">
+                  <Icone className="w-6 h-6" strokeWidth={1.6} />
+                </div>
+                <div className="flex flex-col text-left">
+                  <h3 className="font-display font-semibold text-base sm:text-lg text-zinc-50 tracking-wide">
+                    {item.nome}
+                  </h3>
+                  <p className="font-sans text-[13px] text-zinc-400 leading-snug mt-1">
+                    {item.descricao}
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
