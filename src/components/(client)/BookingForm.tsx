@@ -205,7 +205,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
       setCouponSuccess('Cupom "10% OFF" aplicado com sucesso!');
     } else if (cleaned === 'SECULO20' || cleaned === 'MASTER20') {
       setAppliedDiscount(0.20);
-      setCouponSuccess('Cupom "20% OFF" de alta-costura aplicado!');
+      setCouponSuccess('Cupom "20% OFF" aplicado!');
     } else {
       setCouponError('Cupom inválido para esta assinatura.');
     }
@@ -376,7 +376,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
       window.dispatchEvent(new CustomEvent('show-toast', {
         detail: {
           title: 'AGENDAMENTO CONFIRMADO',
-          message: `Olá ${name.trim()}, seu agendamento de "${selectedService.name}" foi concluído para hoje ou dia selecionado (${formatSelectedShortDate(selectedDate)}) às ${selectedTime}h com ${selectedBarber.name.split(' "')[0]}. Voucher: ${randomTicket}`,
+          message: `Olá ${name.trim()}, seu "${selectedService.name}" está agendado para ${formatSelectedShortDate(selectedDate)} às ${selectedTime}h com ${selectedBarber.name.split(' "')[0]}. Comprovante: ${randomTicket}`,
           type: 'success'
         }
       }));
@@ -430,19 +430,19 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
   const discountedPrice = (selectedService?.price ?? 0) * (1 - appliedDiscount);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 backdrop-blur-md" id="reservar-modal">
-      
-      <div 
-        className="transform-gpu relative bg-white/3 backdrop-blur-2xl backdrop-saturate-100 border border-white/15 rounded-t-3xl md:rounded-2xl w-full md:max-w-xl h-[90vh] md:h-auto md:max-h-[85vh] flex flex-col overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_6px_rgba(0,0,0,0.1),0_4px_20px_rgba(0,0,0,0.35)]"
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/70 backdrop-blur-md" id="reservar-modal">
+
+      <div
+        className="transform-gpu relative bg-[#0b0b0d] bg-tijolo border-2 border-black rounded-t-3xl md:rounded-2xl w-full md:max-w-xl h-[90vh] md:h-auto md:max-h-[85vh] flex flex-col overflow-hidden shadow-[0_6px_0_rgba(0,0,0,0.9),0_18px_44px_rgba(0,0,0,0.6)]"
         id="app-booking-frame"
       >
-        <div className="px-5 py-4 flex items-center justify-between border-b border-white/10 bg-black/30 backdrop-blur-2xl z-10 shrink-0">
+        <div className="px-5 py-4 flex items-center justify-between border-b-2 border-black bg-black/40 backdrop-blur-2xl z-10 shrink-0">
           <div className="flex items-center gap-2">
             <button onClick={onClose} className="p-1.5 -ml-1.5 text-slate-400 hover:text-white transition-colors cursor-pointer rounded-full hover:bg-white/5">
               <X className="w-5 h-5" />
             </button>
-            <h2 className="font-sans font-semibold text-sm tracking-wide text-slate-100 uppercase">
-              {step === 4 ? 'Confirmar horário' : 'Agendar horário'}
+            <h2 className="font-toon text-logo-3d text-lg tracking-wide uppercase" data-text={step === 4 ? 'Confirmar' : 'Agendar'}>
+              {step === 4 ? 'Confirmar' : 'Agendar'}
             </h2>
           </div>
         </div>
@@ -465,20 +465,20 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                     {[1, 2, 3, 4].map((sIndex) => (
                       <React.Fragment key={sIndex}>
                         {sIndex > 1 && (
-                          <div className={`h-[1px] w-5 rounded-full transition-colors duration-300 ${
-                            step >= sIndex ? 'bg-[#c8ccd4]' : 'bg-white/10'
+                          <div className={`h-[2px] w-5 rounded-full transition-colors duration-300 ${
+                            step >= sIndex ? 'bg-brand-blue' : 'bg-white/10'
                           }`} />
                         )}
                         <button
                           type="button"
                           disabled={sIndex > step}
                           onClick={() => goToStep(sIndex)}
-                          className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-mono font-bold transition-all duration-300 ${
-                            step === sIndex 
-                              ? 'bg-linear-to-br from-[#eef1f5] to-[#c8ccd4] text-slate-950 scale-105 shadow-[0_0_10px_rgba(200, 204, 212,0.3)]' 
-                              : step > sIndex 
-                                ? 'bg-[#c8ccd4]/15 text-[#c8ccd4] border border-[#c8ccd4]/30' 
-                                : 'bg-white/5 text-slate-500 border border-white/10 cursor-not-allowed'
+                          className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-mono font-bold transition-all duration-300 border-2 ${
+                            step === sIndex
+                              ? 'bg-brand-blue text-white border-black scale-105 shadow-[0_2px_0_rgba(0,0,0,0.9)]'
+                              : step > sIndex
+                                ? 'bg-brand-blue/20 text-brand-blue border-brand-blue/40'
+                                : 'bg-white/5 text-slate-500 border-white/10 cursor-not-allowed'
                           }`}
                         >
                           {step > sIndex ? '✓' : sIndex}
@@ -487,15 +487,20 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                     ))}
                   </div>
 
-                  <div className="flex items-center gap-1.5 justify-center leading-none">
-                    <span className="font-mono text-[8px] text-[#c8ccd4]/80 tracking-widest font-bold uppercase">
-                      Passo {step}/4 •
+                  <div className="flex flex-col items-center gap-1 justify-center leading-none">
+                    <span className="font-mono text-[8px] text-brand-blue tracking-widest font-bold uppercase">
+                      Passo {step}/4
                     </span>
-                    <h1 className="font-sans font-black text-sm text-white uppercase tracking-wider select-none">
+                    <h1 className="font-toon text-logo-3d text-lg uppercase tracking-wide select-none text-center" data-text={
+                      step === 1 ? "Escolha o serviço"
+                      : step === 2 ? "Escolha o barbeiro"
+                      : step === 3 ? (selectedDate ? "Escolha o horário" : "Escolha a data")
+                      : "Seus dados"
+                    }>
                       {step === 1 && "Escolha o serviço"}
                       {step === 2 && "Escolha o barbeiro"}
-                      {step === 3 && (selectedDate ? "Escolha o Horário" : "Escolha a Data")}
-                      {step === 4 && "Preencha seus dados"}
+                      {step === 3 && (selectedDate ? "Escolha o horário" : "Escolha a data")}
+                      {step === 4 && "Seus dados"}
                     </h1>
                   </div>
                 </div>
@@ -539,20 +544,20 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                             key={srv.id}
                             type="button"
                             onClick={() => handleSelectService(srv)}
-                            className={`w-full p-3 text-left rounded-xl border transition-all duration-200 cursor-pointer relative flex items-center justify-between group overflow-hidden ${
+                            className={`w-full p-3 text-left rounded-xl border-2 transition-all duration-200 cursor-pointer relative flex items-center justify-between group overflow-hidden ${
                               selectedService?.id === srv.id
-                                ? 'bg-[#c8ccd4]/10 border-[#c8ccd4] shadow-[inset_0_0_15px_rgba(200, 204, 212,0.15)]'
-                                : 'bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 hover:border-[#c8ccd4]/30'
+                                ? 'bg-brand-blue/10 border-brand-blue shadow-[0_3px_0_rgba(0,0,0,0.7)]'
+                                : 'bg-white/5 border-black/60 hover:bg-white/10 hover:border-brand-blue/50'
                             }`}
                           >
                             <div className="flex flex-col text-left pr-4">
-                              <h3 className="font-sans font-semibold text-sm text-slate-100 group-hover:text-[#c8ccd4] transition-colors">{srv.name}</h3>
+                              <h3 className="font-sans font-semibold text-sm text-slate-100 group-hover:text-brand-blue transition-colors">{srv.name}</h3>
                               <span className="font-sans text-[10px] text-zinc-500 font-normal leading-tight mt-0.5 line-clamp-1">
                                 {srv.description}
                               </span>
                             </div>
                             <div className="text-right shrink-0 flex flex-col items-end justify-center min-w-[65px]">
-                              <span className="font-sans font-extrabold text-xs text-[#c8ccd4]">R$ {srv.price}</span>
+                              <span className="font-sans font-extrabold text-xs text-emerald-400">R$ {srv.price}</span>
                               <span className="font-mono text-[8px] text-zinc-500">{srv.duration} min</span>
                             </div>
                           </button>
@@ -569,22 +574,22 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); handleSelectBarber(ANY_BARBER); }}
-                            className={`p-3 text-left rounded-xl border transition-all duration-200 cursor-pointer flex flex-col justify-between h-[95px] group relative overflow-hidden ${
+                            className={`p-3 text-left rounded-xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between h-[95px] group relative overflow-hidden ${
                               selectedBarber?.id === 'qualquer'
-                                ? 'bg-[#c8ccd4]/10 border-[#c8ccd4] shadow-[inset_0_0_15px_rgba(200, 204, 212,0.15)]'
-                                : 'bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 hover:border-[#c8ccd4]/30'
+                                ? 'bg-brand-blue/10 border-brand-blue shadow-[0_3px_0_rgba(0,0,0,0.7)]'
+                                : 'bg-white/5 border-black/60 hover:bg-white/10 hover:border-brand-blue/50'
                             }`}
                           >
                             <div className="flex justify-between items-start w-full">
-                              <div className="w-7 h-7 rounded-lg bg-[#c8ccd4]/10 border border-[#c8ccd4]/25 flex items-center justify-center text-[#c8ccd4]">
+                              <div className="w-7 h-7 rounded-lg bg-brand-blue/15 border border-brand-blue/30 flex items-center justify-center text-brand-blue">
                                 <Scissors className="w-3.5 h-3.5 rotate-45" />
                               </div>
                               {selectedBarber?.id === 'qualquer' && (
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#c8ccd4] inline-block animate-pulse" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-brand-blue inline-block animate-pulse" />
                               )}
                             </div>
                             <div>
-                              <h4 className="font-sans font-bold text-[10px] uppercase tracking-wider text-zinc-100 group-hover:text-[#c8ccd4] leading-tight">
+                              <h4 className="font-sans font-bold text-[10px] uppercase tracking-wider text-zinc-100 group-hover:text-brand-blue leading-tight">
                                 Qualquer Disponível
                               </h4>
                               <p className="font-sans text-[8.5px] text-zinc-500 font-normal leading-none mt-0.5">
@@ -599,25 +604,25 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                               key={barb.id}
                               type="button"
                               onClick={() => handleSelectBarber(barb)}
-                              className={`p-3 text-left rounded-xl border transition-all duration-200 cursor-pointer flex flex-col justify-between h-[95px] group relative overflow-hidden ${
+                              className={`p-3 text-left rounded-xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between h-[95px] group relative overflow-hidden ${
                                 selectedBarber?.id === barb.id
-                                  ? 'bg-[#c8ccd4]/10 border-[#c8ccd4] shadow-[inset_0_0_15px_rgba(200, 204, 212,0.15)]'
-                                  : 'bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 hover:border-[#c8ccd4]/30'
+                                  ? 'bg-brand-blue/10 border-brand-blue shadow-[0_3px_0_rgba(0,0,0,0.7)]'
+                                  : 'bg-white/5 border-black/60 hover:bg-white/10 hover:border-brand-blue/50'
                               }`}
                             >
                               <div className="flex justify-between items-start w-full">
-                                <div className="w-7 h-7 rounded-lg bg-[#c8ccd4]/10 border border-[#c8ccd4]/25 flex items-center justify-center text-[#c8ccd4] text-[9px] font-bold uppercase">
+                                <div className="w-7 h-7 rounded-lg bg-brand-blue/15 border border-brand-blue/30 flex items-center justify-center text-brand-blue text-[9px] font-bold uppercase">
                                   {barb.name.trim().split(' ').slice(0, 2).map((n) => n[0] ?? '').join('')}
                                 </div>
                                 {selectedBarber?.id === barb.id && (
-                                  <span className="w-1.5 h-1.5 rounded-full bg-[#c8ccd4] inline-block animate-pulse" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-brand-blue inline-block animate-pulse" />
                                 )}
                               </div>
                               <div>
-                                <h4 className="font-sans font-bold text-[10px] uppercase tracking-wider text-zinc-150 group-hover:text-[#c8ccd4] leading-tight truncate">
+                                <h4 className="font-sans font-bold text-[10px] uppercase tracking-wider text-zinc-100 group-hover:text-brand-blue leading-tight truncate">
                                   {barb.name}
                                 </h4>
-                                <p className="font-sans text-[8px] text-[#c8ccd4] font-bold uppercase mt-0.5">
+                                <p className="font-sans text-[8px] text-brand-blue font-bold uppercase mt-0.5">
                                   {barb.role}
                                 </p>
                               </div>
@@ -630,7 +635,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                           <button
                             type="button"
                             onClick={() => goToStep(1)}
-                            className="font-mono text-[9px] uppercase text-[#c8ccd4] hover:text-white transition-colors py-1 flex items-center gap-1 cursor-pointer"
+                            className="font-mono text-[9px] uppercase text-brand-blue hover:text-white transition-colors py-1 flex items-center gap-1 cursor-pointer"
                           >
                             ← Voltar para Serviços
                           </button>
@@ -640,9 +645,9 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                     {step === 3 && (
                       <div className="space-y-4" id="app-step-date-time">
                         {/* Dynamic selected service summary header with "Trocar" trigger */}
-                        <div className="bg-white/5 backdrop-blur-md p-3 border border-white/10 rounded-xl flex justify-between items-center text-xs select-none shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                        <div className="bg-white/5 p-3 border-2 border-black/60 rounded-xl flex justify-between items-center text-xs select-none">
                           <div className="flex flex-col text-left leading-tight">
-                            <span className="font-mono text-[8px] text-[#c8ccd4] uppercase block leading-none mb-1 font-bold">SERVIÇO ESCOLHIDO</span>
+                            <span className="font-mono text-[8px] text-brand-blue uppercase block leading-none mb-1 font-bold">SERVIÇO ESCOLHIDO</span>
                             <span className="font-sans font-semibold text-slate-100 uppercase text-[11px]">
                               {selectedService?.name} <span className="text-emerald-400 font-bold ml-1.5">R$ {selectedService?.price}</span>
                             </span>
@@ -650,7 +655,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                           <button
                             type="button"
                             onClick={() => goToStep(1)}
-                            className="text-[#c8ccd4] hover:text-white font-mono text-[9px] tracking-widest uppercase py-1 px-2.5 rounded border border-white/10 hover:border-[#c8ccd4] bg-white/5 hover:bg-white/10 transition-all cursor-pointer"
+                            className="text-brand-blue hover:text-white font-mono text-[9px] tracking-widest uppercase py-1 px-2.5 rounded border-2 border-black/60 hover:border-brand-blue bg-white/5 hover:bg-white/10 transition-all cursor-pointer"
                           >
                             Trocar
                           </button>
@@ -658,18 +663,18 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
 
                         {!selectedDate ? (
                           /* Render compact calendar */
-                          <div className="bg-white/5 backdrop-blur-md p-3 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl relative" id="app-calendar-box">
+                          <div className="bg-white/5 p-3 border-2 border-black/60 rounded-xl relative" id="app-calendar-box">
                             {/* Navigation */}
                             <div className="flex justify-between items-center mb-2.5 select-none">
                               <button
                                 type="button"
                                 onClick={handlePrevMonth}
                                 disabled={isAtCurrentMonth}
-                                className="w-7 h-7 rounded-full border border-zinc-805 hover:border-[#c8ccd4] hover:text-[#c8ccd4] flex items-center justify-center transition-all cursor-pointer text-zinc-500 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-zinc-805 disabled:hover:text-zinc-500"
+                                className="w-7 h-7 rounded-full border-2 border-black/60 hover:border-brand-blue hover:text-brand-blue flex items-center justify-center transition-all cursor-pointer text-zinc-500 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-black/60 disabled:hover:text-zinc-500"
                               >
                                 <ChevronLeft className="w-3.5 h-3.5" />
                               </button>
-                              
+
                               <span className="font-sans font-bold text-[10px] uppercase tracking-widest text-zinc-200">
                                 {monthNames[currentMonth]} {currentYear}
                               </span>
@@ -677,14 +682,14 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                               <button
                                 type="button"
                                 onClick={handleNextMonth}
-                                className="w-7 h-7 rounded-full border border-zinc-855 hover:border-[#c8ccd4] hover:text-[#c8ccd4] flex items-center justify-center transition-all cursor-pointer text-zinc-500"
+                                className="w-7 h-7 rounded-full border-2 border-black/60 hover:border-brand-blue hover:text-brand-blue flex items-center justify-center transition-all cursor-pointer text-zinc-500"
                               >
                                 <ChevronRight className="w-3.5 h-3.5" />
                               </button>
                             </div>
 
                             {/* Weekday names */}
-                            <div className="grid grid-cols-7 gap-1 text-center font-mono text-[8px] text-[#c8ccd4]/70 font-bold uppercase select-none border-b border-zinc-900 pb-1.5 mb-1.5">
+                            <div className="grid grid-cols-7 gap-1 text-center font-mono text-[8px] text-brand-blue/80 font-bold uppercase select-none border-b border-white/10 pb-1.5 mb-1.5">
                               {weekdayNames.map((w, wi) => (
                                 <span key={wi}>{w}</span>
                               ))}
@@ -712,11 +717,11 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                                       setSelectedTime(''); // Reset selected time on date change
                                     }}
                                     className={`aspect-square w-full rounded-lg flex flex-col items-center justify-center relative transition-all duration-200 cursor-pointer text-[10px] ${
-                                      isSelected 
-                                        ? 'bg-[#c8ccd4] text-black font-extrabold shadow-md shadow-[#c8ccd4]/10' 
-                                        : isPast || status === 'lotado' 
-                                          ? 'text-zinc-750 cursor-not-allowed opacity-20 bg-[#16181a]/10' 
-                                          : 'hover:border-[#c8ccd4]/35 hover:bg-zinc-900 border border-transparent bg-[#14161a]'
+                                      isSelected
+                                        ? 'bg-brand-blue text-white font-extrabold border-2 border-black shadow-[0_2px_0_rgba(0,0,0,0.9)]'
+                                        : isPast || status === 'lotado'
+                                          ? 'text-zinc-700 cursor-not-allowed opacity-20 bg-[#16181a]/10'
+                                          : 'hover:border-brand-blue/50 hover:bg-zinc-900 border border-transparent bg-[#14161a]'
                                     }`}
                                   >
                                     <span>{dayNum}</span>
@@ -755,9 +760,9 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                         ) : (
                           /* Interactive Hours list once date is selected - collapses calendar to prevent scroll! */
                           <div className="space-y-3 animation-fade-in" id="app-hours-pane">
-                            <div className="bg-[#121315] p-3 border border-zinc-900 rounded-xl flex justify-between items-center text-xs select-none">
+                            <div className="bg-white/5 p-3 border-2 border-black/60 rounded-xl flex justify-between items-center text-xs select-none">
                               <div className="flex flex-col text-left leading-tight">
-                                <span className="font-mono text-[8px] text-[#c8ccd4] uppercase block leading-none mb-1 font-bold">DATA SELECIONADA</span>
+                                <span className="font-mono text-[8px] text-brand-blue uppercase block leading-none mb-1 font-bold">DATA SELECIONADA</span>
                                 <span className="font-sans text-[11px] text-zinc-200 font-semibold">{getFormattedDateLong(selectedDate)}</span>
                               </div>
                               <button
@@ -766,14 +771,14 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                                   setSelectedDate('');
                                   setSelectedTime('');
                                 }}
-                                className="text-zinc-500 hover:text-[#c8ccd4] font-mono text-[8px] uppercase py-1 px-2.5 rounded border border-zinc-800 hover:border-[#c8ccd4]/30 bg-[#0c0d0e] transition-all cursor-pointer"
+                                className="text-zinc-500 hover:text-brand-blue font-mono text-[8px] uppercase py-1 px-2.5 rounded border-2 border-black/60 hover:border-brand-blue/50 bg-black/30 transition-all cursor-pointer"
                               >
                                 Alterar
                               </button>
                             </div>
 
-                            <div className="bg-[#121315] p-3 border border-zinc-900 rounded-xl">
-                              <span className="font-mono text-[8px] text-[#c8ccd4] uppercase block font-bold text-left mb-2.5">HORÁRIOS DISPONÍVEIS:</span>
+                            <div className="bg-white/5 p-3 border-2 border-black/60 rounded-xl">
+                              <span className="font-mono text-[8px] text-brand-blue uppercase block font-bold text-left mb-2.5">HORÁRIOS DISPONÍVEIS:</span>
                               {loadingSlots ? (
                                 <div className="grid grid-cols-4 gap-2">
                                   {Array.from({ length: 8 }).map((_, i) => (
@@ -795,10 +800,10 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                                       setSelectedTime(sh);
                                       goToStep(4); // Advance to Passo 4
                                     }}
-                                    className={`py-2 text-center rounded-lg font-mono text-xs border transition-all duration-150 cursor-pointer ${
+                                    className={`py-2 text-center rounded-lg font-mono text-xs border-2 transition-all duration-150 cursor-pointer ${
                                       selectedTime === sh
-                                        ? 'bg-[#c8ccd4] text-black border-[#c8ccd4] font-bold shadow-md shadow-[#c8ccd4]/15'
-                                        : 'bg-[#14161a] border-zinc-930 hover:border-[#c8ccd4]/30 text-[#e2e2e2]'
+                                        ? 'bg-brand-blue text-white border-black font-bold shadow-[0_2px_0_rgba(0,0,0,0.9)]'
+                                        : 'bg-[#14161a] border-black/60 hover:border-brand-blue/50 text-[#e2e2e2]'
                                     }`}
                                   >
                                     {sh}
@@ -815,7 +820,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                           <button
                             type="button"
                             onClick={() => goToStep(2)}
-                            className="font-mono text-[9px] uppercase text-[#c8ccd4] hover:text-white transition-colors py-1 flex items-center gap-1 cursor-pointer"
+                            className="font-mono text-[9px] uppercase text-brand-blue hover:text-white transition-colors py-1 flex items-center gap-1 cursor-pointer"
                           >
                             ← Voltar para Barbeiros
                           </button>
@@ -827,9 +832,9 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                       <form onSubmit={validateAndSubmit} className="space-y-4" id="app-step-personal-form">
                         
                         {/* Compact Visual Summary Header */}
-                        <div className="bg-white/5 backdrop-blur-md p-3 border border-white/10 rounded-xl text-left text-xs flex justify-between items-center relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]" id="booking-summary-receipt">
+                        <div className="bg-white/5 p-3 border-2 border-black/60 rounded-xl text-left text-xs flex justify-between items-center relative overflow-hidden" id="booking-summary-receipt">
                           <div className="flex flex-col">
-                            <span className="font-mono text-[8px] text-[#c8ccd4] uppercase block mb-0.5 font-bold">RESUMO</span>
+                            <span className="font-mono text-[8px] text-brand-blue uppercase block mb-0.5 font-bold">RESUMO</span>
                             <span className="font-sans font-black text-xs text-slate-100 uppercase leading-none">
                               {selectedService?.name}
                             </span>
@@ -839,11 +844,11 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                           </div>
                           <div className="text-right shrink-0">
                             <span className="font-mono text-[8px] text-slate-500 uppercase block mb-0.5">TOTAL</span>
-                            <span className="font-sans font-bold text-xs text-[#c8ccd4]">
+                            <span className="font-sans font-bold text-xs text-emerald-400">
                               {appliedDiscount > 0 ? (
                                 <div className="flex flex-col items-end leading-none">
                                   <span className="text-slate-500 line-through text-[9px] font-normal">R$ {selectedService?.price}</span>
-                                  <span className="text-[#c8ccd4] mt-0.5">R$ {discountedPrice.toFixed(0)},00</span>
+                                  <span className="text-emerald-400 mt-0.5">R$ {discountedPrice.toFixed(0)},00</span>
                                 </div>
                               ) : (
                                 <span>R$ {selectedService?.price},00</span>
@@ -855,9 +860,9 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                         {/* Customer Information Inputs Form side by side/compact */}
                         <div className="space-y-3">
                           <div className="space-y-1 text-left">
-                            <label className="font-mono text-[8.5px] text-[#c8ccd4]/85 font-bold tracking-wider block uppercase select-none">Seu Nome completo</label>
+                            <label className="font-mono text-[8.5px] text-brand-blue font-bold tracking-wider block uppercase select-none">Seu Nome completo</label>
                             <div className="relative">
-                              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#c8ccd4]/50" />
+                              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-brand-blue/60" />
                               <input
                                 type="text"
                                 value={name}
@@ -866,22 +871,22 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                                   if (errors.name) setErrors(prev => ({ ...prev, name: '' }));
                                 }}
                                 placeholder="Seu nome"
-                                className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-lg py-2 pl-8.5 pr-3 text-xs font-sans text-slate-100 focus:outline-none focus:border-[#c8ccd4]/50 focus:bg-white/10 transition-all placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+                                className="w-full bg-white/5 border-2 border-black/60 rounded-lg py-2 pl-8.5 pr-3 text-xs font-sans text-slate-100 focus:outline-none focus:border-brand-blue focus:bg-white/10 transition-all placeholder:text-slate-600"
                               />
                             </div>
                             {errors.name && <p className="text-rose-400 font-mono text-[9px] mt-0.5 leading-none">{errors.name}</p>}
                           </div>
 
                           <div className="space-y-1 text-left">
-                            <label className="font-mono text-[8.5px] text-[#c8ccd4]/85 font-bold tracking-wider block uppercase select-none">WhatsApp para Confirmação</label>
+                            <label className="font-mono text-[8.5px] text-brand-blue font-bold tracking-wider block uppercase select-none">WhatsApp para Confirmação</label>
                             <div className="relative">
-                              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#c8ccd4]/50" />
+                              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-brand-blue/60" />
                               <input
                                 type="tel"
                                 value={phone}
                                 onChange={(e) => handlePhoneInput(e.target.value)}
                                 placeholder="(11) 99999-9999"
-                                className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-lg py-2 pl-8.5 pr-3 text-xs font-sans text-slate-100 focus:outline-none focus:border-[#c8ccd4]/50 focus:bg-white/10 transition-all placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+                                className="w-full bg-white/5 border-2 border-black/60 rounded-lg py-2 pl-8.5 pr-3 text-xs font-sans text-slate-100 focus:outline-none focus:border-brand-blue focus:bg-white/10 transition-all placeholder:text-slate-600"
                               />
                             </div>
                             {errors.phone && <p className="text-rose-400 font-mono text-[9px] mt-0.5 leading-none">{errors.phone}</p>}
@@ -894,26 +899,26 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                             <button
                               type="button"
                               onClick={() => setShowCouponInput(true)}
-                              className="font-mono text-[8px] text-zinc-500 hover:text-[#c8ccd4] transition-colors flex items-center gap-1 cursor-pointer"
+                              className="font-mono text-[8px] text-zinc-500 hover:text-brand-blue transition-colors flex items-center gap-1 cursor-pointer"
                             >
                               <Tag className="w-2.5 h-2.5" />
                               Possui cupom de desconto?
                             </button>
                           ) : (
                             <div className="space-y-1.5 animation-fade-in">
-                              <label className="font-mono text-[8px] text-[#c8ccd4]/70 font-bold block uppercase">Cupom de Desconto</label>
+                              <label className="font-mono text-[8px] text-brand-blue font-bold block uppercase">Cupom de Desconto</label>
                               <div className="flex gap-2">
                                 <input
                                   type="text"
                                   value={coupon}
                                   onChange={(e) => setCoupon(e.target.value)}
-                                  placeholder="ex: ORTEGA10"
-                                  className="flex-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg py-1.5 px-3 text-[10px] font-sans text-slate-100 uppercase focus:outline-none focus:border-[#c8ccd4]/50 focus:bg-white/10 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+                                  placeholder="ex: SECULO20"
+                                  className="flex-1 bg-white/5 border-2 border-black/60 rounded-lg py-1.5 px-3 text-[10px] font-sans text-slate-100 uppercase focus:outline-none focus:border-brand-blue focus:bg-white/10 transition-all"
                                 />
                                 <button
                                   type="button"
                                   onClick={handleApplyCoupon}
-                                  className="bg-white/5 hover:bg-[#c8ccd4] hover:text-black border border-white/10 hover:border-[#c8ccd4] py-1.5 px-3 font-mono text-[9px] uppercase font-bold rounded-lg transition-all cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+                                  className="bg-white/5 hover:bg-brand-blue hover:text-white border-2 border-black/60 hover:border-brand-blue py-1.5 px-3 font-mono text-[9px] uppercase font-bold rounded-lg transition-all cursor-pointer"
                                 >
                                   Aplicar
                                 </button>
@@ -934,7 +939,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                           <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full py-3.5 bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] btn-game btn-game-light hover:brightness-105 text-sm uppercase rounded-2xl transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 border-2 border-white/70 shadow-[0_4px_14px_rgba(0,0,0,0.25)] disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="relative overflow-hidden w-full py-3.5 btn-game btn-game-sm text-sm uppercase rounded-2xl transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 border-2 border-black/55 bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] hover:brightness-110 active:scale-[0.98] shadow-[0_8px_24px_rgba(0,0,0,0.45)] disabled:opacity-60 disabled:cursor-not-allowed"
                             id="submit-booking-action"
                           >
                             {isSubmitting ? (
@@ -979,11 +984,11 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className="font-display font-black text-xl text-emerald-400 uppercase tracking-tight">
-                    Agendado com sucesso!
+                  <h3 className="font-toon text-logo-3d text-2xl uppercase tracking-wide" data-text="Agendado!">
+                    Agendado!
                   </h3>
-                  <p className="font-serif italic text-zinc-400 text-xs max-w-sm">
-                    Sua assinatura de visual de alta-costura foi inserida na fila estrita com segurança militar.
+                  <p className="font-sans text-zinc-400 text-xs max-w-sm">
+                    Seu horário está reservado. Mostre o comprovante abaixo na recepção.
                   </p>
                 </div>
 
@@ -991,32 +996,32 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                 <div className="relative w-full max-w-sm bg-[#fafaf9] text-zinc-900 p-5 rounded-2xl border-2 border-zinc-950 shadow-2xl flex flex-col justify-between overflow-hidden text-left" id="visual-luxury-final-ticket">
                   
                   {/* Stylized punch holes on edge */}
-                  <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#0c0d0e] rounded-full border border-[#c8ccd4]/15" />
-                  <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#0c0d0e] rounded-full border border-[#c8ccd4]/15" />
-                  
+                  <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#0c0d0e] rounded-full border border-black/40" />
+                  <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#0c0d0e] rounded-full border border-black/40" />
+
                   {/* Upper notch line */}
                   <div className="border-b border-dashed border-zinc-300 pb-3 mb-3 text-center">
                     <div className="flex items-center gap-1.5 justify-center mb-0.5">
                       <Scissors className="w-3.5 h-3.5 text-zinc-900" />
-                      <span className="font-display font-extrabold text-[12px] tracking-widest text-[#151515]">BARBER<span className="text-[#c8ccd4]">CODE</span></span>
+                      <span className="font-display font-extrabold text-[12px] tracking-widest text-[#151515]">SÉCULO <span className="text-brand-red">XXI</span></span>
                     </div>
-                    <span className="font-mono text-[7px] text-zinc-450 uppercase tracking-widest font-semibold block col-span-12">CRUZEIRO/SP • VILA PAULO ROMEU</span>
+                    <span className="font-mono text-[7px] text-zinc-500 uppercase tracking-widest font-semibold block col-span-12">CRUZEIRO/SP • VILA PAULO ROMEU</span>
                   </div>
 
                   {/* Body data info blocks */}
                   <div className="space-y-2.5 font-mono text-[10px] text-zinc-800">
                     <div className="flex flex-col border-b border-zinc-100 pb-1.5">
-                      <span className="text-[7.5px] text-zinc-400 uppercase">[VOUCHER_SINALIZACAO]</span>
+                      <span className="text-[7.5px] text-zinc-400 uppercase">Serviço</span>
                       <span className="text-xs font-display font-bold text-zinc-950 uppercase">{selectedService?.name}</span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex flex-col">
-                        <span className="text-[7.5px] text-zinc-400 uppercase">[PROFISSIONAL]</span>
+                        <span className="text-[7.5px] text-zinc-400 uppercase">Profissional</span>
                         <span className="font-semibold text-zinc-900">{selectedBarber.name.split(' "')[0]}</span>
                       </div>
                       <div className="flex flex-col items-end text-right">
-                        <span className="text-[7.5px] text-zinc-400 uppercase">[INVESTIMENTO]</span>
+                        <span className="text-[7.5px] text-zinc-400 uppercase">Valor</span>
                         <span className="font-bold text-zinc-900 text-xs">
                           R$ {appliedDiscount > 0 ? discountedPrice.toFixed(0) : selectedService?.price},00
                         </span>
@@ -1025,20 +1030,20 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
 
                     <div className="grid grid-cols-2 gap-4 border-t border-zinc-100 pt-2">
                       <div className="flex flex-col">
-                        <span className="text-[7.5px] text-zinc-400 uppercase">[DATA]</span>
+                        <span className="text-[7.5px] text-zinc-400 uppercase">Data</span>
                         <span className="font-semibold text-zinc-900">
                           {selectedDate ? new Date(selectedDate + 'T00:00:00').toLocaleDateString('pt-BR') : ''}
                         </span>
                       </div>
                       <div className="flex flex-col items-end text-right">
-                        <span className="text-[7.5px] text-zinc-400 uppercase">[DIZ_ESTIPULADO]</span>
+                        <span className="text-[7.5px] text-zinc-400 uppercase">Horário</span>
                         <span className="font-semibold text-zinc-900">{selectedTime}hs</span>
                       </div>
                     </div>
 
                     <div className="flex flex-col border-t border-zinc-100 pt-2">
-                      <span className="text-[7.5px] text-zinc-400 uppercase">[TITULAR_E_CONTATO]</span>
-                      <span className="font-semibold text-zinc-900 uppercase truncate">{name || 'Cliente Secreto'}</span>
+                      <span className="text-[7.5px] text-zinc-400 uppercase">Cliente</span>
+                      <span className="font-semibold text-zinc-900 uppercase truncate">{name || '—'}</span>
                       <span className="text-zinc-500 font-normal mt-0.5 text-[8.5px]">{phone}</span>
                     </div>
                   </div>
@@ -1054,17 +1059,17 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                     </div>
                     
                     <span className="font-mono text-[8.5px] text-zinc-500 font-bold tracking-widest uppercase mt-2.5">
-                      {ticketNumber || 'BC-PREMIUM-AGENDAMENTO'}
+                      {ticketNumber || 'BC-AGENDAMENTO'}
                     </span>
                   </div>
                 </div>
 
                 {/* Confirm details notice list */}
-                <div className="bg-[#121315] p-3.5 border border-zinc-850 rounded-xl text-left select-none max-w-sm">
+                <div className="bg-white/5 p-3.5 border-2 border-black/60 rounded-xl text-left select-none max-w-sm">
                   <div className="flex gap-2.5 items-start">
-                    <Info className="w-4 h-4 text-[#c8ccd4] shrink-0 mt-0.5" />
+                    <Info className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
                     <p className="font-sans text-[10.5px] text-zinc-400 leading-normal font-normal">
-                      <strong>Confirmação via WhatsApp:</strong> Enviamos uma mensagem com as diretrizes do seu agendamento. Pague diretamente ao finalizar no salão.
+                      <strong>Confirmação via WhatsApp:</strong> Enviamos uma mensagem com os detalhes do seu agendamento. O pagamento é feito no salão.
                     </p>
                   </div>
                 </div>
@@ -1073,13 +1078,13 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                 <div className="w-full pt-4 space-y-2">
                   <button
                     onClick={onClose}
-                    className="w-full py-3.5 bg-[#c8ccd4] hover:bg-white text-black font-display text-xs font-black uppercase tracking-widest rounded-xl transition-colors cursor-pointer"
+                    className="relative overflow-hidden w-full py-3.5 btn-game btn-game-sm text-sm uppercase rounded-xl transition-all cursor-pointer border-2 border-black/55 bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] hover:brightness-110 active:scale-[0.98] shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
                   >
-                    Fechar aplicativo
+                    Fechar
                   </button>
                   <button
                     onClick={handleResetAndRestart}
-                    className="w-full py-3 bg-transparent border border-zinc-850 hover:border-[#c8ccd4] text-zinc-400 hover:text-[#c8ccd4] font-mono text-[9px] uppercase tracking-widest transition-colors cursor-pointer"
+                    className="w-full py-3 bg-transparent border-2 border-black/60 hover:border-brand-blue text-zinc-400 hover:text-brand-blue font-mono text-[9px] uppercase tracking-widest transition-colors cursor-pointer"
                   >
                     Realizar Outro Agendamento
                   </button>
@@ -1091,8 +1096,8 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
         </div>
 
                 {/* Modal persistent luxury brand footnote */}
-        <div className="bg-black/40 p-3 text-center border-t border-white/5 text-sans text-[7.5px] select-none uppercase tracking-wider text-slate-500 shrink-0 font-sans">
-          SÉCULO XXI • SISTEMA DE RESERVA DIGITAL EXCLUSIVO LTDA.
+        <div className="bg-black/40 p-3 text-center border-t-2 border-black text-[7.5px] select-none uppercase tracking-wider text-slate-500 shrink-0 font-sans">
+          SÉCULO XXI • AGENDAMENTO ONLINE
         </div>
       </div>
     </div>
