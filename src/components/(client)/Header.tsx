@@ -182,7 +182,7 @@ export default function Header() {
       <div className="w-full fixed top-0 left-0 right-0 z-40 flex flex-col" id="header-fixed-wrapper">
         {/* Top micro ticker (very Swiss, Clean & Architectural) - collapses elegantly on scroll */}
         <div 
-          className={`w-full bg-black/40 backdrop-blur-md text-zinc-455 text-[8.5px] font-mono px-4 md:px-8 flex justify-between items-center transition-all duration-300 overflow-hidden border-b border-white/5 ${
+          className={`w-full bg-black/85 backdrop-blur-2xl text-zinc-455 text-[8.5px] font-mono px-4 md:px-8 flex justify-between items-center transition-all duration-300 overflow-hidden border-b border-white/10 ${
             scrolled ? 'h-0 py-0 opacity-0 border-b-0' : 'h-8 py-2 opacity-100'
           }`}
           style={{ transitionProperty: 'all' }}
@@ -203,25 +203,22 @@ export default function Header() {
         <header
           className={`w-full transition-all duration-350 ${
             scrolled 
-              ? 'bg-black/60 backdrop-blur-2xl py-3 border-b border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.5)]' 
-              : 'bg-transparent py-5 border-b border-transparent'
+              ? 'bg-black/80 backdrop-blur-2xl py-3 border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
+              : 'bg-black/85 backdrop-blur-2xl py-5 border-b border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.25)]'
           }`}
           id="app-header"
         >
         <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
-          {/* Brand Logo & Est - Classic luxury serif and sans pairing */}
-          <a href="#" className="flex items-center gap-3.5 group" id="header-brand-logo">
-            <div className="w-8.5 h-8.5 rounded-lg border border-gold/20 group-hover:border-gold/50 flex items-center justify-center transition-all duration-500 bg-gold/10 shadow-[inset_0_0_10px_rgba(194,163,93,0.15)]">
-              <Scissors className="w-3.5 h-3.5 text-[#c2a35d] transition-transform duration-500 group-hover:-rotate-12" />
-            </div>
-            <div className="flex flex-col text-left">
-              <span className="font-display font-medium text-lg md:text-xl tracking-[0.16em] text-white leading-none">
-                SÉCULO XXI
-              </span>
-              <span className="font-sans text-[8.5px] font-bold text-[#c2a35d]/85 tracking-[0.32em] mt-1 leading-none uppercase">
-                Estética do Cuidado
-              </span>
-            </div>
+          {/* Brand Logo (graffiti) com leve glow claro para destacar do header preto */}
+          <a href="#" className="relative flex items-center group shrink-0" id="header-brand-logo" aria-label="Barbearia Século XXI — início">
+            <span className="absolute inset-0 -z-10 blur-xl bg-white/15 rounded-full scale-90 group-hover:bg-white/20 transition-colors duration-500" aria-hidden="true" />
+            <img
+              src="/img/logo.png"
+              alt="Barbearia Século XXI"
+              className="h-9 md:h-11 w-auto object-contain select-none transition-transform duration-500 group-hover:scale-[1.03]"
+              loading="eager"
+              decoding="async"
+            />
           </a>
 
           {/* Desktop Navigation */}
@@ -256,7 +253,7 @@ export default function Header() {
               onClick={() => {
                 window.dispatchEvent(new CustomEvent('select-service', { detail: '' }));
               }}
-              className="bg-linear-to-r from-[#ece4cb] to-[#c2a35d] hover:opacity-90 text-slate-950 font-sans text-[9px] font-black tracking-[0.24em] px-6 py-3 border border-transparent transition-all duration-300 uppercase rounded-xl shadow-[0_0_15px_rgba(194,163,93,0.3)] transform hover:scale-[1.02] cursor-pointer"
+              className="bg-linear-to-r from-brand-red to-brand-blue hover:opacity-90 text-white font-sans text-[9px] font-black tracking-[0.24em] px-6 py-3 border border-white/10 transition-all duration-300 uppercase rounded-xl shadow-[0_0_15px_rgba(43,79,184,0.3)] transform hover:scale-[1.02] cursor-pointer"
               id="cta-reservar-button"
             >
               Agendar Horário
@@ -282,7 +279,7 @@ export default function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="absolute top-full left-0 w-full bg-black/80 backdrop-blur-3xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)] md:hidden overflow-hidden flex flex-col z-50"
+              className="absolute top-full left-0 w-full bg-black/95 backdrop-blur-3xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.6)] md:hidden overflow-hidden flex flex-col z-50"
               id="mobile-nav-panel"
             >
               <div className="px-6 py-8 flex flex-col gap-6">
@@ -291,7 +288,7 @@ export default function Header() {
                     key={item.label}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="font-sans text-[11px] font-bold tracking-[0.22em] text-zinc-400 hover:text-[#c2a35d] transition-colors py-2 border-b border-zinc-950 uppercase"
+                    className="font-sans text-[11px] font-bold tracking-[0.22em] text-zinc-100 hover:text-[#c2a35d] transition-colors py-2 border-b border-white/10 uppercase"
                   >
                     {item.label}
                   </a>
@@ -304,7 +301,7 @@ export default function Header() {
                     setIsOpen(false);
                     setShowClientArea(true);
                   }}
-                  className="font-sans text-[11px] font-bold tracking-[0.22em] text-[#c2a35d] hover:text-white transition-colors py-2 border-b border-zinc-950 uppercase text-left flex items-center justify-between"
+                  className="font-sans text-[11px] font-bold tracking-[0.22em] text-[#c2a35d] hover:text-white transition-colors py-2 border-b border-white/10 uppercase text-left flex items-center justify-between"
                 >
                   <span>ÁREA DO CLIENTE (ASSINANTES)</span>
                   <span className="font-mono text-[7px] text-[#c2a35d] border border-[#c2a35d]/30 px-1 py-0.5 rounded font-black uppercase">
@@ -318,7 +315,7 @@ export default function Header() {
                     setIsOpen(false);
                     window.dispatchEvent(new CustomEvent('select-service', { detail: '' }));
                   }}
-                  className="bg-[#c2a35d] text-zinc-950 text-center font-sans text-[10px] font-bold tracking-[0.22em] py-4 mt-2 rounded-xl w-full flex items-center justify-center gap-2.5 uppercase shadow-lg shadow-gold/15 active:scale-95 transition-all cursor-pointer font-bold"
+                  className="bg-linear-to-r from-brand-red to-brand-blue text-white text-center font-sans text-[10px] font-bold tracking-[0.22em] py-4 mt-2 rounded-xl w-full flex items-center justify-center gap-2.5 uppercase shadow-lg shadow-brand-blue/20 active:scale-95 transition-all cursor-pointer"
                 >
                   <Calendar className="w-3.5 h-3.5 animate-pulse" />
                   AGENDAR HORÁRIO

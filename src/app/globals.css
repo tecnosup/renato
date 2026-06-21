@@ -18,6 +18,13 @@
   --color-gold-light: #ece4cb;
   --color-sleek-dark: #090a0a;
   --color-card-dark: #121314;
+
+  /* Identidade tricolor da marca (logo graffiti vermelho/azul/branco) */
+  --color-brand-red: #e23a2e;
+  --color-brand-red-deep: #b81e16;
+  --color-brand-blue: #2b4fb8;
+  --color-brand-blue-deep: #1d3585;
+  --color-brand-cream: #f4f4f2;
 }
 
 /* Tokens do tema do painel admin (Configurações > Tema).

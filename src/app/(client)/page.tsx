@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Scissors, Sparkle, ArrowDown, MapPin, Phone, ShieldCheck, Mail, ArrowUpRight, Award, Compass, Star, Camera, Video, MessageCircle, Share2 } from 'lucide-react';
 import Header from '@/components/(client)/Header';
-import ThreeDBox from '@/components/(client)/ThreeDBox';
 import ThreeDText from '@/components/(client)/ThreeDText';
 import BookingForm from '@/components/(client)/BookingForm';
 import OrbCarousel from '@/components/(client)/OrbCarousel';
@@ -71,10 +70,10 @@ export default function App() {
         <div className="absolute inset-0 bg-gradient-to-br from-[#020202]/95 via-[#080808]/90 to-[#020202]/98" />
       </div>
 
-      {/* Decorative Background Glows */}
-      <div className="fixed top-[-10%] right-[-15%] w-[700px] h-[700px] bg-[#c2a35d]/5 rounded-full blur-[140px] pointer-events-none hidden md:block" id="decorative-glow-1"></div>
-      <div className="absolute top-[35%] left-[-10%] w-[500px] h-[500px] bg-[#c2a35d]/3 rounded-full blur-[120px] pointer-events-none hidden md:block" id="decorative-glow-2"></div>
-      <div className="fixed bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-gold/3 rounded-full blur-[130px] pointer-events-none hidden md:block" id="decorative-glow-3"></div>
+      {/* Decorative Background Glows — tricolor da marca (azul + vermelho) */}
+      <div className="fixed top-[-10%] right-[-15%] w-[700px] h-[700px] bg-brand-blue/8 rounded-full blur-[140px] pointer-events-none hidden md:block" id="decorative-glow-1"></div>
+      <div className="absolute top-[35%] left-[-10%] w-[500px] h-[500px] bg-brand-red/6 rounded-full blur-[120px] pointer-events-none hidden md:block" id="decorative-glow-2"></div>
+      <div className="fixed bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-gold/4 rounded-full blur-[130px] pointer-events-none hidden md:block" id="decorative-glow-3"></div>
       
       {/* Background Graphic Grid */}
       <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.03]" id="design-grid-overlay">
@@ -91,79 +90,119 @@ export default function App() {
       {/* Primary Top Header */}
       <Header />
  
-      {/* SECTION 1: HERO (With Booking Form CTA) */}
-      <section className="relative min-h-[85vh] lg:min-h-[92vh] flex flex-col justify-center items-center px-4 md:px-8 pt-28 pb-10 sm:pt-36 sm:pb-16 md:pt-40 md:pb-20 z-10" id="hero-section">
-        <div className="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-12 items-center relative">
-          
-          {/* Slogan Text Left (7 columns) */}
-          <div className="lg:col-span-7 flex flex-col items-start text-left z-20">
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="font-sans text-[8.5px] text-[#c2a35d] uppercase tracking-[0.35em] mb-3 sm:mb-4 flex items-center gap-2.5 font-bold bg-[#c2a35d]/5 border border-[#c2a35d]/10 px-4.5 py-1.5 rounded-full"
-            >
-              <span className="inline-block w-1.5 h-1.5 bg-[#c2a35d] rounded-full" />
-              CRUZEIRO/SP • CLUBE HIGH-CLASS
-            </motion.div>
- 
+      {/* SECTION 1: HERO — 2 colunas (texto à esquerda + personagem 3D à direita) sobre fundo claro */}
+      <section className="relative isolate min-h-[92vh] flex flex-col justify-center px-5 md:px-8 pt-32 pb-12 sm:pt-36 sm:pb-16 z-10 overflow-hidden" id="hero-section">
+        {/* Fundo do hero: parede de tijolinhos (cobre o background escuro global) */}
+        <div
+          className="absolute inset-0 -z-20 bg-cover bg-center"
+          style={{ backgroundImage: "url('/img/fundohero.jpeg')" }}
+        />
+        {/* Overlay claro para garantir contraste do texto escuro */}
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,0.68)_0%,rgba(244,244,242,0.6)_50%,rgba(233,235,242,0.7)_100%)]" />
+        {/* Glows tricolor suaves */}
+        <div className="absolute top-[8%] left-[8%] w-[420px] h-[420px] bg-brand-red/10 rounded-full blur-[130px] -z-10 pointer-events-none" />
+        <div className="absolute bottom-[6%] right-[6%] w-[460px] h-[460px] bg-brand-blue/10 rounded-full blur-[140px] -z-10 pointer-events-none" />
+
+        <div className="max-w-7xl w-full mx-auto grid grid-cols-12 gap-3 sm:gap-6 items-center">
+
+          {/* COLUNA ESQUERDA — conteúdo */}
+          <div className="col-span-7 flex flex-col items-start text-left">
+
+            {/* Logo */}
+            <motion.img
+              initial={{ opacity: 0, scale: 0.92, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+              src="/img/logo.png"
+              alt="Barbearia Século XXI"
+              className="w-full max-w-[280px] sm:max-w-[440px] lg:max-w-[520px] h-auto object-contain select-none drop-shadow-[0_16px_40px_rgba(0,0,0,0.18)]"
+              loading="eager"
+              decoding="async"
+            />
+
+            {/* Headline com underline pontilhado vermelho */}
             <motion.h1
-              initial={{ opacity: 0, y: 25 }}
+              initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="font-display font-light text-3xl sm:text-6xl xl:text-[74px] text-zinc-100 tracking-wide leading-[1.05] mb-4 sm:mb-8"
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="font-display font-medium text-lg sm:text-3xl xl:text-5xl text-zinc-900 tracking-tight leading-[1.05] mt-3 sm:mt-6 pb-2 sm:pb-3 border-b-2 border-dotted border-brand-red"
             >
-              MAESTRIA EM<br/>
-              <span className="text-[#c2a35d] font-serif italic font-light">Cada Corte</span>
+              MAESTRIA EM <span className="font-serif italic font-semibold bg-gradient-to-r from-brand-red to-brand-blue bg-clip-text text-transparent">Cada Corte</span>
             </motion.h1>
- 
+
+            {/* Parágrafo curto */}
             <motion.p
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.25 }}
-              className="font-serif italic text-zinc-400 text-sm sm:text-base md:text-lg md:max-w-md mb-4 sm:mb-8 leading-relaxed font-light"
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="font-serif italic text-zinc-600 text-[11px] sm:text-base max-w-md mt-3 mb-5 sm:mt-5 sm:mb-8 leading-snug sm:leading-relaxed font-light"
             >
-              Uma experiência sob medida de autocuidado masculino combinada com a tradicional navalha italiana e alta harmonização estética do visagismo.
+              Uma experiência sob medida de autocuidado masculino com a tradicional navalha italiana e alta harmonização estética do visagismo.
             </motion.p>
- 
+
+            {/* Dois botões empilhados — gradientes invertidos */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.35 }}
-              className="flex flex-col items-start gap-4 w-full"
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="flex flex-col items-stretch gap-2.5 sm:gap-3.5 w-full max-w-sm"
             >
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto animate-fade-in">
-                <button
-                  onClick={() => setIsBookingOpen(true)}
-                  className="relative overflow-hidden h-12 sm:h-13 bg-linear-to-r from-[#ece4cb] to-[#c2a35d] text-slate-950 font-sans text-[10.5px] sm:text-xs font-black tracking-[0.15em] px-8 rounded-xl border border-transparent hover:opacity-90 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(194,163,93,0.3)] active:scale-[0.98] transform hover:scale-[1.01] group/hero-btn"
-                >
-                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover/hero-btn:animate-shimmer" />
-                  AGENDAR ATENDIMENTO
-                  <Scissors className="w-3.5 h-3.5 rotate-45 text-slate-950 group-hover/hero-btn:rotate-90 transition-transform duration-300" />
-                </button>
-                <a
-                  href="#servicos"
-                  className="h-12 sm:h-13 bg-transparent text-zinc-300 hover:text-white border border-zinc-900 hover:border-zinc-700 hover:bg-zinc-900/35 font-sans text-[10.5px] sm:text-xs font-bold tracking-[0.15em] px-8 rounded-xl transition-all duration-300 text-center flex items-center justify-center uppercase"
-                >
-                  Explorar Serviços
-                </a>
-              </div>
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 font-mono text-[9px] text-zinc-500 font-semibold pl-1 select-none">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                  AGENDAMENTO GARANTIDO EM 1 MINUTO
-                </span>
-                <span className="hidden sm:inline-block text-zinc-800">•</span>
-                <span>PAGAMENTO REALIZADO APENAS NO SALÃO</span>
-                <span className="hidden sm:inline-block text-zinc-800">•</span>
-                <span className="text-gold/90 font-bold">REMANESCENTE: POUCAS VAGAS DISPONÍVEIS HOJE</span>
-              </div>
+              <button
+                onClick={() => setIsBookingOpen(true)}
+                className="relative overflow-hidden h-10 sm:h-13 bg-linear-to-r from-brand-red to-brand-blue text-white font-sans text-[11px] sm:text-sm font-black tracking-[0.12em] rounded-xl sm:rounded-2xl border border-white/10 hover:opacity-90 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-[0_8px_24px_rgba(43,79,184,0.28)] active:scale-[0.98] hover:scale-[1.01] group/hero-btn uppercase"
+              >
+                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover/hero-btn:animate-shimmer" />
+                Agendar
+                <Scissors className="w-3.5 h-3.5 rotate-45 text-white group-hover/hero-btn:rotate-90 transition-transform duration-300" />
+              </button>
+              <a
+                href="#servicos"
+                className="relative overflow-hidden h-10 sm:h-13 bg-linear-to-r from-brand-blue to-brand-red text-white font-sans text-[11px] sm:text-sm font-black tracking-[0.12em] rounded-xl sm:rounded-2xl border border-white/10 hover:opacity-90 transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_8px_24px_rgba(226,58,46,0.24)] active:scale-[0.98] hover:scale-[1.01] uppercase"
+              >
+                Serviços / Produtos
+              </a>
+            </motion.div>
+
+            {/* Selos de confiança — escondidos no mobile (sem espaço com 2 colunas) */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="hidden sm:flex flex-wrap items-center justify-start gap-x-4 gap-y-1.5 font-mono text-[9px] text-zinc-500 font-semibold mt-7 select-none"
+            >
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                AGENDAMENTO EM 1 MINUTO
+              </span>
+              <span className="hidden sm:inline-block text-zinc-300">•</span>
+              <span>PAGAMENTO APENAS NO SALÃO</span>
+              <span className="hidden sm:inline-block text-zinc-300">•</span>
+              <span className="text-brand-red font-bold">POUCAS VAGAS HOJE</span>
             </motion.div>
           </div>
 
-          {/* Majestic Interactive 3D Cube (5 columns, centered) */}
-          <div className="lg:col-span-5 flex justify-center py-6 lg:py-0 select-none z-10" id="hero-cube-anchor">
-            <ThreeDBox />
+          {/* COLUNA DIREITA — personagem 3D do Renato com sombra CSS + float */}
+          <div className="col-span-5 flex justify-center items-end select-none" id="hero-character-anchor">
+            <motion.div
+              initial={{ opacity: 0, y: 24, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+              className="relative flex flex-col items-center"
+            >
+              {/* Sombra CSS no chão (estática) */}
+              <div
+                aria-hidden="true"
+                className="absolute bottom-1 w-[55%] h-4 sm:h-5 bg-black/40 rounded-[100%] blur-md"
+              />
+              {/* Personagem (sem animação) */}
+              <img
+                src="/img/personagemrenato.png"
+                alt="Renato — Barbearia Século XXI"
+                className="relative z-10 w-full h-auto max-h-[42vh] sm:max-h-[56vh] lg:max-h-[72vh] object-contain drop-shadow-[0_24px_40px_rgba(0,0,0,0.35)]"
+                loading="eager"
+                decoding="async"
+              />
+            </motion.div>
           </div>
         </div>
       </section>
