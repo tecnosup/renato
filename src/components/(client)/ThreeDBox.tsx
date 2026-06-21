@@ -83,14 +83,14 @@ export default function ThreeDBox() {
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-          className="w-[94%] h-[94%] border border-dashed border-[#c2a35d]/10 rounded-full"
+          className="w-[94%] h-[94%] border border-dashed border-[#c8ccd4]/10 rounded-full"
         />
       </div>
       <div className="absolute inset-4 border border-zinc-900/30 rounded-full pointer-events-none flex items-center justify-center">
         <motion.div
           animate={{ rotate: -360 }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="w-[90%] h-[90%] border border-[#c2a35d]/5 rounded-full"
+          className="w-[90%] h-[90%] border border-[#c8ccd4]/5 rounded-full"
         />
       </div>
 
@@ -114,7 +114,7 @@ export default function ThreeDBox() {
           id="sculpture-backdrop"
         >
           {/* Top aesthetic corner labels */}
-          <div className="flex justify-between items-center text-[7.5px] text-[#c2a35d]/40 tracking-[0.2em] font-sans font-bold">
+          <div className="flex justify-between items-center text-[7.5px] text-[#c8ccd4]/40 tracking-[0.2em] font-sans font-bold">
             <span>SÉCULO XXI • ESTÉTICA</span>
             <span>EXCELÊNCIA</span>
           </div>
@@ -144,10 +144,10 @@ export default function ThreeDBox() {
           id="luxury-barber-pole-model"
         >
           {/* Top cap - brass finish */}
-          <div className="w-full h-8 md:h-10 bg-gradient-to-r from-amber-600 via-[#c2a35d] to-[#7c6331] rounded-t-full shadow-lg border border-[#c2a35d]/40 flex flex-col items-center justify-center relative">
+          <div className="w-full h-8 md:h-10 bg-gradient-to-r from-amber-600 via-[#c8ccd4] to-[#7c6331] rounded-t-full shadow-lg border border-[#c8ccd4]/40 flex flex-col items-center justify-center relative">
             <div className="w-3 h-3 bg-gradient-to-r from-[#faf9f6]/40 to-transparent rounded-full absolute top-1 left-2 blur-[1px]" />
             {/* Small top crown */}
-            <div className="w-5 h-2 -mt-4 bg-[#c2a35d] rounded-t-sm border-t border-[#faf9f6]/20" />
+            <div className="w-5 h-2 -mt-4 bg-[#c8ccd4] rounded-t-sm border-t border-[#faf9f6]/20" />
           </div>
 
           {/* Core glass cylinder containing rotating diagonal stripes */}
@@ -156,7 +156,7 @@ export default function ThreeDBox() {
             <div
               className="absolute inset-y-0 w-full animate-[barberScroll_4s_linear_infinite]"
               style={{
-                backgroundImage: 'repeating-linear-gradient(135deg, #c2a35d, #c2a35d 14px, #1a1a1c 14px, #1a1a1c 28px, #ffffff 28px, #ffffff 32px)',
+                backgroundImage: 'repeating-linear-gradient(135deg, #c8ccd4, #c8ccd4 14px, #1a1a1c 14px, #1a1a1c 28px, #ffffff 28px, #ffffff 32px)',
                 backgroundSize: '100% 50px',
               }}
             />
@@ -168,7 +168,7 @@ export default function ThreeDBox() {
           </div>
 
           {/* Bottom cap - brass finish */}
-          <div className="w-full h-8 md:h-10 bg-gradient-to-r from-amber-600 via-[#c2a35d] to-[#7c6331] rounded-b-full shadow-lg border border-[#c2a35d]/40 relative flex flex-col items-center justify-start">
+          <div className="w-full h-8 md:h-10 bg-gradient-to-r from-amber-600 via-[#c8ccd4] to-[#7c6331] rounded-b-full shadow-lg border border-[#c8ccd4]/40 relative flex flex-col items-center justify-start">
             <div className="w-3 h-3 bg-gradient-to-r from-[#faf9f6]/20 to-transparent rounded-full absolute bottom-1 left-2" />
             {/* Small bottom ornament */}
             <div className="w-4 h-2 mt-8 bg-[#7c6331] rounded-b-sm" />
@@ -188,7 +188,7 @@ export default function ThreeDBox() {
           id="sculpture-scissors"
         >
           {/* Glassmorhic capsule carrying scissors */}
-          <div className="relative p-3 bg-zinc-950/40 border border-[#c2a35d]/20 rounded-2xl shadow-xl md:backdrop-blur-md flex items-center justify-center group">
+          <div className="relative p-3 bg-zinc-950/40 border border-[#c8ccd4]/20 rounded-2xl shadow-xl md:backdrop-blur-md flex items-center justify-center group">
             {/* Scissors vector icon */}
             <motion.div 
               animate={{ 
@@ -196,13 +196,13 @@ export default function ThreeDBox() {
                 rotate: isHovered ? [0, 5, -5, 0] : 0 
               }}
               transition={{ duration: 0.5, repeat: isHovered ? Infinity : 0, repeatType: 'reverse' }}
-              className="text-[#c2a35d] w-12 h-12 md:w-16 md:h-16 flex items-center justify-center relative filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]"
+              className="text-[#c8ccd4] w-12 h-12 md:w-16 md:h-16 flex items-center justify-center relative filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]"
             >
               <Scissors className="w-full h-full stroke-[1.25]" />
             </motion.div>
             
             {/* Micro details */}
-            <span className="absolute bottom-1 font-sans text-[6.5px] text-[#c2a35d]/60 tracking-wider">SHEARS</span>
+            <span className="absolute bottom-1 font-sans text-[6.5px] text-[#c8ccd4]/60 tracking-wider">SHEARS</span>
           </div>
         </motion.div>
 
@@ -224,14 +224,14 @@ export default function ThreeDBox() {
               {Array.from({ length: 14 }).map((_, idx) => (
                 <div 
                   key={idx} 
-                  className="w-px bg-gradient-to-b from-[#c2a35d] to-transparent" 
+                  className="w-px bg-gradient-to-b from-[#c8ccd4] to-transparent" 
                   style={{ height: `${12 + (idx % 3) * 4}px` }} 
                 />
               ))}
             </div>
             
             {/* Comb stem */}
-            <div className="w-full h-1.5 bg-gradient-to-r from-[#c2a35d] via-[#faf9f6]/90 to-[#7c6331] rounded-full mt-1.5" />
+            <div className="w-full h-1.5 bg-gradient-to-r from-[#c8ccd4] via-[#faf9f6]/90 to-[#7c6331] rounded-full mt-1.5" />
             
             <span className="font-sans text-[6px] text-zinc-500 tracking-widest uppercase mt-1">SÉCULO XXI COMB</span>
           </div>
@@ -239,7 +239,7 @@ export default function ThreeDBox() {
 
         {/* TOP FLOATING ATMOSPHERIC SPARKS */}
         <motion.div
-          className="absolute -top-4 right-16 text-[#c2a35d]/30"
+          className="absolute -top-4 right-16 text-[#c8ccd4]/30"
           animate={{ y: [0, -6, 0], opacity: [0.3, 0.7, 0.3] }}
           transition={{ duration: 3, repeat: Infinity }}
           style={{ translateZ: '30px' }}
@@ -248,7 +248,7 @@ export default function ThreeDBox() {
         </motion.div>
 
         <motion.div
-          className="absolute bottom-8 left-12 text-[#c2a35d]/20"
+          className="absolute bottom-8 left-12 text-[#c8ccd4]/20"
           animate={{ y: [0, 4, 0], opacity: [0.2, 0.5, 0.2] }}
           transition={{ duration: 4, repeat: Infinity, delay: 1 }}
           style={{ translateZ: '20px' }}

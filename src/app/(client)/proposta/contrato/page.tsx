@@ -207,12 +207,12 @@ export default function ContratoPage() {
   const saldo = option.price / 2;
 
   return (
-    <div className="relative min-h-screen bg-[#050505] text-[#e2e2e2] antialiased overflow-x-hidden selection:bg-gold selection:text-black">
+    <div className="relative min-h-screen bg-[#050505] text-[#e2e2e2] antialiased overflow-x-hidden selection:bg-[#c8ccd4] selection:text-black">
       {/* Background ambient */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-[#020202] via-[#080808] to-[#020202]" />
-        <div className="absolute top-[-10%] right-[-15%] w-[700px] h-[700px] bg-[#c2a35d]/5 rounded-full blur-[140px] hidden md:block" />
-        <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] bg-[#c2a35d]/4 rounded-full blur-[130px] hidden md:block" />
+        <div className="absolute top-[-10%] right-[-15%] w-[700px] h-[700px] bg-[#c8ccd4]/5 rounded-full blur-[140px] hidden md:block" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] bg-[#c8ccd4]/4 rounded-full blur-[130px] hidden md:block" />
       </div>
 
       {/* HERO */}
@@ -221,9 +221,9 @@ export default function ContratoPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2.5 font-sans text-[9px] text-[#c2a35d] uppercase tracking-[0.35em] font-bold bg-[#c2a35d]/5 border border-[#c2a35d]/10 px-4 py-1.5 rounded-full mb-6"
+          className="inline-flex items-center gap-2.5 font-sans text-[9px] text-[#c8ccd4] uppercase tracking-[0.35em] font-bold bg-[#c8ccd4]/5 border border-[#c8ccd4]/10 px-4 py-1.5 rounded-full mb-6"
         >
-          <span className="inline-block w-1.5 h-1.5 bg-[#c2a35d] rounded-full" />
+          <span className="inline-block w-1.5 h-1.5 bg-[#c8ccd4] rounded-full" />
           CONTRATO · BARBEARIA SÉCULO XXI
         </motion.div>
 
@@ -234,7 +234,7 @@ export default function ContratoPage() {
           className="font-display font-light text-3xl sm:text-5xl text-zinc-100 tracking-wide leading-[1.2] mb-6"
         >
           Prestação de serviços <br className="sm:hidden" />
-          <span className="text-[#c2a35d] font-serif italic">de desenvolvimento e uso do Sistema</span>
+          <span className="text-[#c8ccd4] font-serif italic">de desenvolvimento e uso do Sistema</span>
         </motion.h1>
 
         <motion.p
@@ -256,7 +256,7 @@ export default function ContratoPage() {
         >
           <Link
             href="/proposta/contrato/imprimir"
-            className="h-12 bg-linear-to-r from-[#ece4cb] to-[#c2a35d] text-slate-950 font-sans text-[11px] font-black tracking-[0.15em] px-8 rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(194,163,93,0.3)] hover:scale-[1.02] transition-all"
+            className="h-12 bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] text-slate-950 font-sans text-[11px] font-black tracking-[0.15em] px-8 rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(200, 204, 212,0.3)] hover:scale-[1.02] transition-all"
           >
             <Printer className="w-3.5 h-3.5" />
             VERSÃO PARA IMPRIMIR E ASSINAR
@@ -282,7 +282,7 @@ export default function ContratoPage() {
             transition={{ duration: 0.5 }}
             className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6"
           >
-            <span className="font-mono text-[9px] text-[#c2a35d] uppercase tracking-[0.25em] font-bold">
+            <span className="font-mono text-[9px] text-[#c8ccd4] uppercase tracking-[0.25em] font-bold">
               CONTRATADOS
             </span>
             <ul className="mt-3 space-y-3 font-sans text-sm text-zinc-300">
@@ -304,9 +304,9 @@ export default function ContratoPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="bg-white/5 backdrop-blur-xl border border-[#c2a35d]/20 rounded-2xl p-6"
+            className="bg-white/5 backdrop-blur-xl border border-[#c8ccd4]/20 rounded-2xl p-6"
           >
-            <span className="font-mono text-[9px] text-[#c2a35d] uppercase tracking-[0.25em] font-bold">
+            <span className="font-mono text-[9px] text-[#c8ccd4] uppercase tracking-[0.25em] font-bold">
               CONTRATANTE
             </span>
             <ul className="mt-3 space-y-3 font-sans text-sm text-zinc-300">
@@ -333,7 +333,7 @@ export default function ContratoPage() {
           tag="CLÁUSULA 3 · ANEXO II"
           title={
             <>
-              Escolha a opção <span className="text-[#c2a35d] font-serif italic">que faz sentido pra você</span>
+              Escolha a opção <span className="text-[#c8ccd4] font-serif italic">que faz sentido pra você</span>
             </>
           }
         />
@@ -421,13 +421,13 @@ export default function ContratoPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6 }}
-          className="relative bg-white/5 backdrop-blur-xl border border-[#c2a35d]/20 rounded-3xl p-8 sm:p-10 overflow-hidden"
+          className="relative bg-white/5 backdrop-blur-xl border border-[#c8ccd4]/20 rounded-3xl p-8 sm:p-10 overflow-hidden"
         >
-          <div className="absolute -top-10 -right-10 w-48 h-48 bg-[#c2a35d]/10 rounded-full blur-[80px]" />
+          <div className="absolute -top-10 -right-10 w-48 h-48 bg-[#c8ccd4]/10 rounded-full blur-[80px]" />
           <div className="relative z-10">
             <div className="flex flex-col sm:flex-row items-start gap-6 mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-[#c2a35d]/10 border border-[#c2a35d]/30 flex items-center justify-center shrink-0">
-                <MessageCircle className="w-7 h-7 text-[#c2a35d]" />
+              <div className="w-14 h-14 rounded-2xl bg-[#c8ccd4]/10 border border-[#c8ccd4]/30 flex items-center justify-center shrink-0">
+                <MessageCircle className="w-7 h-7 text-[#c8ccd4]" />
               </div>
               <div>
                 <h3 className="font-display font-light text-2xl sm:text-3xl text-zinc-100 mb-3">
@@ -443,8 +443,8 @@ export default function ContratoPage() {
             </div>
 
             <div className="flex items-center gap-2.5 mb-3">
-              <Info className="w-4 h-4 text-[#c2a35d]" />
-              <span className="font-mono text-[9px] text-[#c2a35d] uppercase tracking-[0.25em] font-bold">
+              <Info className="w-4 h-4 text-[#c8ccd4]" />
+              <span className="font-mono text-[9px] text-[#c8ccd4] uppercase tracking-[0.25em] font-bold">
                 COMO VAMOS IMPLEMENTAR — TRANSPARÊNCIA TOTAL
               </span>
             </div>
@@ -464,7 +464,7 @@ export default function ContratoPage() {
               </div>
               <div className="bg-black/30 border border-white/5 rounded-2xl p-5">
                 <div className="flex items-center gap-2.5 mb-2">
-                  <Smartphone className="w-4 h-4 text-[#c2a35d]" />
+                  <Smartphone className="w-4 h-4 text-[#c8ccd4]" />
                   <h4 className="font-display font-medium text-sm text-zinc-100">
                     Conexão pelo número da barbearia
                   </h4>
@@ -493,12 +493,12 @@ export default function ContratoPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
-          className="relative bg-white/5 backdrop-blur-xl border-2 border-[#c2a35d]/40 rounded-3xl p-7 sm:p-8 shadow-[0_0_40px_rgba(194,163,93,0.1)]"
+          className="relative bg-white/5 backdrop-blur-xl border-2 border-[#c8ccd4]/40 rounded-3xl p-7 sm:p-8 shadow-[0_0_40px_rgba(200, 204, 212,0.1)]"
         >
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#c2a35d]/10 border border-[#c2a35d]/20 flex items-center justify-center shrink-0">
-                <Wallet className="w-5 h-5 text-[#c2a35d]" />
+              <div className="w-10 h-10 rounded-xl bg-[#c8ccd4]/10 border border-[#c8ccd4]/20 flex items-center justify-center shrink-0">
+                <Wallet className="w-5 h-5 text-[#c8ccd4]" />
               </div>
               <div>
                 <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-[0.25em] font-bold">
@@ -523,8 +523,8 @@ export default function ContratoPage() {
             <BenefitRow text={`Saldo de R$ ${formatBRL(saldo)}, pago na entrega/ativação do Sistema em produção`} />
           </ul>
           {option.highlight && (
-            <div className="flex items-start gap-2.5 bg-[#c2a35d]/5 border border-[#c2a35d]/15 rounded-xl p-3.5 mb-4">
-              <Sparkles className="w-4 h-4 mt-0.5 shrink-0 text-[#c2a35d]" />
+            <div className="flex items-start gap-2.5 bg-[#c8ccd4]/5 border border-[#c8ccd4]/15 rounded-xl p-3.5 mb-4">
+              <Sparkles className="w-4 h-4 mt-0.5 shrink-0 text-[#c8ccd4]" />
               <p className="font-sans text-xs text-zinc-300 leading-relaxed">{option.highlight}</p>
             </div>
           )}
@@ -660,9 +660,9 @@ export default function ContratoPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.5 }}
-          className="relative bg-white/5 backdrop-blur-xl border-2 border-[#c2a35d]/40 rounded-2xl p-6 sm:p-7"
+          className="relative bg-white/5 backdrop-blur-xl border-2 border-[#c8ccd4]/40 rounded-2xl p-6 sm:p-7"
         >
-          <span className="font-mono text-[9px] text-[#c2a35d] uppercase tracking-[0.25em] font-bold">
+          <span className="font-mono text-[9px] text-[#c8ccd4] uppercase tracking-[0.25em] font-bold">
             APÓS 12 MESES — CONTINUAR COM SUPORTE (OPCIONAL)
           </span>
           <h3 className="font-display font-light text-xl text-zinc-100 mt-2 mb-4">
@@ -672,13 +672,13 @@ export default function ContratoPage() {
             <div
               className={`rounded-xl p-4 border transition-colors ${
                 selected === 2
-                  ? "border-[#c2a35d]/50 bg-[#c2a35d]/5"
+                  ? "border-[#c8ccd4]/50 bg-[#c8ccd4]/5"
                   : "border-white/10 bg-black/20"
               }`}
             >
               <div className="flex items-baseline gap-1.5 mb-1">
-                <span className="font-sans text-[#c2a35d] text-sm">R$</span>
-                <span className="font-display text-3xl text-[#c2a35d] font-light">129,90</span>
+                <span className="font-sans text-[#c8ccd4] text-sm">R$</span>
+                <span className="font-display text-3xl text-[#c8ccd4] font-light">129,90</span>
                 <span className="font-sans text-zinc-500 text-sm">/mês</span>
               </div>
               <p className="font-sans text-xs text-zinc-400 leading-relaxed">
@@ -689,7 +689,7 @@ export default function ContratoPage() {
             <div
               className={`rounded-xl p-4 border transition-colors ${
                 selected === 1
-                  ? "border-[#c2a35d]/50 bg-[#c2a35d]/5"
+                  ? "border-[#c8ccd4]/50 bg-[#c8ccd4]/5"
                   : "border-white/10 bg-black/20"
               }`}
             >
@@ -783,7 +783,7 @@ export default function ContratoPage() {
           <div className="mt-6 text-center">
             <Link
               href="/proposta/contrato/imprimir"
-              className="inline-flex items-center gap-2 h-12 bg-linear-to-r from-[#ece4cb] to-[#c2a35d] text-slate-950 font-sans text-[11px] font-black tracking-[0.15em] px-8 rounded-xl shadow-[0_0_20px_rgba(194,163,93,0.3)] hover:scale-[1.02] transition-all"
+              className="inline-flex items-center gap-2 h-12 bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] text-slate-950 font-sans text-[11px] font-black tracking-[0.15em] px-8 rounded-xl shadow-[0_0_20px_rgba(200, 204, 212,0.3)] hover:scale-[1.02] transition-all"
             >
               <FileSignature className="w-3.5 h-3.5" />
               ABRIR VERSÃO PARA IMPRIMIR
@@ -796,11 +796,11 @@ export default function ContratoPage() {
       <footer className="relative z-10 border-t border-white/5 mt-4 py-10 px-4 md:px-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 bg-[#c2a35d] text-black rounded-full flex items-center justify-center">
+            <div className="w-7 h-7 bg-[#c8ccd4] text-black rounded-full flex items-center justify-center">
               <Scissors className="w-3.5 h-3.5" />
             </div>
             <span className="font-display font-light text-zinc-100 tracking-[0.16em] uppercase text-sm">
-              SÉCULO <span className="text-[#c2a35d] font-serif italic">XXI</span>
+              SÉCULO <span className="text-[#c8ccd4] font-serif italic">XXI</span>
             </span>
           </div>
           <span className="font-mono text-[9px] text-zinc-600 uppercase tracking-widest">
@@ -821,7 +821,7 @@ function SectionHeader({ tag, title }: { tag: string; title: React.ReactNode }) 
       transition={{ duration: 0.5 }}
       className="mb-6 text-center sm:text-left"
     >
-      <span className="font-mono text-[9px] text-[#c2a35d]/70 uppercase tracking-[0.25em] font-bold">
+      <span className="font-mono text-[9px] text-[#c8ccd4]/70 uppercase tracking-[0.25em] font-bold">
         {tag}
       </span>
       <h2 className="font-display font-light text-2xl sm:text-3xl text-zinc-100 mt-2">
@@ -846,10 +846,10 @@ function FeatureCard({
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
       whileHover={{ y: -3 }}
-      className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-[#c2a35d]/30 rounded-2xl p-5 flex flex-col gap-3 transition-colors"
+      className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-[#c8ccd4]/30 rounded-2xl p-5 flex flex-col gap-3 transition-colors"
     >
-      <div className="w-9 h-9 rounded-xl bg-[#c2a35d]/10 border border-[#c2a35d]/20 flex items-center justify-center">
-        <Icon className="w-4.5 h-4.5 text-[#c2a35d]" />
+      <div className="w-9 h-9 rounded-xl bg-[#c8ccd4]/10 border border-[#c8ccd4]/20 flex items-center justify-center">
+        <Icon className="w-4.5 h-4.5 text-[#c8ccd4]" />
       </div>
       <h4 className="font-display font-medium text-sm text-zinc-100 leading-snug">
         {item.title}
@@ -888,18 +888,18 @@ function UnitOptionCard({
       transition={{ duration: 0.5 }}
       className={`relative text-left bg-white/5 backdrop-blur-xl rounded-2xl p-6 flex gap-4 transition-all ${
         selected
-          ? "border-2 border-[#c2a35d]/60 shadow-[0_0_30px_rgba(194,163,93,0.12)]"
+          ? "border-2 border-[#c8ccd4]/60 shadow-[0_0_30px_rgba(200, 204, 212,0.12)]"
           : "border border-white/10 hover:border-white/20"
       }`}
     >
       {opt.badge && (
-        <span className="absolute -top-3 right-6 bg-linear-to-r from-[#ece4cb] to-[#c2a35d] text-slate-950 font-sans text-[9px] font-black tracking-[0.2em] uppercase px-4 py-1.5 rounded-full shadow-lg">
+        <span className="absolute -top-3 right-6 bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] text-slate-950 font-sans text-[9px] font-black tracking-[0.2em] uppercase px-4 py-1.5 rounded-full shadow-lg">
           {opt.badge}
         </span>
       )}
       <div
         className={`w-5 h-5 mt-1 rounded-md border-2 shrink-0 flex items-center justify-center transition-colors ${
-          selected ? "bg-[#c2a35d] border-[#c2a35d]" : "border-zinc-600"
+          selected ? "bg-[#c8ccd4] border-[#c8ccd4]" : "border-zinc-600"
         }`}
       >
         {selected && <CheckCircle2 className="w-4 h-4 text-slate-950" />}
@@ -916,7 +916,7 @@ function UnitOptionCard({
               R$ {formatBRL(opt.originalPrice)}
             </span>
           )}
-          <span className={`font-display text-2xl font-light ${selected ? "text-[#c2a35d]" : "text-zinc-200"}`}>
+          <span className={`font-display text-2xl font-light ${selected ? "text-[#c8ccd4]" : "text-zinc-200"}`}>
             R$ {formatBRL(opt.price)}
           </span>
         </div>
@@ -942,8 +942,8 @@ function TimelineStep({
       transition={{ duration: 0.4 }}
       className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 flex items-start gap-4"
     >
-      <div className="w-10 h-10 rounded-xl bg-[#c2a35d]/10 border border-[#c2a35d]/20 flex items-center justify-center shrink-0">
-        <Icon className="w-4.5 h-4.5 text-[#c2a35d]" />
+      <div className="w-10 h-10 rounded-xl bg-[#c8ccd4]/10 border border-[#c8ccd4]/20 flex items-center justify-center shrink-0">
+        <Icon className="w-4.5 h-4.5 text-[#c8ccd4]" />
       </div>
       <div>
         <h4 className="font-display font-medium text-sm text-zinc-100 mb-1">{title}</h4>

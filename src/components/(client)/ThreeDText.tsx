@@ -34,8 +34,8 @@ export default function ThreeDText() {
       id="3d-text-section"
     >
       {/* Background design accents */}
-      <div className="absolute left-[5%] top-3 font-sans text-[8px] font-bold text-[#c2a35d]/40 tracking-[0.25em] select-none uppercase">SÉCULO XXI • ESTÉTICA DO CUIDADO</div>
-      <div className="absolute right-[5%] bottom-3 font-sans text-[8px] font-bold text-[#c2a35d]/40 tracking-[0.25em] select-none uppercase">HERANÇA & PRECISÃO</div>
+      <div className="absolute left-[5%] top-3 font-sans text-[8px] font-bold text-[#c8ccd4]/40 tracking-[0.25em] select-none uppercase">SÉCULO XXI • ESTÉTICA DO CUIDADO</div>
+      <div className="absolute right-[5%] bottom-3 font-sans text-[8px] font-bold text-[#c8ccd4]/40 tracking-[0.25em] select-none uppercase">HERANÇA & PRECISÃO</div>
 
       {/* 3D tilt board containment */}
       <div 
@@ -74,7 +74,7 @@ export default function ThreeDText() {
         </div>
 
         <motion.div 
-          className={`whitespace-nowrap flex gap-6 font-display font-light text-[40px] md:text-[75px] leading-none text-[#c2a35d]/90 select-none tracking-[0.08em] opacity-95 w-max justify-end ${isMobile ? 'animate-[marqueeRight_20s_linear_infinite]' : ''}`}
+          className={`whitespace-nowrap flex gap-6 font-display font-light text-[40px] md:text-[75px] leading-none text-[#c8ccd4]/90 select-none tracking-[0.08em] opacity-95 w-max justify-end ${isMobile ? 'animate-[marqueeRight_20s_linear_infinite]' : ''}`}
           style={isMobile ? undefined : { x: smoothX2, transformStyle: 'preserve-3d' }}
           id="text-vortex-row-2"
         >
@@ -97,7 +97,7 @@ export default function ThreeDText() {
 
       <style>{`
         .stroke-text {
-          -webkit-text-stroke: 1px #c2a35d;
+          -webkit-text-stroke: 1px #c8ccd4;
         }
         @keyframes marqueeLeft {
           0% { transform: translateX(0); }

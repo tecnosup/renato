@@ -70,9 +70,9 @@ export default function Memberships() {
         "Atendimento com Especialista"
       ],
       gradient: "from-[#0d0d0a] via-zinc-950 to-[#0d0d0a]",
-      borderColor: "border-[#c2a35d]/20",
-      badgeBg: "bg-[#c2a35d]/5 text-[#c2a35d] border-[#c2a35d]/10",
-      textColor: "text-white group-hover/club:text-gold"
+      borderColor: "border-[#c8ccd4]/20",
+      badgeBg: "bg-[#c8ccd4]/5 text-[#c8ccd4] border-[#c8ccd4]/10",
+      textColor: "text-white group-hover/club:text-[#c8ccd4]"
     },
     {
       id: "dark-club",
@@ -218,7 +218,7 @@ export default function Memberships() {
               style={{
                 background: activeIndex === 2 
                   ? "radial-gradient(circle, rgba(147,51,234,0.18) 0%, rgba(0,0,0,0) 70%)" // Black/Purple vibe for Club Legend
-                  : "radial-gradient(circle, rgba(194,163,93,0.18) 0%, rgba(0,0,0,0) 70%)", // Gold vibe for Royal / Silver
+                  : "radial-gradient(circle, rgba(200, 204, 212,0.18) 0%, rgba(0,0,0,0) 70%)", // Gold vibe for Royal / Silver
               }}
               className="absolute left-[15%] right-[15%] top-0 bottom-0 blur-[60px] rounded-full"
             />
@@ -312,7 +312,7 @@ export default function Memberships() {
                     >
                       {/* Luxe Golden Contour Highlight for Selected card */}
                       {matchesSelection && (
-                        <div className="absolute inset-0 rounded-[20px] sm:rounded-[24px] pointer-events-none z-35 border border-gold/30 shadow-[0_0_15px_rgba(194,163,93,0.1)]" />
+                        <div className="absolute inset-0 rounded-[20px] sm:rounded-[24px] pointer-events-none z-35 border border-[#c8ccd4]/30 shadow-[0_0_15px_rgba(200, 204, 212,0.1)]" />
                       )}
 
                       {/* Glass Specular Gloss Highlight top layer */}
@@ -328,12 +328,12 @@ export default function Memberships() {
                             Tier {plan.tier}
                           </span>
                           {matchesSelection ? (
-                            <span className="font-mono text-[7px] sm:text-[8px] bg-gradient-to-r from-amber-500 to-[#c2a35d] text-zinc-950 px-2 py-0.5 font-bold uppercase tracking-wider flex items-center gap-1 rounded shadow-sm">
+                            <span className="font-mono text-[7px] sm:text-[8px] bg-gradient-to-r from-amber-500 to-[#c8ccd4] text-zinc-950 px-2 py-0.5 font-bold uppercase tracking-wider flex items-center gap-1 rounded shadow-sm">
                               <CheckCircle className="w-2.5 h-2.5 fill-current" />
                               Ativo
                             </span>
                           ) : plan.popular ? (
-                            <span className="font-mono text-[7px] sm:text-[8px] bg-gold text-black px-2 py-0.5 font-bold uppercase tracking-wider flex items-center gap-1 rounded">
+                            <span className="font-mono text-[7px] sm:text-[8px] bg-[#c8ccd4] text-black px-2 py-0.5 font-bold uppercase tracking-wider flex items-center gap-1 rounded">
                               <Flame className="w-2.5 h-2.5 fill-current" />
                               Desejado
                             </span>
@@ -369,7 +369,7 @@ export default function Memberships() {
                             <li key={bIdx} className="flex gap-1.5 items-start text-[9.5px] sm:text-[10.5px] text-zinc-350">
                               <div className={`w-3 h-3 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
                                   plan.popular 
-                                    ? 'bg-[#c2a35d]/20 text-[#c2a35d]' 
+                                    ? 'bg-[#c8ccd4]/20 text-[#c8ccd4]' 
                                     : 'bg-white/10 text-slate-300'
                                 }`}>
                                 <Check className="w-1.5 h-1.5" />

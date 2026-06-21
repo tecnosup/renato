@@ -78,12 +78,12 @@ const PROXIMA_ENTREGA = [
 
 export default function PropostaPage() {
   return (
-    <div className="relative min-h-screen bg-[#050505] text-[#e2e2e2] antialiased overflow-x-hidden selection:bg-gold selection:text-black">
+    <div className="relative min-h-screen bg-[#050505] text-[#e2e2e2] antialiased overflow-x-hidden selection:bg-[#c8ccd4] selection:text-black">
       {/* Background ambient */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-[#020202] via-[#080808] to-[#020202]" />
-        <div className="absolute top-[-10%] right-[-15%] w-[700px] h-[700px] bg-[#c2a35d]/5 rounded-full blur-[140px] hidden md:block" />
-        <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] bg-[#c2a35d]/4 rounded-full blur-[130px] hidden md:block" />
+        <div className="absolute top-[-10%] right-[-15%] w-[700px] h-[700px] bg-[#c8ccd4]/5 rounded-full blur-[140px] hidden md:block" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] bg-[#c8ccd4]/4 rounded-full blur-[130px] hidden md:block" />
       </div>
 
       {/* HERO */}
@@ -92,9 +92,9 @@ export default function PropostaPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2.5 font-sans text-[9px] text-[#c2a35d] uppercase tracking-[0.35em] font-bold bg-[#c2a35d]/5 border border-[#c2a35d]/10 px-4 py-1.5 rounded-full mb-6"
+          className="inline-flex items-center gap-2.5 font-sans text-[9px] text-[#c8ccd4] uppercase tracking-[0.35em] font-bold bg-[#c8ccd4]/5 border border-[#c8ccd4]/10 px-4 py-1.5 rounded-full mb-6"
         >
-          <span className="inline-block w-1.5 h-1.5 bg-[#c2a35d] rounded-full" />
+          <span className="inline-block w-1.5 h-1.5 bg-[#c8ccd4] rounded-full" />
           PROPOSTA EXCLUSIVA · BARBEARIA SÉCULO XXI
         </motion.div>
 
@@ -105,7 +105,7 @@ export default function PropostaPage() {
           className="font-display font-light text-4xl sm:text-6xl text-zinc-100 tracking-wide leading-[1.1] mb-6"
         >
           O seu sistema, <br className="sm:hidden" />
-          <span className="text-[#c2a35d] font-serif italic">do zero ao ar</span>
+          <span className="text-[#c8ccd4] font-serif italic">do zero ao ar</span>
         </motion.h1>
 
         <motion.p
@@ -127,7 +127,7 @@ export default function PropostaPage() {
         >
           <a
             href="#investimento"
-            className="h-12 bg-linear-to-r from-[#ece4cb] to-[#c2a35d] text-slate-950 font-sans text-[11px] font-black tracking-[0.15em] px-8 rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(194,163,93,0.3)] hover:scale-[1.02] transition-all"
+            className="h-12 bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] text-slate-950 font-sans text-[11px] font-black tracking-[0.15em] px-8 rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(200, 204, 212,0.3)] hover:scale-[1.02] transition-all"
           >
             VER INVESTIMENTO
             <ArrowRight className="w-3.5 h-3.5" />
@@ -148,7 +148,7 @@ export default function PropostaPage() {
           tag="ENTREGA ATUAL · 4 DIAS"
           title={
             <>
-              O que já está <span className="text-[#c2a35d] font-serif italic">pronto</span>
+              O que já está <span className="text-[#c8ccd4] font-serif italic">pronto</span>
             </>
           }
         />
@@ -165,7 +165,7 @@ export default function PropostaPage() {
           tag="PRÓXIMOS 25 DIAS"
           title={
             <>
-              O que vem na <span className="text-[#c2a35d] font-serif italic">entrega final</span>
+              O que vem na <span className="text-[#c8ccd4] font-serif italic">entrega final</span>
             </>
           }
         />
@@ -183,15 +183,15 @@ export default function PropostaPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6 }}
-          className="relative bg-white/5 backdrop-blur-xl border border-[#c2a35d]/20 rounded-3xl p-8 sm:p-10 overflow-hidden"
+          className="relative bg-white/5 backdrop-blur-xl border border-[#c8ccd4]/20 rounded-3xl p-8 sm:p-10 overflow-hidden"
         >
-          <div className="absolute -top-10 -right-10 w-48 h-48 bg-[#c2a35d]/10 rounded-full blur-[80px]" />
+          <div className="absolute -top-10 -right-10 w-48 h-48 bg-[#c8ccd4]/10 rounded-full blur-[80px]" />
           <div className="flex flex-col sm:flex-row items-start gap-6 relative z-10">
-            <div className="w-14 h-14 rounded-2xl bg-[#c2a35d]/10 border border-[#c2a35d]/30 flex items-center justify-center shrink-0">
-              <MessageCircle className="w-7 h-7 text-[#c2a35d]" />
+            <div className="w-14 h-14 rounded-2xl bg-[#c8ccd4]/10 border border-[#c8ccd4]/30 flex items-center justify-center shrink-0">
+              <MessageCircle className="w-7 h-7 text-[#c8ccd4]" />
             </div>
             <div>
-              <span className="font-mono text-[9px] text-[#c2a35d] uppercase tracking-[0.25em] font-bold">
+              <span className="font-mono text-[9px] text-[#c8ccd4] uppercase tracking-[0.25em] font-bold">
                 BÔNUS EXCLUSIVO
               </span>
               <h3 className="font-display font-light text-2xl sm:text-3xl text-zinc-100 mt-1 mb-3">
@@ -214,7 +214,7 @@ export default function PropostaPage() {
           tag="INVESTIMENTO"
           title={
             <>
-              Vamos colocar isso <span className="text-[#c2a35d] font-serif italic">no ar</span>
+              Vamos colocar isso <span className="text-[#c8ccd4] font-serif italic">no ar</span>
             </>
           }
         />
@@ -252,12 +252,12 @@ export default function PropostaPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="relative bg-white/5 backdrop-blur-xl border-2 border-[#c2a35d]/50 rounded-3xl p-7 sm:p-8 flex flex-col shadow-[0_0_40px_rgba(194,163,93,0.15)]"
+            className="relative bg-white/5 backdrop-blur-xl border-2 border-[#c8ccd4]/50 rounded-3xl p-7 sm:p-8 flex flex-col shadow-[0_0_40px_rgba(200, 204, 212,0.15)]"
           >
-            <span className="absolute -top-3 right-6 bg-linear-to-r from-[#ece4cb] to-[#c2a35d] text-slate-950 font-sans text-[9px] font-black tracking-[0.2em] uppercase px-4 py-1.5 rounded-full shadow-lg">
+            <span className="absolute -top-3 right-6 bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] text-slate-950 font-sans text-[9px] font-black tracking-[0.2em] uppercase px-4 py-1.5 rounded-full shadow-lg">
               MAIS VANTAJOSO
             </span>
-            <span className="font-mono text-[9px] text-[#c2a35d] uppercase tracking-[0.25em] font-bold mb-2">
+            <span className="font-mono text-[9px] text-[#c8ccd4] uppercase tracking-[0.25em] font-bold mb-2">
               AS DUAS UNIDADES
             </span>
             <h3 className="font-display font-light text-xl text-zinc-100 mb-4">
@@ -270,8 +270,8 @@ export default function PropostaPage() {
               </span>
             </div>
             <div className="flex items-baseline gap-1.5 mb-6">
-              <span className="font-sans text-[#c2a35d] text-sm">R$</span>
-              <span className="font-display text-4xl text-[#c2a35d] font-light">3.000</span>
+              <span className="font-sans text-[#c8ccd4] text-sm">R$</span>
+              <span className="font-display text-4xl text-[#c8ccd4] font-light">3.000</span>
             </div>
             <ul className="space-y-3 font-sans text-sm text-zinc-300 mb-6 flex-1">
               <BenefitRow text="Sistema completo para AS DUAS unidades, cada uma com sua instância" highlight />
@@ -291,14 +291,14 @@ export default function PropostaPage() {
           transition={{ duration: 0.5 }}
           className="mt-6 bg-black/30 border border-white/5 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-4 text-left"
         >
-          <div className="w-10 h-10 rounded-xl bg-[#c2a35d]/10 border border-[#c2a35d]/20 flex items-center justify-center shrink-0">
-            <Gift className="w-5 h-5 text-[#c2a35d]" />
+          <div className="w-10 h-10 rounded-xl bg-[#c8ccd4]/10 border border-[#c8ccd4]/20 flex items-center justify-center shrink-0">
+            <Gift className="w-5 h-5 text-[#c8ccd4]" />
           </div>
           <p className="font-sans text-sm text-zinc-400 leading-relaxed">
             Depois dos primeiros 12 meses, o sistema continua{" "}
             <strong className="text-zinc-200">100% seu — sem custo nenhum</strong>. Se quiser
             manter nosso suporte e atualizações contínuas, a manutenção fica em apenas{" "}
-            <strong className="text-[#c2a35d]">R$ 129,90/mês</strong> (cobrindo as duas
+            <strong className="text-[#c8ccd4]">R$ 129,90/mês</strong> (cobrindo as duas
             unidades), sem fidelidade — cancele quando quiser.
           </p>
         </motion.div>
@@ -317,7 +317,7 @@ export default function PropostaPage() {
           </p>
           <Link
             href="/proposta/contrato"
-            className="inline-flex items-center gap-2 h-12 bg-linear-to-r from-[#ece4cb] to-[#c2a35d] text-slate-950 font-sans text-[11px] font-black tracking-[0.15em] px-8 rounded-xl shadow-[0_0_20px_rgba(194,163,93,0.3)] hover:scale-[1.02] transition-all"
+            className="inline-flex items-center gap-2 h-12 bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] text-slate-950 font-sans text-[11px] font-black tracking-[0.15em] px-8 rounded-xl shadow-[0_0_20px_rgba(200, 204, 212,0.3)] hover:scale-[1.02] transition-all"
           >
             <FileSignature className="w-3.5 h-3.5" />
             ABRIR CONTRATO PARA ASSINATURA
@@ -329,11 +329,11 @@ export default function PropostaPage() {
       <footer className="relative z-10 border-t border-white/5 mt-12 py-10 px-4 md:px-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 bg-[#c2a35d] text-black rounded-full flex items-center justify-center">
+            <div className="w-7 h-7 bg-[#c8ccd4] text-black rounded-full flex items-center justify-center">
               <Scissors className="w-3.5 h-3.5" />
             </div>
             <span className="font-display font-light text-zinc-100 tracking-[0.16em] uppercase text-sm">
-              SÉCULO <span className="text-[#c2a35d] font-serif italic">XXI</span>
+              SÉCULO <span className="text-[#c8ccd4] font-serif italic">XXI</span>
             </span>
           </div>
           <span className="font-mono text-[9px] text-zinc-600 uppercase tracking-widest">
@@ -354,7 +354,7 @@ function SectionHeader({ tag, title }: { tag: string; title: React.ReactNode }) 
       transition={{ duration: 0.5 }}
       className="mb-8 text-center sm:text-left"
     >
-      <span className="font-mono text-[9px] text-[#c2a35d]/70 uppercase tracking-[0.25em] font-bold">
+      <span className="font-mono text-[9px] text-[#c8ccd4]/70 uppercase tracking-[0.25em] font-bold">
         {tag}
       </span>
       <h2 className="font-display font-light text-2xl sm:text-3xl text-zinc-100 mt-2">
@@ -383,8 +383,8 @@ function FeatureCard({
       className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 flex flex-col gap-3"
     >
       <div className="flex items-center justify-between">
-        <div className="w-9 h-9 rounded-xl bg-[#c2a35d]/10 border border-[#c2a35d]/20 flex items-center justify-center">
-          <Icon className="w-4.5 h-4.5 text-[#c2a35d]" />
+        <div className="w-9 h-9 rounded-xl bg-[#c8ccd4]/10 border border-[#c8ccd4]/20 flex items-center justify-center">
+          <Icon className="w-4.5 h-4.5 text-[#c8ccd4]" />
         </div>
         {done && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
       </div>
@@ -400,7 +400,7 @@ function BenefitRow({ text, highlight }: { text: string; highlight?: boolean }) 
   return (
     <li className="flex items-start gap-2.5">
       <CheckCircle2
-        className={`w-4 h-4 mt-0.5 shrink-0 ${highlight ? "text-[#c2a35d]" : "text-emerald-400"}`}
+        className={`w-4 h-4 mt-0.5 shrink-0 ${highlight ? "text-[#c8ccd4]" : "text-emerald-400"}`}
       />
       <span>{text}</span>
     </li>

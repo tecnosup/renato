@@ -260,7 +260,7 @@ export default function JornadaSobre() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="relative flex flex-col items-center mt-14 sm:mt-20"
         >
-          <div className="absolute inset-x-0 -top-4 mx-auto w-44 h-44 bg-[#c2a35d]/20 blur-[60px] rounded-full -z-10" />
+          <div className="absolute inset-x-0 -top-4 mx-auto w-44 h-44 bg-[#c8ccd4]/20 blur-[60px] rounded-full -z-10" />
           <img
             src="/img/cadeiradourada.png"
             alt="Cadeira de barbeiro — o destino da Século XXI"
@@ -268,7 +268,7 @@ export default function JornadaSobre() {
             loading="lazy"
             decoding="async"
           />
-          <p className="font-sans text-[10px] sm:text-xs font-bold tracking-[0.28em] uppercase text-[#c2a35d] mt-2">
+          <p className="font-sans text-[10px] sm:text-xs font-bold tracking-[0.28em] uppercase text-[#c8ccd4] mt-2">
             O destino: excelência
           </p>
         </motion.div>
