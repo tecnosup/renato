@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -13,6 +13,8 @@
   --font-mono: "JetBrains Mono", var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
   --font-display: "Playfair Display", serif;
   --font-serif: "Playfair Display", serif;
+  /* Fonte de identidade da LANDING (não usar no admin) */
+  --font-brand: "Bricolage Grotesque", "Inter", sans-serif;
 
   --color-gold: #c2a35d;
   --color-gold-light: #ece4cb;
@@ -156,6 +158,14 @@ body {
 }
 
 @layer utilities {
+  /* Tipografia de identidade da LANDING: dentro de .landing-fonts, os títulos
+     (font-display) e os textos serifados (font-serif) passam a usar a
+     Bricolage Grotesque. O admin não usa esta classe, então fica intocado. */
+  .landing-fonts .font-display,
+  .landing-fonts .font-serif {
+    font-family: var(--font-brand) !important;
+  }
+
   /* Cards/painéis do admin, adaptados por tema via tokens em [data-theme] */
   .admin-glass-card {
     background-color: var(--admin-card-bg);

@@ -6,15 +6,15 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Scissors, Sparkle, ArrowDown, MapPin, Phone, ShieldCheck, Mail, ArrowUpRight, Award, Compass, Star, Camera, Video, MessageCircle, Share2 } from 'lucide-react';
+import { Scissors, Sparkle, ArrowDown, MapPin, Phone, ShieldCheck, Mail, ArrowUpRight, Award, Camera, Video, MessageCircle, Share2 } from 'lucide-react';
 import Header from '@/components/(client)/Header';
 import ThreeDText from '@/components/(client)/ThreeDText';
+import JornadaSobre from '@/components/(client)/JornadaSobre';
 import BookingForm from '@/components/(client)/BookingForm';
 import OrbCarousel from '@/components/(client)/OrbCarousel';
 import Memberships from '@/components/(client)/Memberships';
 import ShowcaseBanner from '@/components/(client)/ShowcaseBanner';
 import LocationMap from '@/components/(client)/LocationMap';
-import ThreeDTiltCard from '@/components/(client)/ThreeDTiltCard';
 import Toast from '@/components/(client)/Toast';
 import { BARBERS } from '@/lib/data';
 
@@ -55,7 +55,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#050505] text-[#e2e2e2] antialiased overflow-x-hidden selection:bg-gold selection:text-black" id="main-layout">
+    <div className="landing-fonts relative min-h-screen bg-[#050505] text-[#e2e2e2] antialiased overflow-x-hidden selection:bg-gold selection:text-black" id="main-layout">
       
       {/* Immersive Dark Refractive Background Layer */}
       <div className="fixed inset-0 z-0 select-none pointer-events-none">
@@ -207,95 +207,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* SECTION 2: SOBRE NÓS (Manifesto + Filosofia de design) */}
-      <section className="w-full bg-black/60 md:bg-black/40 md:backdrop-blur-md py-12 sm:py-20 md:py-24 px-4 md:px-8 border-t border-white/5 relative z-10 scroll-mt-20 md:scroll-mt-24" id="sobre-nos">
-        <div className="max-w-7xl mx-auto space-y-24">
-          
-          {/* Parallax block 1: Manifesto */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            <motion.div 
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.8 }}
-              className="lg:col-span-5 flex flex-col items-start text-left space-y-6"
-            >
-              <span className="font-sans text-[8px] text-[#c2a35d] tracking-[0.25em] font-bold uppercase bg-[#c2a35d]/5 px-3 py-1.5 rounded border border-[#c2a35d]/10">SÉCULO XXI • NOSSA ESSÊNCIA</span>
-              
-              <h2 className="font-display font-light text-3xl md:text-4xl text-[#faf9f6] tracking-wide leading-tight uppercase">
-                A Precisão como <span className="font-serif italic text-[#c2a35d]">Forma de Arte</span>
-              </h2>
-              
-              <p className="font-serif italic text-zinc-400 text-lg leading-relaxed font-light">
-                "Na Século XXI, cada traço da navalha e cada ângulo da tesoura obedecem ao rigor de proporções refinadas e ao respeito fisionômico individual. Não oferecemos apenas cortes rápidos. Nós geramos uma assinatura visual de presença, distinção e elegância autoral."
-              </p>
-
-              <div className="space-y-4 pt-4 border-t border-gold/10 w-full">
-                <div className="flex gap-3 items-start">
-                  <div className="w-5 h-5 border border-gold/30 flex items-center justify-center text-gold mt-1 shrink-0 rounded">
-                    <Star className="w-3.5 h-3.5 fill-current" />
-                  </div>
-                  <div className="flex flex-col text-left">
-                    <h4 className="font-display font-bold text-xs uppercase tracking-wider text-[#e2e2e2]">Higiene em Escala Cirúrgica</h4>
-                    <p className="font-sans text-[11px] text-zinc-500 leading-normal font-normal">
-                      Lâminas descartáveis de aço sueco e todos os insumos metálicos esterilizados em ciclo UV medicinal.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3 items-start border-t border-gold/10 pt-4">
-                  <div className="w-5 h-5 border border-gold/30 flex items-center justify-center text-gold mt-1 shrink-0 rounded">
-                    <Compass className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="flex flex-col text-left">
-                    <h4 className="font-display font-bold text-xs uppercase tracking-wider text-[#e2e2e2]">Análise Visual Geométrica</h4>
-                    <p className="font-sans text-[11px] text-zinc-500 leading-normal font-normal">
-                      Cada fisionomia é estudada baseada em ângulos de maxilar e contraste ótico de sombras de barba.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.8 }}
-              className="lg:col-span-7 flex flex-col gap-6"
-            >
-              <ThreeDTiltCard intensity={6} className="w-full">
-                <div className="glass-card p-8 md:p-10 text-left relative overflow-hidden rounded-3xl depth-card shadow-lg md:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_40px_rgba(0,0,0,0.5)]">
-                  <div className="absolute right-0 top-0 w-32 h-32 border-l border-b border-white/5 flex items-center justify-center font-sans text-[8px] text-[#c2a35d]/40 tracking-[0.16em] uppercase select-none font-bold">FILOSOFIA</div>
-                  
-                  <h3 className="font-display font-light text-xl text-white tracking-wide uppercase mb-4">
-                    COMPROMISSO HISTÓRICO
-                  </h3>
- 
-                  <p className="font-sans text-xs text-zinc-450 leading-relaxed font-normal mb-8 max-w-sm">
-                    Nossos profissionais preservam as técnicas consagradas com dedicação exclusiva às proporções ideais de cada cliente. Um atendimento digno resgata a arte clássica e promove momentos saudáveis de cuidados pessoais em primeira classe.
-                  </p>
- 
-                  <div className="flex flex-wrap gap-2 pt-4 border-t border-zinc-900 font-sans text-[8.5px] font-bold text-[#c2a35d] tracking-widest uppercase">
-                    <span className="bg-white/5 px-3 py-1.5 border border-white/5 rounded">TOALHAS AQUECIDAS &amp; ARRÔMAS</span>
-                    <span className="bg-white/5 px-3 py-1.5 border border-white/5 rounded">CORTES AUTORAIS</span>
-                    <span className="bg-white/5 px-3 py-1.5 border border-white/5 rounded">ATENDIMENTO V.I.P</span>
-                  </div>
-                </div>
-              </ThreeDTiltCard>
- 
-              <div className="bg-black/30 md:backdrop-blur-sm p-4 border border-white/5 text-left font-sans text-[11px] text-zinc-400 leading-normal rounded-2xl md:shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
-                <span className="text-[#c2a35d] font-bold uppercase tracking-wider text-[10px] mr-1.5">COMPROMISSO NATURAL:</span>Trabalhamos exclusivamente com insumos orgânicos botânicos certificados de altíssimo desempenho, totalmente livres de essências sintéticas ou irritantes.
-              </div>
-            </motion.div>
- 
-          </div>
- 
-
-
-        </div>
-      </section>
+      {/* SECTION 2: SOBRE A SÉCULO XXI — jornada Missão/Visão/Valores com trilha 3D */}
+      <JornadaSobre />
 
       {/* SECTION 3: SERVIÇOS E PRODUTOS (Circulativo OrbCarousel) */}
       <OrbCarousel />
