@@ -45,10 +45,10 @@ export default function Toast() {
           id="global-success-toast"
         >
           {/* Accent light decoration */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-gold/2 to-transparent pointer-events-none rounded-2xl" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-[#c8ccd4]/2 to-transparent pointer-events-none rounded-2xl" />
 
           {/* Icon frame */}
-          <div className="w-10 h-10 bg-gold/10 rounded-xl flex items-center justify-center text-gold shrink-0 border border-gold/15 relative z-10">
+          <div className="w-10 h-10 bg-[#c8ccd4]/10 rounded-xl flex items-center justify-center text-[#c8ccd4] shrink-0 border border-[#c8ccd4]/15 relative z-10">
             {toast.type === 'success' ? (
               <CheckCircle2 className="w-5 h-5" />
             ) : (
@@ -58,7 +58,7 @@ export default function Toast() {
 
           <div className="flex-1 leading-tight select-none relative z-10">
             <h5 className="font-sans font-bold text-xs uppercase text-white tracking-widest flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-gold" />
+              <Sparkles className="w-3.5 h-3.5 text-[#c8ccd4]" />
               {toast.title}
             </h5>
             <p className="font-sans text-[11px] text-zinc-400 font-normal leading-relaxed mt-2">
