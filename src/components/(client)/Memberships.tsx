@@ -2,7 +2,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Sparkles, Check, Gift, Crown, Flame, CheckCircle, ChevronLeft, ChevronRight, Eye, Award, Gem } from 'lucide-react';
-import ThreeDTiltCard from './ThreeDTiltCard';
 
 type Tier = 'Ouro' | 'Platina' | 'Diamante';
 
@@ -319,7 +318,7 @@ export default function Memberships() {
                     ? "radial-gradient(circle, rgba(34,211,238,0.18) 0%, rgba(0,0,0,0) 70%)" // Diamante / ciano
                     : "radial-gradient(circle, rgba(203,213,225,0.18) 0%, rgba(0,0,0,0) 70%)", // Platina / prata
               }}
-              className="absolute left-[15%] right-[15%] top-0 bottom-0 blur-[60px] rounded-full"
+              className="glow-decor absolute left-[15%] right-[15%] top-0 bottom-0 blur-[60px] rounded-full"
             />
           </div>
 
@@ -344,7 +343,6 @@ export default function Memberships() {
               let zOffset = 50;
               let scaleVal = 1.0;
               let opacityVal = 1;
-              let isBlurVal = "blur(0px)";
 
               if (diff === 0) {
                 // Focus foreground card
@@ -353,7 +351,6 @@ export default function Memberships() {
                 zOffset = isMobile ? 80 : 160;
                 scaleVal = 1.04;
                 opacityVal = 1;
-                isBlurVal = "blur(0px)";
               } else if (diff === 1) {
                 // Orbital right hand card - widely spread so 40%+ of its visual space is exposed to the user
                 xOffset = isMobile ? "54%" : isTablet ? "74%" : "84%";
@@ -361,7 +358,6 @@ export default function Memberships() {
                 zOffset = isMobile ? -80 : -130;
                 scaleVal = isMobile ? 0.86 : 0.85;
                 opacityVal = isMobile ? 0.48 : 0.58;
-                isBlurVal = isMobile ? "blur(0.5px)" : "blur(0.8px)";
               } else if (diff === -1) {
                 // Orbital left hand card - widely spread so 40%+ of its visual space is exposed to the user
                 xOffset = isMobile ? "-54%" : isTablet ? "-74%" : "-84%";
@@ -369,7 +365,6 @@ export default function Memberships() {
                 zOffset = isMobile ? -80 : -130;
                 scaleVal = isMobile ? 0.86 : 0.85;
                 opacityVal = isMobile ? 0.48 : 0.58;
-                isBlurVal = isMobile ? "blur(0.5px)" : "blur(0.8px)";
               }
 
               return (
@@ -385,7 +380,6 @@ export default function Memberships() {
                     translateZ: zOffset,
                     scale: scaleVal,
                     opacity: opacityVal,
-                    filter: isBlurVal,
                     zIndex: matchesSelection ? 30 : 15
                   }}
                   transition={{
@@ -401,9 +395,9 @@ export default function Memberships() {
                   onClick={() => handleCardClick(idx)}
                   className="absolute inset-0 w-full h-full flex cursor-grab active:cursor-grabbing"
                 >
-                  <ThreeDTiltCard intensity={matchesSelection ? 4 : 0} className="w-full flex group/club h-full">
+                  <div className="w-full flex group/club h-full">
                     <div
-                      className={`w-full bg-[#0e0e11] p-4 sm:p-5 md:p-6 flex flex-col justify-between text-left relative rounded-xl transition-all duration-300 h-full overflow-hidden border-2 ${
+                      className={`w-full bg-[#0e0e11] p-4 sm:p-5 md:p-6 flex flex-col justify-between text-left relative rounded-[20px] sm:rounded-[24px] transition-all duration-300 h-full overflow-hidden border-2 ${
                         matchesSelection
                           ? plan.activeBorder
                           : 'border-black/55 opacity-90 shadow-[0_4px_0_rgba(0,0,0,0.85)]'
@@ -518,7 +512,7 @@ export default function Memberships() {
                       </div>
 
                     </div>
-                  </ThreeDTiltCard>
+                  </div>
                 </motion.div>
               );
             })}
