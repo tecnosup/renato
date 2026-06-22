@@ -35,9 +35,11 @@ const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${MAPS_QUERY}
 export default function LocationMap() {
   return (
     <section
-      className="w-full py-12 sm:py-20 md:py-24 px-4 md:px-8 relative z-10 scroll-mt-20 md:scroll-mt-24 overflow-hidden bg-[#0b0b0d] bg-tijolo border-t-2 border-black"
+      className="w-full py-12 sm:py-20 md:py-24 px-4 md:px-8 relative z-10 scroll-mt-20 md:scroll-mt-24 overflow-hidden bg-[#0b0b0d] bg-tijolo"
       id="localizacao"
     >
+      {/* Fade de transição da seção anterior — dissolve o limite sem linha dura */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-32 sm:h-40 z-0 pointer-events-none bg-gradient-to-b from-[#0a0a0c] to-transparent" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header da seção — estilo HUD */}

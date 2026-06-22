@@ -201,11 +201,14 @@ export default function JornadaSobre() {
   return (
     <section
       id="sobre-nos"
-      className="relative isolate w-full overflow-hidden py-16 sm:py-24 px-4 md:px-8 scroll-mt-20 md:scroll-mt-24 bg-[#0b0b0d] bg-tijolo border-t-2 border-black"
+      className="relative isolate w-full overflow-hidden py-16 sm:py-24 px-4 md:px-8 scroll-mt-20 md:scroll-mt-24 bg-[#0b0b0d] bg-tijolo"
     >
-      {/* Glows tricolor sutis */}
-      <div className="absolute top-[10%] right-[6%] w-80 h-80 bg-brand-blue/12 rounded-full blur-[120px] -z-10 pointer-events-none" />
-      <div className="absolute bottom-[12%] left-[4%] w-72 h-72 bg-brand-red/12 rounded-full blur-[110px] -z-10 pointer-events-none" />
+      {/* Fade de transição da seção anterior — dissolve o limite sem linha dura */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-32 sm:h-40 -z-10 pointer-events-none bg-gradient-to-b from-[#0a0a0c] to-transparent" />
+
+      {/* Glows tricolor sutis — glow-decor: escondidos <768px (caros no GPU mobile) */}
+      <div className="glow-decor absolute top-[10%] right-[6%] w-80 h-80 bg-brand-blue/12 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      <div className="glow-decor absolute bottom-[12%] left-[4%] w-72 h-72 bg-brand-red/12 rounded-full blur-[110px] -z-10 pointer-events-none" />
 
       {/* Cabeçalho */}
       <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">

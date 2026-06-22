@@ -178,9 +178,12 @@ export default function ShowcaseBanner() {
   return (
     <section 
       ref={containerRef}
-      className="w-full bg-[#0b0b0d] bg-tijolo py-12 sm:py-20 md:py-24 border-t-2 border-black overflow-hidden relative scroll-mt-20 md:scroll-mt-24"
+      className="w-full bg-[#0b0b0d] bg-tijolo py-12 sm:py-20 md:py-24 overflow-hidden relative scroll-mt-20 md:scroll-mt-24"
       id="portfolio"
     >
+      {/* Fade de transição da seção anterior — dissolve o limite sem linha dura */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-32 sm:h-40 z-0 pointer-events-none bg-gradient-to-b from-[#0a0a0c] to-transparent" />
+
       {/* Glowing atmospheric dust over the tracks */}
       <div className="absolute top-[30%] left-[20%] w-[250px] h-[250px] bg-[#c8ccd4]/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen hidden md:block" />
       <div className="absolute bottom-[20%] right-[15%] w-[350px] h-[350px] bg-[#c8ccd4]/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen hidden md:block" />

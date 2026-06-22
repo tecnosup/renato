@@ -343,7 +343,7 @@ export default function Header() {
       {/* Luxury Member-Exclusive Client Portal Modal */}
       <AnimatePresence>
         {showClientArea && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center px-4" id="client-area-modal-container">
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-4 sm:py-6 overflow-y-auto" id="client-area-modal-container">
             {/* Dark glass backdrop overlay */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -362,7 +362,7 @@ export default function Header() {
               exit={{ opacity: 0, scale: 0.96, y: 15 }}
               className={`relative w-full ${
                 currentLoggedMember ? 'max-w-2xl' : 'max-w-md'
-              } bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_40px_rgba(0,0,0,0.6)] p-5 sm:p-7 md:p-8 text-left z-10 transition-all duration-300`}
+              } my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3rem)] overflow-y-auto bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_40px_rgba(0,0,0,0.6)] p-5 sm:p-7 md:p-8 text-left z-10 transition-all duration-300`}
               id="client-portal-modal"
             >
               {/* Refraction ambient overlay */}

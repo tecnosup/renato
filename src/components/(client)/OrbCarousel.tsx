@@ -5,14 +5,14 @@ import { subscribeToServices } from '@/lib/services';
 import { subscribeToProducts } from '@/lib/products';
 import { subscribeToCategories, serviceCategoryId } from '@/lib/categories';
 import type { BarberService, Product, Category } from '@/lib/types';
+import ProductCheckout from './ProductCheckout';
 import {
   Calendar,
   ShoppingBag,
   ArrowLeft,
   Clock,
   Compass,
-  CheckCircle2,
-  X
+  CheckCircle2
 } from 'lucide-react';
 
 
@@ -157,8 +157,9 @@ function CategoryOrb({ variant, icon }: { variant: 'services' | 'products'; icon
 export default function OrbCarousel() {
   // 'menu' | 'services' | 'products'
   const [activeCategory, setActiveCategory] = useState<'menu' | 'services' | 'products'>('menu');
-  const [reservationSuccess, setReservationSuccess] = useState<string | null>(null);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  // Produto em checkout (abre o modal de compra com gateway simulado)
+  const [checkoutProduct, setCheckoutProduct] = useState<Product | null>(null);
 
   // Serviços reais (Firestore), só os ativos, ordenados. Vitrine reflete o
   // catálogo cadastrado no admin; sem fallback hardcoded.
@@ -210,11 +211,8 @@ export default function OrbCarousel() {
     }
   };
 
-  const handleReserveProduct = (product: Product) => {
-    setReservationSuccess(product.name);
-    setTimeout(() => {
-      setReservationSuccess(null);
-    }, 4000);
+  const handleBuyProduct = (product: Product) => {
+    setCheckoutProduct(product);
   };
 
   // Listas filtradas pelo chip de categoria ativo.
@@ -227,9 +225,12 @@ export default function OrbCarousel() {
 
   return (
     <section 
-      className="w-full bg-[#0b0b0d] bg-tijolo py-12 sm:py-20 px-4 md:px-8 border-t-2 border-black relative overflow-hidden scroll-mt-20 md:scroll-mt-24"
+      className="w-full bg-[#0b0b0d] bg-tijolo py-12 sm:py-20 px-4 md:px-8 relative overflow-hidden scroll-mt-20 md:scroll-mt-24"
       id="servicos"
     >
+      {/* Fade de transição da seção anterior — dissolve o limite sem linha dura */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-32 sm:h-40 z-0 pointer-events-none bg-gradient-to-b from-[#0a0a0c] to-transparent" />
+
       {/* Dynamic Ambient Background Glows */}
       <div className="glow-decor absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-blue/8 rounded-full blur-[140px] pointer-events-none" />
       
@@ -625,12 +626,12 @@ export default function OrbCarousel() {
 
                       <button
                         type="button"
-                        onClick={() => handleReserveProduct(prod)}
+                        onClick={() => handleBuyProduct(prod)}
                         className="relative overflow-hidden bg-brand-blue-deep hover:bg-brand-blue btn-game btn-game-sm text-xs uppercase py-3.5 px-5 rounded-xl border-2 border-black/55 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-brand-blue/25 active:scale-95 group/prod-btn transform hover:scale-[1.03]"
                       >
                         <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover/prod-btn:animate-shimmer" />
                         <ShoppingBag className="w-3.5 h-3.5" />
-Reservar
+                        Comprar
                       </button>
                     </div>
                   </motion.div>
@@ -641,34 +642,13 @@ Reservar
           )}
         </AnimatePresence>
 
-        {/* Global Product reservation confirmation modal/box overlay */}
+        {/* Modal de checkout do produto (gateway de pagamento simulado) */}
         <AnimatePresence>
-          {reservationSuccess && (
-            <motion.div
-              initial={{ opacity: 0, y: 50, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 30, scale: 0.9 }}
-              className="fixed bottom-6 right-6 z-50 max-w-sm bg-[#0e0e11] text-zinc-100 p-4.5 rounded-2xl border-2 border-black shadow-[0_8px_0_rgba(0,0,0,0.85),0_24px_50px_rgba(0,0,0,0.6)] flex items-start gap-3.5 text-left"
-              id="product-reservation-toast"
-            >
-              <div className="w-9 h-9 bg-emerald-500/15 rounded-full flex items-center justify-center text-emerald-400 shrink-0 border-2 border-emerald-500/40">
-                <CheckCircle2 className="w-5 h-5" />
-              </div>
-              <div className="flex-1 leading-tight select-none">
-                <h5 className="font-toon text-logo-3d text-base uppercase tracking-wide" data-text="PRODUTO RESERVADO!">PRODUTO RESERVADO!</h5>
-                <p className="font-sans text-[10.5px] text-zinc-400 font-normal leading-normal mt-1.5">
-                  O item <strong className="text-zinc-200">{reservationSuccess}</strong> foi separado e reservado exclusivamente para você retirar no salão em Cruzeiro.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setReservationSuccess(null)}
-                className="text-zinc-500 hover:text-zinc-200 cursor-pointer p-0.5"
-                aria-label="Fechar"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </motion.div>
+          {checkoutProduct && (
+            <ProductCheckout
+              product={checkoutProduct}
+              onClose={() => setCheckoutProduct(null)}
+            />
           )}
         </AnimatePresence>
 

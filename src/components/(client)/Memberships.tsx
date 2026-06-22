@@ -257,9 +257,12 @@ export default function Memberships() {
   return (
     <section 
       ref={sectionRef} 
-      className="w-full bg-[#0b0b0d] bg-tijolo py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-12 border-t-2 border-black relative overflow-hidden scroll-mt-20 md:scroll-mt-24"
+      className="w-full bg-[#0b0b0d] bg-tijolo py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-12 relative overflow-hidden scroll-mt-20 md:scroll-mt-24"
       id="assinaturas"
     >
+      {/* Fade de transição da seção anterior — dissolve o limite sem linha dura */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-32 sm:h-40 z-0 pointer-events-none bg-gradient-to-b from-[#0a0a0c] to-transparent" />
+
       {/* Background Graphic elements matching luxury look */}
       <div className="glow-decor absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-brand-blue/8 blur-[160px] rounded-full pointer-events-none" />
 

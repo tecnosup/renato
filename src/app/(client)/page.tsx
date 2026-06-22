@@ -7,7 +7,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Scissors, Sparkle, ArrowDown, MapPin, Phone, ShieldCheck, Mail, ArrowUpRight, Award, Camera, Video, MessageCircle, Share2 } from 'lucide-react';
+import { Scissors, Sparkle, ArrowDown, MapPin, Phone, ShieldCheck, Mail, ArrowUpRight, Award, Camera, Video, MessageCircle, Share2, Users, Lock, Check, X } from 'lucide-react';
 import Header from '@/components/(client)/Header';
 import Reveal from '@/components/(client)/Reveal';
 import ThreeDText from '@/components/(client)/ThreeDText';
@@ -20,8 +20,19 @@ import LocationMap from '@/components/(client)/LocationMap';
 import Toast from '@/components/(client)/Toast';
 import { BARBERS } from '@/lib/data';
 
+// Barbeiros do hero. Só o Renato tem personagem 3D pronto; os demais entram
+// como "sombra bloqueada" (cadeado + Em breve) até o Abraão criar os personagens.
+const HERO_BARBERS = [
+  { id: 'renato', name: 'Renato', role: 'Dono & Barbeiro', img: '/img/personagemrenato.webp', locked: false },
+  { id: 'barbeiro-2', name: 'Em breve', role: 'Novo barbeiro', img: null, locked: true },
+  { id: 'barbeiro-3', name: 'Em breve', role: 'Novo barbeiro', img: null, locked: true },
+] as const;
+
 export default function App() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [activeBarberId, setActiveBarberId] = useState<string>('renato');
+  const [isBarberPickerOpen, setIsBarberPickerOpen] = useState(false);
+  const activeBarber = HERO_BARBERS.find((b) => b.id === activeBarberId) ?? HERO_BARBERS[0];
 
   // Dispatches selected service ID to populate the physical form below and opens the modal
   const handleSelectServiceDirect = (serviceId: string) => {
@@ -30,6 +41,8 @@ export default function App() {
   };
 
   const [showStickyCTA, setShowStickyCTA] = useState(false);
+  // Algum overlay/checkout aberto? A barra fixa "Agendar Agora" recua para não tapá-lo.
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
 
   // Listen to select-service-from-orb custom triggers to open modal automatically
   useEffect(() => {
@@ -38,6 +51,15 @@ export default function App() {
     };
     window.addEventListener('select-service', handleOrbTrigger);
     return () => window.removeEventListener('select-service', handleOrbTrigger);
+  }, []);
+
+  // Recolhe a barra fixa "Agendar Agora" enquanto um overlay (ex: checkout) está aberto
+  useEffect(() => {
+    const handleOverlay = (e: Event) => {
+      setIsOverlayOpen(Boolean((e as CustomEvent).detail));
+    };
+    window.addEventListener('overlay-open', handleOverlay);
+    return () => window.removeEventListener('overlay-open', handleOverlay);
   }, []);
 
   // Monitor scroll height to conditionally reveal mobile floating CTA bar
@@ -91,9 +113,10 @@ export default function App() {
         />
         {/* Overlay escuro (parede à noite) para contraste do texto claro */}
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_35%_30%,rgba(8,8,10,0.78)_0%,rgba(5,5,7,0.86)_55%,rgba(2,2,3,0.94)_100%)]" />
-        {/* Glows tricolor suaves */}
-        <div className="absolute top-[8%] left-[8%] w-[420px] h-[420px] bg-brand-red/15 rounded-full blur-[130px] -z-10 pointer-events-none" />
-        <div className="absolute bottom-[6%] right-[6%] w-[460px] h-[460px] bg-brand-blue/15 rounded-full blur-[140px] -z-10 pointer-events-none" />
+        {/* Glows tricolor suaves — escondidos no mobile (blur gigante pesa no GPU
+            de aparelhos antigos; o overlay radial já dá a ambiência). */}
+        <div className="hidden md:block absolute top-[8%] left-[8%] w-[420px] h-[420px] bg-brand-red/15 rounded-full blur-[130px] -z-10 pointer-events-none" />
+        <div className="hidden md:block absolute bottom-[6%] right-[6%] w-[460px] h-[460px] bg-brand-blue/15 rounded-full blur-[140px] -z-10 pointer-events-none" />
         {/* Fade da base: dissolve os tijolos no dark da próxima seção (#0a0a0c) */}
         <div className="absolute inset-x-0 bottom-0 h-40 sm:h-56 -z-10 pointer-events-none bg-gradient-to-b from-transparent to-[#0a0a0c]" />
 
@@ -181,28 +204,39 @@ export default function App() {
             </motion.div>
           </div>
 
-          {/* COLUNA DIREITA — personagem 3D do Renato com sombra CSS + float */}
+          {/* COLUNA DIREITA — personagem 3D maior + seletor "Trocar Barbeiro" */}
           <div className="col-span-5 flex justify-center items-end select-none" id="hero-character-anchor">
             <motion.div
               initial={{ opacity: 0, y: 24, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="relative flex flex-col items-center"
+              className="relative flex flex-col items-center w-full"
             >
+              {/* Badge "Trocar Barbeiro" sobre o personagem */}
+              <button
+                type="button"
+                onClick={() => setIsBarberPickerOpen(true)}
+                className="relative z-20 mb-2 sm:mb-3 flex items-center gap-1.5 bg-black/70 md:backdrop-blur-sm border-2 border-[#c8ccd4]/40 hover:border-[#c8ccd4] text-[#f0ebe4] hover:text-white px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full font-mono text-[7.5px] sm:text-[9px] uppercase tracking-widest font-bold transition-all cursor-pointer active:scale-95 shadow-[0_3px_0_rgba(0,0,0,0.85)]"
+                aria-label="Trocar barbeiro"
+              >
+                <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#c8ccd4]" />
+                Trocar Barbeiro
+              </button>
+
               {/* Sombra CSS no chão (estática) */}
               <div
                 aria-hidden="true"
                 className="absolute bottom-1 w-[55%] h-4 sm:h-5 bg-black/40 rounded-[100%] blur-md"
               />
-              {/* Personagem (sem animação) */}
+              {/* Personagem ativo — maior que antes */}
               <Image
-                src="/img/personagemrenato.webp"
-                alt="Renato — Barbearia Século XXI"
-                width={180}
-                height={464}
+                src={activeBarber.img ?? '/img/personagemrenato.webp'}
+                alt={`${activeBarber.name} — Barbearia Século XXI`}
+                width={220}
+                height={567}
                 priority
-                sizes="(max-width: 640px) 40vw, (max-width: 1024px) 30vw, 25vw"
-                className="relative z-10 w-full h-auto max-h-[42vh] sm:max-h-[56vh] lg:max-h-[72vh] object-contain drop-shadow-[0_24px_40px_rgba(0,0,0,0.35)]"
+                sizes="(max-width: 640px) 48vw, (max-width: 1024px) 36vw, 30vw"
+                className="relative z-10 w-full h-auto max-h-[50vh] sm:max-h-[66vh] lg:max-h-[82vh] object-contain drop-shadow-[0_24px_40px_rgba(0,0,0,0.35)]"
               />
             </motion.div>
           </div>
@@ -361,7 +395,7 @@ export default function App() {
 
       {/* Mobile Sticky Floating CTA Bar for conversion fluidity */}
       <AnimatePresence>
-        {showStickyCTA && !isBookingOpen && (
+        {showStickyCTA && !isBookingOpen && !isOverlayOpen && !isBarberPickerOpen && (
           <motion.div
             initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -400,6 +434,130 @@ export default function App() {
             isOpen={isBookingOpen} 
             onClose={() => setIsBookingOpen(false)} 
           />
+        )}
+      </AnimatePresence>
+
+      {/* Seletor de Barbeiro — Renato ativo; demais bloqueados (Em breve) */}
+      <AnimatePresence>
+        {isBarberPickerOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4"
+            id="barber-picker-overlay"
+          >
+            <div
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              onClick={() => setIsBarberPickerOpen(false)}
+              aria-hidden="true"
+            />
+            <motion.div
+              initial={{ y: 60, opacity: 0, scale: 0.97 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 40, opacity: 0, scale: 0.97 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+              className="relative w-full max-w-md bg-[#0b0b0d] bg-tijolo border-2 border-black rounded-t-3xl sm:rounded-3xl shadow-[0_8px_0_rgba(0,0,0,0.85),0_30px_60px_rgba(0,0,0,0.6)] overflow-hidden"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Escolher barbeiro"
+            >
+              {/* Glow ambiente — glow-decor: só no desktop (blur caro no mobile) */}
+              <div className="glow-decor absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-brand-blue/15 blur-[120px] rounded-full pointer-events-none" />
+
+              {/* Header */}
+              <div className="relative flex items-center justify-between px-5 py-4 border-b border-white/5 z-10">
+                <div className="flex flex-col leading-none">
+                  <span className="font-mono text-[8px] text-brand-blue uppercase tracking-[0.25em] font-black">
+                    NOSSA EQUIPE
+                  </span>
+                  <span className="font-toon text-logo-3d text-lg uppercase tracking-wide mt-1" data-text="Escolha o Barbeiro">
+                    Escolha o Barbeiro
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsBarberPickerOpen(false)}
+                  className="w-8 h-8 grid place-items-center rounded-lg bg-[#16161a] border-2 border-black text-zinc-400 hover:text-white transition-colors cursor-pointer shadow-[0_3px_0_rgba(0,0,0,0.8)] active:translate-y-[2px] active:shadow-none"
+                  aria-label="Fechar"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Lista de barbeiros */}
+              <div className="relative z-10 p-5 grid grid-cols-3 gap-3">
+                {HERO_BARBERS.map((barber) => {
+                  const isActive = barber.id === activeBarberId;
+                  return (
+                    <button
+                      key={barber.id}
+                      type="button"
+                      disabled={barber.locked}
+                      onClick={() => {
+                        if (barber.locked) return;
+                        setActiveBarberId(barber.id);
+                        setIsBarberPickerOpen(false);
+                      }}
+                      className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 p-3 transition-all ${
+                        barber.locked
+                          ? 'border-black/40 bg-[#0e0e11] cursor-not-allowed'
+                          : isActive
+                            ? 'border-emerald-500 bg-emerald-500/5 shadow-[0_0_18px_rgba(16,185,129,0.35)] cursor-pointer'
+                            : 'border-black/55 bg-white/[0.03] hover:border-[#c8ccd4]/60 cursor-pointer active:scale-95'
+                      }`}
+                    >
+                      {/* Selo de selecionado */}
+                      {isActive && !barber.locked && (
+                        <span className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-emerald-500 grid place-items-center text-white shadow-md z-20">
+                          <Check className="w-3 h-3" strokeWidth={3} />
+                        </span>
+                      )}
+
+                      {/* Imagem ou sombra bloqueada */}
+                      <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-zinc-950 border border-zinc-800 grid place-items-center">
+                        {barber.img ? (
+                          <Image
+                            src={barber.img}
+                            alt={barber.name}
+                            width={120}
+                            height={160}
+                            className="w-full h-full object-contain object-bottom"
+                          />
+                        ) : (
+                          <>
+                            {/* Silhueta/sombra bloqueada */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-zinc-800/40 to-black flex items-end justify-center">
+                              <div className="w-2/3 h-3/4 bg-black/70 rounded-t-[50%] blur-[1px]" />
+                            </div>
+                            <span className="relative z-10 w-8 h-8 rounded-full bg-black/80 border-2 border-zinc-700 grid place-items-center text-zinc-500">
+                              <Lock className="w-3.5 h-3.5" />
+                            </span>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Nome + papel */}
+                      <div className="text-center leading-none">
+                        <span className={`font-display font-black text-[10px] uppercase block ${barber.locked ? 'text-zinc-600' : 'text-zinc-100'}`}>
+                          {barber.name}
+                        </span>
+                        <span className="font-mono text-[7px] text-zinc-500 uppercase tracking-wide mt-1 block">
+                          {barber.role}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="relative z-10 px-5 pb-5 -mt-1">
+                <p className="font-sans text-[10px] text-zinc-500 text-center leading-normal">
+                  Novos barbeiros chegando em breve. Por enquanto, agende com o <strong className="text-zinc-300">Renato</strong>.
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 
