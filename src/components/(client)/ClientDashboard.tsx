@@ -192,13 +192,13 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
         </div>
 
         <div className="flex gap-2.5 items-center w-full sm:w-auto shrink-0">
-          <button 
+          <button
             type="button"
             onClick={copyMemberCode}
-            className="font-mono text-[9px] text-[#c8ccd4] hover:text-white bg-zinc-950 border border-zinc-900 hover:border-[#c8ccd4]/40 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer max-w-full truncate"
+            className="font-mono text-[9px] text-[#c8ccd4] hover:text-white bg-zinc-950 border border-zinc-900 hover:border-[#c8ccd4]/40 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer min-w-0 flex-1 sm:flex-initial truncate"
           >
-            <span>ID:</span> <strong className="tracking-widest">{member.id}</strong>
-            <span className="text-[7.5px] text-zinc-650 font-normal">({isCopied ? 'Copiado!' : 'Copiar'})</span>
+            <span className="shrink-0">ID:</span> <strong className="tracking-widest truncate">{member.id}</strong>
+            <span className="text-[7.5px] text-zinc-650 font-normal shrink-0">({isCopied ? 'Copiado!' : 'Copiar'})</span>
           </button>
 
           <button
@@ -222,7 +222,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => setActiveTab(tab.id as typeof activeTab)}
             className={`flex-1 py-1.5 px-1 sm:px-2 flex items-center justify-center gap-1.5 font-sans text-[8.5px] sm:text-[9.5px] font-bold uppercase tracking-widest rounded-lg transition-all cursor-pointer ${
               activeTab === tab.id
                 ? 'bg-[#c8ccd4] text-zinc-950 shadow-md shadow-[#c8ccd4]/5 font-extrabold'
@@ -235,8 +235,10 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
         ))}
       </div>
 
-      {/* Content panes nested viewport container */}
-      <div className="flex-1 overflow-y-auto pr-0.5" style={{ minHeight: '260px', maxHeight: '380px' }} id="dashboard-tab-viewport">
+      {/* Content panes nested viewport container.
+          No mobile o conteúdo flui livre (o card-pai rola); no desktop trava a
+          altura para o cockpit não esticar demais. */}
+      <div className="flex-1 sm:overflow-y-auto sm:pr-0.5 sm:min-h-[260px] sm:max-h-[420px]" id="dashboard-tab-viewport">
         <AnimatePresence mode="wait">
           
           {/* TAB 1: CONSUMPTION BENEFITS TRACKER */}
@@ -302,7 +304,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                 {/* Visual tracker card 2: Premium Treatments or Facials */}
                 <div className="bg-white/5 backdrop-blur-md p-3 border border-white/10 rounded-xl relative flex flex-col justify-between min-h-[90px] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="flex justify-between items-start">
-                    <span className="font-mono text-[7px] text-zinc-500 uppercase">Rituais Premium</span>
+                    <span className="font-mono text-[7px] text-zinc-500 uppercase">Serviços Especiais</span>
                     <Sparkles className="w-3 h-3 text-[#c8ccd4]/80 animate-pulse" />
                   </div>
                   <div className="pt-2">
@@ -367,7 +369,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                   </div>
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>Estacionamento VIP Grátis no Salão</span>
+                    <span>Estacionamento Grátis no Salão</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
@@ -481,7 +483,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                               }`}>
                                 {isUpcoming ? 'upcoming' : 'concluido'}
                               </span>
-                              <span className="font-mono text-[7px] text-zinc-550">Voucher: {appt.id}</span>
+                              <span className="font-mono text-[7px] text-zinc-550">Código: {appt.id}</span>
                             </div>
 
                             {/* Service title */}

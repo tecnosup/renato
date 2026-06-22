@@ -29,10 +29,14 @@ export default function ThreeDText() {
   return (
     <div 
       ref={containerRef}
-      className="w-full bg-[#0b0b0d] bg-tijolo py-16 md:py-24 border-y-2 border-black overflow-hidden relative select-none"
+      className="w-full bg-[#0b0b0d] bg-tijolo py-16 md:py-24 overflow-hidden relative select-none"
       style={{ perspective: '1200px' }}
       id="3d-text-section"
     >
+      {/* Fades de transição (topo + base) — dissolvem os limites sem linha dura */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-24 sm:h-32 z-[1] pointer-events-none bg-gradient-to-b from-[#0a0a0c] to-transparent" />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-24 sm:h-32 z-[1] pointer-events-none bg-gradient-to-t from-[#0a0a0c] to-transparent" />
+
       {/* 3D tilt board containment */}
       <div 
         className="flex flex-col gap-8 md:gap-14"

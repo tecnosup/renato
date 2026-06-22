@@ -98,11 +98,15 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Links do menu = seções reais da landing, na ordem em que aparecem na página.
+  // (Antes havia "EQUIPE → #equipe", que não existe, e faltavam Assinaturas e
+  // Localização — duas seções importantes que já estão no rodapé.)
   const menuItems = [
+    { label: 'SOBRE NÓS', href: '#sobre-nos' },
     { label: 'SERVIÇOS', href: '#servicos' },
-    { label: 'MANIFESTO', href: '#sobre-nos' },
-    { label: 'EQUIPE', href: '#equipe' },
-    { label: 'PORTFÓLIO', href: '#portfolio' },
+    { label: 'ASSINATURAS', href: '#assinaturas' },
+    { label: 'NOSSOS CORTES', href: '#portfolio' },
+    { label: 'ONDE ESTAMOS', href: '#localizacao' },
   ];
 
   const handlePortalSubmit = (e: React.FormEvent) => {
@@ -196,7 +200,7 @@ export default function Header() {
             <span className="hidden sm:inline-block text-zinc-550 tracking-[0.08em]">R. DR. JOSÉ R. ALVES SOBRINHO, 351 • CRUZEIRO/SP</span>
           </div>
           <div className="font-mono text-zinc-500 tracking-[0.08em]">
-            SP {currentTime ? `[${currentTime}]` : '[--:--:--]'} BR_TIME
+            {currentTime ? `AGORA: ${currentTime}` : 'AGORA: --:--:--'}
           </div>
         </div>
 
@@ -339,7 +343,7 @@ export default function Header() {
       {/* Luxury Member-Exclusive Client Portal Modal */}
       <AnimatePresence>
         {showClientArea && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center px-4" id="client-area-modal-container">
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-4 sm:py-6 overflow-y-auto" id="client-area-modal-container">
             {/* Dark glass backdrop overlay */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -358,7 +362,7 @@ export default function Header() {
               exit={{ opacity: 0, scale: 0.96, y: 15 }}
               className={`relative w-full ${
                 currentLoggedMember ? 'max-w-2xl' : 'max-w-md'
-              } bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_40px_rgba(0,0,0,0.6)] p-5 sm:p-7 md:p-8 text-left z-10 transition-all duration-300`}
+              } my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3rem)] overflow-y-auto bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_40px_rgba(0,0,0,0.6)] p-5 sm:p-7 md:p-8 text-left z-10 transition-all duration-300`}
               id="client-portal-modal"
             >
               {/* Refraction ambient overlay */}
@@ -386,10 +390,10 @@ export default function Header() {
                     <CheckCircle2 className="w-7 h-7" />
                   </div>
                   <h3 className="font-display font-medium text-[#e2e2e2] text-xl uppercase tracking-widest mt-2 leading-none">
-                    Acesso Permitido
+                    Acesso Liberado
                   </h3>
                   <p className="font-sans text-xs text-zinc-400 max-w-xs leading-relaxed">
-                    Sincronizando credenciais. Carregando cockpit seguro da assinatura <strong className="text-[#c8ccd4]">SÉCULO XXI</strong>...
+                    Entrando na sua área de assinante da <strong className="text-[#c8ccd4]">Século XXI</strong>...
                   </p>
                   <div className="w-24 h-1 bg-[#111214] mt-2 rounded-full overflow-hidden">
                     <div className="h-full bg-[#c8ccd4] w-1/2 animate-[progress_1.2s_ease-in-out_infinite]" />
@@ -412,13 +416,13 @@ export default function Header() {
                   <div className="space-y-1.5">
                     <div className="inline-flex items-center gap-1.5 font-mono text-[8px] text-amber-500 tracking-widest uppercase bg-amber-500/5 border border-amber-500/20 px-2.5 py-1 rounded-full">
                       <Lock className="w-3 h-3 text-amber-500" />
-                      <span>SIMULADOR DE ASSINANTE VIRTUAL</span>
+                      <span>CRIAR CONTA DE TESTE</span>
                     </div>
                     <h3 className="font-display font-medium text-xl text-white uppercase tracking-wider leading-none">
-                      Criar Conta de Membro
+                      Criar Conta de Assinante
                     </h3>
                     <p className="font-sans text-[11px] text-zinc-450 leading-relaxed font-normal">
-                      Código ou CPF não correspondente hoje. Preencha seus dados para criar um assinante de simulação e explorar todo o cockpit!
+                      Não encontramos seu código ou CPF. Preencha seus dados para criar uma conta de teste e ver como funciona a área do assinante.
                     </p>
                   </div>
 
@@ -426,13 +430,13 @@ export default function Header() {
                     {/* Choose Plan selection row */}
                     <div className="space-y-1.5">
                       <label className="block font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold">
-                        Escolha um Plano para Testar
+                        Escolha um Plano para Conhecer
                       </label>
                       <div className="grid grid-cols-3 gap-2">
                         {[
-                          { plan: 'Silver', label: 'Silver (Executive)', cost: '140' },
-                          { plan: 'Gold', label: 'Gold (Royal)', cost: '240' },
-                          { plan: 'Black', label: 'Black (Legend)', cost: '360' }
+                          { plan: 'Silver', label: 'Executivo', cost: '140' },
+                          { plan: 'Gold', label: 'Ouro', cost: '240' },
+                          { plan: 'Black', label: 'Lendário', cost: '360' }
                         ].map((pOpt) => (
                           <button
                             key={pOpt.plan}
@@ -444,7 +448,7 @@ export default function Header() {
                                 : 'bg-white/5 backdrop-blur-md border-white/10 text-slate-500 hover:border-[#c8ccd4]/30 hover:bg-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]'
                             }`}
                           >
-                            <span className="text-[9px] font-bold block">{pOpt.plan}</span>
+                            <span className="text-[9px] font-bold block">{pOpt.label}</span>
                             <span className="text-[7.5px] mt-1 text-zinc-550">R$ {pOpt.cost}/mês</span>
                           </button>
                         ))}
@@ -499,13 +503,13 @@ export default function Header() {
                   <div className="space-y-2">
                     <div className="inline-flex items-center gap-1.5 font-mono text-[8px] text-[#c8ccd4] tracking-widest uppercase bg-[#c8ccd4]/5 border border-[#c8ccd4]/15 px-2.5 py-1 rounded-full">
                       <Lock className="w-3 h-3 text-[#c8ccd4]" />
-                      <span>PORTAL EXCLUSIVO PARA ASSINANTES</span>
+                      <span>ÁREA EXCLUSIVA PARA ASSINANTES</span>
                     </div>
                     <h3 className="font-display font-medium text-xl text-white uppercase tracking-wider leading-none">
-                      SÉCULO XXI COCKPIT
+                      ÁREA DO ASSINANTE
                     </h3>
                     <p className="font-sans text-[11px] text-zinc-405 leading-relaxed font-normal">
-                      Insira o seu código ou CPF para gerenciar seus rituais, consultar benefícios de assinaturas, bebidas, faturas e agendamentos.
+                      Digite o seu código ou CPF para ver seus cortes, benefícios do plano, contas e agendamentos.
                     </p>
                   </div>
 
@@ -539,15 +543,15 @@ export default function Header() {
                       className="w-full bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] hover:opacity-90 text-slate-950 font-sans text-[9px] font-black tracking-[0.24em] uppercase py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(200, 204, 212,0.3)]"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      Entrar no Cockpit
+                      Entrar
                     </button>
                   </form>
 
-                  {/* Preloaded credentials hint block - Classic Bauhaus architectural detail */}
+                  {/* Dica de teste para o salão experimentar a área do assinante */}
                   <div className="bg-black/30 p-3 border border-white/5 rounded-xl space-y-1.5">
-                    <span className="font-mono text-[7px] text-[#c8ccd4] uppercase block font-bold">[TESTE_SALAO_DEMO]</span>
+                    <span className="font-mono text-[7px] text-[#c8ccd4] uppercase block font-bold">PARA TESTAR</span>
                     <p className="font-sans text-[10px] text-zinc-400 leading-normal">
-                      Insira <strong className="text-zinc-200">123</strong> para acessar como <strong className="text-zinc-200">Lincon Cardoso</strong> (Legend Black) ou insira qualquer CPF/ID para simular sua própria ativação VIP!
+                      Digite <strong className="text-zinc-200">123</strong> para entrar como <strong className="text-zinc-200">Lincon Cardoso</strong> (Plano Lendário) ou digite qualquer CPF para criar uma conta de teste.
                     </p>
                   </div>
 
@@ -555,15 +559,15 @@ export default function Header() {
                   <div className="border-t border-zinc-900 pt-5 flex items-center justify-between font-mono text-[8px] select-none">
                     <div>
                       <span className="text-zinc-650 uppercase block">Ainda não é assinante?</span>
-                      <a 
-                        href="#assinaturas" 
+                      <a
+                        href="#assinaturas"
                         onClick={() => setShowClientArea(false)}
                         className="font-sans text-[9px] font-bold text-[#c8ccd4] hover:text-white hover:underline transition-colors mt-0.5 block uppercase tracking-wider"
                       >
-                        Conhecer Clubes →
+                        Conhecer os Planos →
                       </a>
                     </div>
-                    <span className="text-zinc-700 uppercase">SÉCULO XXI • EST. 2026</span>
+                    <span className="text-zinc-700 uppercase">SÉCULO XXI • CRUZEIRO/SP</span>
                   </div>
                 </div>
               )}

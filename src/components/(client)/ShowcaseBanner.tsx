@@ -5,7 +5,7 @@ import { Flame, Scissors, Wind, ChevronLeft, ChevronRight, ImageIcon } from 'luc
 
 type HairType = 'liso' | 'afro';
 const HAIR_ORDER: HairType[] = ['liso', 'afro'];
-const HAIR_LABEL: Record<HairType, string> = { liso: 'Liso', afro: 'Afro' };
+const HAIR_LABEL: Record<HairType, string> = { liso: 'Liso', afro: 'Crespo' };
 
 interface TrendingCut {
   id: string;
@@ -64,12 +64,6 @@ function CutCarousel({ cut }: { cut: TrendingCut }) {
 
         {/* Sombra elíptica projetada no "chão" */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-1/2 h-4 bg-black/60 rounded-[100%] blur-md pointer-events-none" />
-
-        {/* Tag % em alta — flutua no canto */}
-        <div className="absolute top-2 right-2 bg-[#c8ccd4]/10 md:backdrop-blur-sm border border-[#c8ccd4]/30 text-[#c8ccd4] px-2.5 py-1 text-[9px] font-mono font-bold uppercase rounded flex items-center gap-1 opacity-0 group-hover:opacity-100 -translate-y-1 group-hover:translate-y-0 transition-all duration-300">
-          <Flame className="w-3 h-3 fill-current" />
-          <span>{cut.popularity}</span>
-        </div>
 
         {/* Setas laterais */}
         <button
@@ -131,15 +125,11 @@ export default function ShowcaseBanner() {
     offset: ['start end', 'end start']
   });
 
-  // Calculate sliding offsets for dual tracks
-  const xLeftTrack = useTransform(scrollYProgress, [0, 1], [-80, 80]);
-  const xRightTrack = useTransform(scrollYProgress, [0, 1], [80, -80]);
-  const scaleCenterImage = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1.03, 0.95]);
+  // Offset de parallax do trilho único da galeria (desliza com o scroll)
+  const xLeftTrack = useTransform(scrollYProgress, [0, 1], [-60, 60]);
 
   const springConfig = { damping: 25, stiffness: 60, mass: 0.5 };
   const smoothLeftX = useSpring(xLeftTrack, springConfig);
-  const smoothRightX = useSpring(xRightTrack, springConfig);
-  const smoothScale = useSpring(scaleCenterImage, springConfig);
 
   // Cortes mais pedidos, cada um em duas texturas de cabelo (liso / afro).
   // As imagens são manequins 3D sem fundo (PNG transparente) — a cabeça flutua.
@@ -147,39 +137,53 @@ export default function ShowcaseBanner() {
     {
       id: "americano",
       name: "Americano",
-      type: "Taper Fade",
+      type: "Degradê nas laterais",
       images: {
-        liso: "/cortes/americano-liso.png",
-        afro: "/cortes/americano-afro.png",
+        liso: "/cortes/americano-liso.webp",
+        afro: "/cortes/americano-afro.webp",
       },
       popularity: "95%",
-      styling: "Pó Texturizador + Pomada Matte",
-      description: "Topo texturizado curto com degradê limpo nas laterais e nuca. O queridinho versátil — cai bem em qualquer rosto."
+      styling: "Acabamento com pomada sem brilho",
+      description: "Cabelo mais curto no topo e degradê limpo nas laterais e na nuca. Combina com qualquer tipo de rosto."
     },
     {
       id: "midfade",
-      name: "Mid Fade com Volume",
-      type: "Degradê Médio",
+      name: "Degradê com Volume",
+      type: "Volume no topo",
       images: {
-        liso: "/cortes/midfade-liso.png",
-        afro: "/cortes/midfade-afro.png",
+        liso: "/cortes/midfade-liso.webp",
+        afro: "/cortes/midfade-afro.webp",
       },
       popularity: "92%",
-      styling: "Pomada Modeladora + Secador",
-      description: "Volume jogado para cima com transição na altura da orelha. Moderno, imponente e fácil de manter no dia a dia."
+      styling: "Acabamento com pomada e secador",
+      description: "Volume jogado para cima e degradê na altura da orelha. Moderno e fácil de manter no dia a dia."
     }
   ];
 
-  // Galeria sem fotos: slots de mockup com ícone de foto (placeholder).
-  // Trocar por imagens reais quando a barbearia enviar o material.
-  const gallerySlots = [0, 1, 2, 3, 4];
+  // Galeria sem fotos ainda: 8 "polaroids" pichados como placeholder estiloso.
+  // Cada slot tem orientação (retrato/paisagem), uma legenda de rua e uma
+  // leve inclinação — quando o material real chegar, basta plugar a foto.
+  // Máx. 8 slots de propósito: nada de parede de retângulos repetidos.
+  const galleryPolaroids: { legenda: string; orient: 'retrato' | 'paisagem'; tilt: number }[] = [
+    { legenda: 'fade na régua', orient: 'retrato', tilt: -3 },
+    { legenda: 'antes & depois', orient: 'paisagem', tilt: 2 },
+    { legenda: '@seculoxxi', orient: 'retrato', tilt: 2.5 },
+    { legenda: 'barba na navalha', orient: 'paisagem', tilt: -2 },
+    { legenda: 'disfarçado', orient: 'retrato', tilt: 3 },
+    { legenda: 'freestyle', orient: 'paisagem', tilt: -2.5 },
+    { legenda: 'risca na lateral', orient: 'retrato', tilt: -1.5 },
+    { legenda: 'no capricho', orient: 'paisagem', tilt: 2 },
+  ];
 
   return (
     <section 
       ref={containerRef}
-      className="w-full bg-[#0b0b0d] bg-tijolo py-12 sm:py-20 md:py-24 border-t-2 border-black overflow-hidden relative scroll-mt-20 md:scroll-mt-24"
+      className="w-full bg-[#0b0b0d] bg-tijolo py-12 sm:py-20 md:py-24 overflow-hidden relative scroll-mt-20 md:scroll-mt-24"
       id="portfolio"
     >
+      {/* Fade de transição da seção anterior — dissolve o limite sem linha dura */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-32 sm:h-40 z-0 pointer-events-none bg-gradient-to-b from-[#0a0a0c] to-transparent" />
+
       {/* Glowing atmospheric dust over the tracks */}
       <div className="absolute top-[30%] left-[20%] w-[250px] h-[250px] bg-[#c8ccd4]/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen hidden md:block" />
       <div className="absolute bottom-[20%] right-[15%] w-[350px] h-[350px] bg-[#c8ccd4]/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen hidden md:block" />
@@ -189,10 +193,6 @@ export default function ShowcaseBanner() {
         @keyframes marqueeImagesLeft {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
-        }
-        @keyframes marqueeImagesRight {
-          0% { transform: translateX(-50%); }
-          100% { transform: translateX(0); }
         }
         /* Flutuação suave da cabeça do corte */
         @keyframes cut-float {
@@ -214,48 +214,56 @@ export default function ShowcaseBanner() {
           className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 text-left"
         >
           <div className="space-y-2">
-            <span className="font-sans text-[8px] text-[#c8ccd4] tracking-[0.25em] uppercase flex items-center gap-2 font-bold select-none">SÉCULO XXI • GALERIA VISUAL</span>
+            <span className="font-sans text-[8px] text-[#c8ccd4] tracking-[0.25em] uppercase flex items-center gap-2 font-bold select-none">SÉCULO XXI • NOSSOS CORTES</span>
             <h2 className="text-3xl md:text-5xl uppercase tracking-wide">
-              <span className="font-toon text-logo-3d" data-text="Estilo & Harmonia Visual">Estilo &amp; Harmonia Visual</span>
+              <span className="font-toon text-logo-3d" data-text="Nossos Cortes">Nossos Cortes</span>
             </h2>
           </div>
           <p className="font-serif italic text-zinc-400 text-sm md:text-base max-w-sm font-light leading-relaxed">
-            Retratos de atitude e excelência técnica esculpidos no templo da <strong>Século XXI</strong>. Visuais que ditam as tendências e representam sofisticação em Cruzeiro.
+            Veja alguns dos cortes feitos na <strong>Século XXI</strong>. Trabalho caprichado, do clássico ao moderno, aqui em Cruzeiro.
           </p>
         </motion.div>
       </div>
 
-      {/* Sliding Parallax Panorama Track (Immersive Scroll Effect) */}
-      <div className="w-full relative overflow-hidden py-6 select-none bg-black/30 md:backdrop-blur-md border-y border-white/5 mb-24">
-        
-        {/* Track 1: Moving left to right — slots de mockup (sem foto) */}
+      {/* Galeria em montagem: UM trilho de polaroids pichados (8 slots, sem repetir) */}
+      <div className="w-full relative overflow-hidden py-8 select-none bg-black/30 md:backdrop-blur-md border-y border-white/5 mb-20 md:mb-24">
+
+        {/* Selo assumido: a galeria está sendo montada, de propósito e com estilo */}
+        <div className="max-w-7xl mx-auto px-4 md:px-8 mb-6 flex items-center gap-3">
+          <span className="font-toon text-[#c8ccd4] text-sm uppercase -rotate-2 inline-block">Galeria em montagem</span>
+          <div className="h-px bg-[#c8ccd4]/15 flex-1" />
+          <span className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold hidden sm:block">Fotos reais chegando</span>
+        </div>
+
+        {/* Trilho único — parallax no desktop, marquee suave no mobile */}
         <motion.div
           style={isMobile ? undefined : { x: smoothLeftX }}
-          className={`flex gap-4 w-max mb-4 ${isMobile ? 'animate-[marqueeImagesLeft_35s_linear_infinite]' : 'md:w-[150%]'}`}
+          className={`flex items-center gap-5 md:gap-7 w-max px-4 ${isMobile ? 'animate-[marqueeImagesLeft_45s_linear_infinite]' : 'md:w-[120%]'}`}
         >
-          {[...gallerySlots, ...gallerySlots, ...gallerySlots].map((_, i) => (
-            <div key={i} className="h-[200px] md:h-[260px] aspect-[4/3] overflow-hidden relative border border-[#c8ccd4]/15 rounded-xl flex-shrink-0 bg-gradient-to-br from-[#15151a] to-[#0c0c0f] flex items-center justify-center">
-              <ImageIcon className="w-9 h-9 text-[#c8ccd4]/25" strokeWidth={1.5} />
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
-                <span className="font-mono text-[9px] text-[#c8ccd4]/45 uppercase">CENA_{i + 1}</span>
-              </div>
-            </div>
-          ))}
-        </motion.div>
+          {[...galleryPolaroids, ...galleryPolaroids].map((slot, i) => {
+            const isRetrato = slot.orient === 'retrato';
+            return (
+              <div
+                key={i}
+                className="flex-shrink-0 bg-[#f4f1ea] p-2 pb-7 rounded-sm shadow-[0_12px_30px_rgba(0,0,0,0.6)] hover:shadow-[0_18px_40px_rgba(0,0,0,0.8)] transition-shadow duration-300 relative"
+                style={{ transform: `rotate(${slot.tilt}deg)` }}
+              >
+                {/* Fita crepe no topo */}
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-12 h-5 bg-[#c8ccd4]/30 border border-white/20 rotate-2 rounded-[1px] backdrop-blur-[1px]" />
 
-        {/* Track 2: Moving right to left — slots de mockup (sem foto) */}
-        <motion.div
-          style={isMobile ? undefined : { x: smoothRightX }}
-          className={`flex gap-4 w-max justify-end ${isMobile ? 'animate-[marqueeImagesRight_30s_linear_infinite]' : 'md:w-[150%]'}`}
-        >
-          {[...gallerySlots, ...gallerySlots, ...gallerySlots].map((_, i) => (
-            <div key={i} className="h-[140px] md:h-[180px] aspect-[4/3] overflow-hidden relative border border-[#c8ccd4]/15 rounded-xl flex-shrink-0 bg-gradient-to-br from-[#15151a] to-[#0c0c0f] flex items-center justify-center">
-              <ImageIcon className="w-7 h-7 text-[#c8ccd4]/25" strokeWidth={1.5} />
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
-                <span className="font-mono text-[9px] text-[#c8ccd4]/45 uppercase">DECOR_{i + 1}</span>
+                {/* "Foto" — moldura escura com ícone, placeholder até a imagem real */}
+                <div className={`overflow-hidden relative bg-gradient-to-br from-[#1a1a20] to-[#0b0b0e] flex items-center justify-center ${isRetrato ? 'h-[210px] md:h-[260px] w-[150px] md:w-[185px]' : 'h-[160px] md:h-[200px] w-[220px] md:w-[280px]'}`}>
+                  <ImageIcon className="w-8 h-8 text-[#c8ccd4]/25" strokeWidth={1.5} />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(200,204,212,0.06),transparent_60%)]" />
+                </div>
+
+                {/* Legenda manuscrita/pichada na borda branca da polaroid */}
+                <span className="absolute bottom-1.5 left-0 right-0 text-center font-toon text-[#1a1a20] text-[11px] lowercase tracking-tight">
+                  {slot.legenda}
+                </span>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </motion.div>
       </div>
 
@@ -265,9 +273,9 @@ export default function ShowcaseBanner() {
         {/* Carousel title indicator */}
         <div className="flex items-center gap-3 mb-12 select-none">
           <Flame className="w-5 h-5 text-[#c8ccd4] animate-bounce" />
-          <span className="font-mono text-[10px] text-white uppercase tracking-[0.3em] font-extrabold whitespace-nowrap">CORTES EM ALTA</span>
+          <span className="font-mono text-[10px] text-white uppercase tracking-[0.3em] font-extrabold whitespace-nowrap">CORTES MAIS PEDIDOS</span>
           <div className="h-[1.5px] bg-[#c8ccd4]/15 flex-1" />
-          <span className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold hidden md:block whitespace-nowrap">Arraste ou use as setas • Liso / Afro</span>
+          <span className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold hidden md:block whitespace-nowrap">Use as setas para ver • Cabelo liso ou crespo</span>
         </div>
 
         {/* Vitrine: cabeças flutuantes sem moldura, carrossel liso/afro por corte */}
@@ -281,6 +289,12 @@ export default function ShowcaseBanner() {
               transition={{ duration: 0.6, delay: idx * 0.1 }}
               className="group relative flex flex-col items-center text-center pt-8 pb-2 select-none"
             >
+              {/* Badge de ranking — leaderboard de cortes (combina com o tema game) */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 bg-black/70 md:backdrop-blur-sm border border-[#c8ccd4]/30 rounded-full pl-2 pr-3 py-1 shadow-lg">
+                <span className="font-toon text-[#c8ccd4] text-sm leading-none">#{idx + 1}</span>
+                <span className="font-mono text-[8px] text-zinc-400 uppercase tracking-widest font-bold leading-none">mais pedido</span>
+              </div>
+
               {/* Carrossel da cabeça (setas + arraste + dots) */}
               <CutCarousel cut={cut} />
 
@@ -288,6 +302,16 @@ export default function ShowcaseBanner() {
               <div className="relative mt-4 w-full max-w-[300px] rounded-2xl border border-white/10 bg-black/40 md:backdrop-blur-md px-5 py-4 group-hover:border-[#c8ccd4]/40 group-hover:bg-black/55 transition-all duration-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
                 <span className="font-mono text-[8px] text-[#c8ccd4]/70 uppercase block font-bold tracking-[0.2em] leading-none mb-1.5">{cut.type}</span>
                 <h3 className="font-display font-black text-xl text-white uppercase tracking-tight group-hover:text-[#c8ccd4] transition-colors">{cut.name}</h3>
+
+                {/* Barra de popularidade — sempre visível (vira "ranking" de procura) */}
+                <div className="mt-3 flex items-center gap-2">
+                  <div className="h-1.5 flex-1 rounded-full bg-white/10 overflow-hidden">
+                    <div className="h-full rounded-full bg-gradient-to-r from-[#c8ccd4]/60 to-[#c8ccd4]" style={{ width: cut.popularity }} />
+                  </div>
+                  <span className="font-mono text-[10px] text-[#c8ccd4] font-bold leading-none flex items-center gap-1">
+                    <Flame className="w-3 h-3 fill-current" />{cut.popularity}
+                  </span>
+                </div>
 
                 {/* Detalhes que só se revelam no hover/toque — texto em segundo plano */}
                 <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-out">
@@ -310,7 +334,7 @@ export default function ShowcaseBanner() {
             href="#reservar"
             className="inline-flex items-center gap-2 font-display text-[11px] font-bold tracking-widest text-[#c8ccd4] hover:text-white border-b border-dashed border-[#c8ccd4]/25 hover:border-white py-2 uppercase transition-all"
           >
-            quero agendar um destes modelos
+quero agendar um corte destes
             <Scissors className="w-3.5 h-3.5" />
           </a>
         </div>

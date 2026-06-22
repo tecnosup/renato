@@ -35,9 +35,11 @@ const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${MAPS_QUERY}
 export default function LocationMap() {
   return (
     <section
-      className="w-full py-12 sm:py-20 md:py-24 px-4 md:px-8 relative z-10 scroll-mt-20 md:scroll-mt-24 overflow-hidden bg-[#0b0b0d] bg-tijolo border-t-2 border-black"
+      className="w-full py-12 sm:py-20 md:py-24 px-4 md:px-8 relative z-10 scroll-mt-20 md:scroll-mt-24 overflow-hidden bg-[#0b0b0d] bg-tijolo"
       id="localizacao"
     >
+      {/* Fade de transição da seção anterior — dissolve o limite sem linha dura */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-32 sm:h-40 z-0 pointer-events-none bg-gradient-to-b from-[#0a0a0c] to-transparent" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header da seção — estilo HUD */}
@@ -53,7 +55,7 @@ export default function LocationMap() {
             SÉCULO XXI • LOCALIZAÇÃO
           </span>
           <h2 className="text-3xl md:text-5xl uppercase tracking-wide">
-            <span className="font-toon text-logo-3d" data-text="Visite o Nosso Templo">Visite o Nosso Templo</span>
+            <span className="font-toon text-logo-3d" data-text="Venha nos Visitar">Venha nos Visitar</span>
           </h2>
         </motion.div>
 
@@ -107,7 +109,7 @@ export default function LocationMap() {
           >
             {/* Header do painel HUD */}
             <div className="bg-[#c8ccd4] px-5 py-2.5 flex items-center justify-between border-b-2 border-[#f0ebe4]">
-              <span className="font-mono text-[10px] text-black uppercase tracking-[0.2em] font-black">// FICHA DA UNIDADE</span>
+              <span className="font-mono text-[10px] text-black uppercase tracking-[0.2em] font-black">NOSSO ENDEREÇO</span>
               <span className="w-2.5 h-2.5 rounded-full bg-black/70" />
             </div>
 

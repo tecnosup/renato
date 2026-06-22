@@ -17,6 +17,10 @@
 }
 
 @theme inline {
+  /* Breakpoint extra-pequeno (telas estreitas ~ celulares). Sem ele as
+     variantes `xs:` ficam inertes no Tailwind 4 e o conteúdo não responde. */
+  --breakpoint-xs: 25rem;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: "Inter", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
@@ -479,11 +483,13 @@ body {
     position: absolute;
     inset: 0;
     z-index: -2;
-    background-image: url("/img/fundohero.webp");
+    /* Versão já pré-processada (cinza + contraste) — evita aplicar
+       filter: grayscale()/contrast() em runtime numa camada cover de tela
+       inteira, que causava repaints pesados no iOS durante o scroll. */
+    background-image: url("/img/fundohero-tijolo.webp");
     background-size: cover;
     background-position: center;
     opacity: 0.2;
-    filter: grayscale(1) contrast(1.2);
   }
   .bg-tijolo::after {
     content: "";
@@ -505,9 +511,90 @@ body {
   }
 }
 
+/* ===== Reveal "in" (CSS puro) =====
+   Anima fade + slide ao entrar na viewport. O JS (componente Reveal) só
+   adiciona .is-visible via um IntersectionObserver compartilhado — nada roda
+   por frame. Apenas opacity/transform (GPU) e will-change só enquanto oculto. */
+.reveal {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal[data-reveal="up"] {
+  transform: translate3d(0, 24px, 0);
+}
+.reveal[data-reveal="down"] {
+  transform: translate3d(0, -24px, 0);
+}
+.reveal[data-reveal="left"] {
+  transform: translate3d(-28px, 0, 0);
+}
+.reveal[data-reveal="right"] {
+  transform: translate3d(28px, 0, 0);
+}
+.reveal[data-reveal="fade"] {
+  transform: none;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
+}
+/* Acessibilidade: quem pede menos movimento vê tudo de cara, sem slide. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
+/* Orbes da seção Serviços & Produtos (OrbCarousel). Keyframes aqui no global
+   para não serem reinjetadas a cada render do componente. Os loops infinitos
+   já são neutralizados pelo bloco prefers-reduced-motion global abaixo. */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 15s linear infinite;
+}
+/* Variante mais lenta — anel dos mini-orbes de nível (Clube de Assinaturas).
+   Reaproveita o keyframe global; neutralizada por prefers-reduced-motion. */
+.animate-spin-slower {
+  animation: spin-slow 26s linear infinite;
+}
+/* Orbe viva do header: flutua de leve e o glow "respira" */
+@keyframes orb-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes orb-breathe {
+  0%, 100% { opacity: 0.35; transform: scale(0.95); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
 /* Custom smooth scroll */
 html {
   scroll-behavior: smooth;
+}
+
+/* Respeita "reduzir movimento" do sistema (iOS: Ajustes > Acessibilidade).
+   Mata os loops infinitos (spins das orbes, marquees, floats, pulses) que,
+   mesmo fora da viewport, mantêm o compositor ativo e drenam bateria/CPU
+   no celular. Cobre as animações utilitárias arbitrárias do Tailwind
+   (animate-[spin_30s...], animate-[marquee...]) que não tinham guarda. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Trava scroll horizontal em qualquer tela */
