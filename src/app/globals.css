@@ -547,6 +547,26 @@ body {
   }
 }
 
+/* Orbes da seção Serviços & Produtos (OrbCarousel). Keyframes aqui no global
+   para não serem reinjetadas a cada render do componente. Os loops infinitos
+   já são neutralizados pelo bloco prefers-reduced-motion global abaixo. */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 15s linear infinite;
+}
+/* Orbe viva do header: flutua de leve e o glow "respira" */
+@keyframes orb-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes orb-breathe {
+  0%, 100% { opacity: 0.35; transform: scale(0.95); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
 /* Custom smooth scroll */
 html {
   scroll-behavior: smooth;
