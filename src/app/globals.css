@@ -557,6 +557,11 @@ body {
 .animate-spin-slow {
   animation: spin-slow 15s linear infinite;
 }
+/* Variante mais lenta — anel dos mini-orbes de nível (Clube de Assinaturas).
+   Reaproveita o keyframe global; neutralizada por prefers-reduced-motion. */
+.animate-spin-slower {
+  animation: spin-slow 26s linear infinite;
+}
 /* Orbe viva do header: flutua de leve e o glow "respira" */
 @keyframes orb-float {
   0%, 100% { transform: translateY(0); }
