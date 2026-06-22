@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { subscribeToServices } from '@/lib/services';
 import { subscribeToProducts } from '@/lib/products';
@@ -47,7 +47,7 @@ function GlassOrb({ category, onClick, icon, label, sublabel }: GlassOrbProps) {
     >
       {/* 1. Luz/halo em volta — VERDE discreto (acento de "ação boa", sem inundar
           o fundo): glow mais justo à orbe e bem suave, ganha vida só no hover. */}
-      <div className="absolute -inset-1 rounded-full blur-2xl opacity-20 group-hover:opacity-45 group-hover:scale-105 transition-all duration-700 pointer-events-none bg-gradient-to-r from-emerald-500 to-green-400" />
+      <div className="glow-decor absolute -inset-1 rounded-full blur-2xl opacity-20 group-hover:opacity-45 group-hover:scale-105 transition-all duration-700 pointer-events-none bg-gradient-to-r from-emerald-500 to-green-400" />
 
       {/* 2. Anel orbital tracejado — verde sutil, acompanhando a luz de ação */}
       <div className="absolute -inset-2 rounded-full border border-dashed animate-[spin_30s_linear_infinite] group-hover:scale-110 transition-all duration-500 pointer-events-none border-emerald-400/25 group-hover:border-emerald-300/60" />
@@ -63,22 +63,23 @@ function GlassOrb({ category, onClick, icon, label, sublabel }: GlassOrbProps) {
         {/* Specular inner material overlay */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(255,255,255,0.2),transparent_60%)]" />
 
-        {/* Refração interna do vidro: sheen azul por categoria (sky / blue) */}
+        {/* Refração interna do vidro: sheen azul por categoria (sky / blue).
+            glow-decor: camadas blur+mix-blend são caras de compor — só no desktop. */}
         {isServices ? (
           <>
             {/* Refração azul da marca top-left */}
-            <div className="absolute top-6 left-5 w-1/2 h-1/2 bg-brand-blue/45 blur-xl rounded-full mix-blend-screen transform -rotate-[25deg]" />
+            <div className="glow-decor absolute top-6 left-5 w-1/2 h-1/2 bg-brand-blue/45 blur-xl rounded-full mix-blend-screen transform -rotate-[25deg]" />
             {/* Sheen verde bottom-right (puxa a base de "ação" do gradiente) */}
-            <div className="absolute bottom-2 right-5 w-1/2 h-1/2 bg-emerald-500/35 blur-xl rounded-full mix-blend-screen" />
+            <div className="glow-decor absolute bottom-2 right-5 w-1/2 h-1/2 bg-emerald-500/35 blur-xl rounded-full mix-blend-screen" />
             {/* Flare branco-azulado de cima */}
-            <div className="absolute top-8 left-8 w-1/4 h-1/4 bg-sky-100/25 blur-xl rounded-full mix-blend-screen" />
+            <div className="glow-decor absolute top-8 left-8 w-1/4 h-1/4 bg-sky-100/25 blur-xl rounded-full mix-blend-screen" />
           </>
         ) : (
           <>
             {/* Refração azul profundo bottom-left */}
-            <div className="absolute bottom-1 left-5 w-1/2 h-1/2 bg-blue-500/40 blur-xl rounded-full mix-blend-screen transform -rotate-[25deg]" />
+            <div className="glow-decor absolute bottom-1 left-5 w-1/2 h-1/2 bg-blue-500/40 blur-xl rounded-full mix-blend-screen transform -rotate-[25deg]" />
             {/* Sheen índigo far top */}
-            <div className="absolute top-3 left-8 w-1/2 h-1/3 bg-indigo-400/30 blur-xl rounded-full mix-blend-screen" />
+            <div className="glow-decor absolute top-3 left-8 w-1/2 h-1/3 bg-indigo-400/30 blur-xl rounded-full mix-blend-screen" />
           </>
         )}
 
@@ -129,7 +130,7 @@ function CategoryOrb({ variant, icon }: { variant: 'services' | 'products'; icon
     <div className="relative w-16 h-16 shrink-0 grid place-items-center [animation:orb-float_6s_ease-in-out_infinite]">
       {/* Glow ambiente que pulsa por trás */}
       <div
-        className={`absolute inset-0 rounded-full blur-xl [animation:orb-breathe_4s_ease-in-out_infinite] ${
+        className={`glow-decor absolute inset-0 rounded-full blur-xl [animation:orb-breathe_4s_ease-in-out_infinite] ${
           isServices ? 'bg-emerald-500/40' : 'bg-blue-600/40'
         }`}
       />
@@ -215,13 +216,21 @@ export default function OrbCarousel() {
     setCheckoutProduct(product);
   };
 
-  // Listas filtradas pelo chip de categoria ativo.
-  const servicesShown = serviceCatFilter
-    ? services.filter((s) => (s.categoryId ?? serviceCategoryId(s.category)) === serviceCatFilter)
-    : services;
-  const productsShown = productCatFilter
-    ? products.filter((p) => (p.categoryId ?? "") === productCatFilter)
-    : products;
+  // Listas filtradas pelo chip de categoria ativo (memoizadas).
+  const servicesShown = useMemo(
+    () =>
+      serviceCatFilter
+        ? services.filter((s) => (s.categoryId ?? serviceCategoryId(s.category)) === serviceCatFilter)
+        : services,
+    [services, serviceCatFilter]
+  );
+  const productsShown = useMemo(
+    () =>
+      productCatFilter
+        ? products.filter((p) => (p.categoryId ?? "") === productCatFilter)
+        : products,
+    [products, productCatFilter]
+  );
 
   return (
     <section 

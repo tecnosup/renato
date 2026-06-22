@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Scissors, Menu, X, Calendar, MapPin, User, Lock, Sparkles, CheckCircle2 } from 'lucide-react';
 import ClientDashboard from './ClientDashboard';
+import { useLockBodyScroll } from '@/hooks/useLockBodyScroll';
 
 const DEFAULT_MEMBERS = [
   {
@@ -66,6 +67,9 @@ export default function Header() {
   const [showSimulationArea, setShowSimulationArea] = useState(false);
   const [simulationPlan, setSimulationPlan] = useState<'Silver' | 'Gold' | 'Black'>('Black');
   const [simulationName, setSimulationName] = useState('');
+
+  // Trava o scroll do fundo enquanto o modal da Área do Cliente está aberto.
+  useLockBodyScroll(showClientArea);
 
   // Clock in standard Brazilian / UTC format
   useEffect(() => {
@@ -344,15 +348,12 @@ export default function Header() {
       <AnimatePresence>
         {showClientArea && (
           <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-4 sm:py-6 overflow-y-auto" id="client-area-modal-container">
-            {/* Dark glass backdrop overlay */}
+            {/* Dark glass backdrop overlay — sem fechar ao clicar (saída só pelo X) */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => {
-                if (!portalSuccess) setShowClientArea(false);
-              }}
-              className="absolute inset-0 bg-[#050505]/92 backdrop-blur-md cursor-pointer"
+              className="absolute inset-0 bg-[#050505]/92 backdrop-blur-md"
             />
 
             {/* Portal Card - dynamically enlarges for the premium cockpit layout spacing */}

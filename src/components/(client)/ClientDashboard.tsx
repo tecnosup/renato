@@ -543,7 +543,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                 {/* Visual Rotating Hologram Interactive Member Pass */}
                 <div className="md:col-span-6 flex justify-center py-2 relative group select-none">
                   {/* Digital Card casing */}
-                  <div className={`relative w-[280px] h-[170px] rounded-2xl p-5 border shadow-2xl overflow-hidden flex flex-col justify-between transition-transform duration-500 transform hover:rotate-1 hover:scale-102 ${
+                  <div className={`relative w-full max-w-[280px] h-[170px] rounded-2xl p-5 border shadow-2xl overflow-hidden flex flex-col justify-between transition-transform duration-500 transform hover:rotate-1 hover:scale-102 ${
                     member.tier === 'Black' 
                       ? 'bg-gradient-to-br from-zinc-950 via-[#101011] to-[#0a0a0b] border-[#c8ccd4]/45 shadow-[#c8ccd4]/5' 
                       : member.tier === 'Gold' 

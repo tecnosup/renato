@@ -23,6 +23,7 @@ import {
   MapPin,
 } from 'lucide-react';
 import type { Product } from '@/lib/types';
+import { useLockBodyScroll } from '@/hooks/useLockBodyScroll';
 
 type Step = 'resumo' | 'pagamento' | 'processando' | 'sucesso';
 type PayMethod = 'pix' | 'cartao' | 'dinheiro';
@@ -57,16 +58,14 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
   const maxStock = product.stock > 0 ? product.stock : 99;
   const subtotal = product.price * qty;
 
-  // Trava o scroll do body e avisa a landing que um overlay está aberto
-  // (a barra fixa "Agendar Agora" recua para não tapar o checkout).
+  // Trava o scroll do fundo enquanto o checkout está aberto (fecha só no X/ESC).
+  useLockBodyScroll(true);
+
+  // Avisa a landing que um overlay está aberto (a barra fixa "Agendar Agora"
+  // recua para não tapar o checkout).
   useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     window.dispatchEvent(new CustomEvent('overlay-open', { detail: true }));
-    return () => {
-      document.body.style.overflow = prev;
-      window.dispatchEvent(new CustomEvent('overlay-open', { detail: false }));
-    };
+    return () => window.dispatchEvent(new CustomEvent('overlay-open', { detail: false }));
   }, []);
 
   // Fecha no ESC
@@ -143,10 +142,9 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
       className="fixed inset-0 z-[60] flex items-center justify-center p-4"
       id="product-checkout-overlay"
     >
-      {/* Backdrop */}
+      {/* Backdrop — sem fechar ao clicar (saída só pelo X/ESC) */}
       <div
         className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-        onClick={onClose}
         aria-hidden="true"
       />
 

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BarberService, BarberSpecialist, Employee } from '@/lib/types';
 import { subscribeToEmployees } from '@/lib/employees';
 import { subscribeToServices } from '@/lib/services';
+import { useLockBodyScroll } from '@/hooks/useLockBodyScroll';
 import { 
   Sparkles, 
   Check, 
@@ -68,6 +69,9 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
 
   // Submission / conflict state (persistencia no Firestore)
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  // Trava o scroll do fundo enquanto o modal está aberto (fecha só no X).
+  useLockBodyScroll(isOpen);
 
   // Slots disponíveis carregados do servidor (data + barbeiro selecionado)
   const [availableSlots, setAvailableSlots] = useState<string[] | null>(null);

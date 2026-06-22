@@ -576,6 +576,26 @@ body {
   50% { opacity: 0.7; transform: scale(1.1); }
 }
 
+/* Letreiro de palavras (ThreeDText) — marquee em todas as telas. O conteúdo é
+   duplicado uma vez, então -50% = um ciclo completo (loop sem emenda). Keyframes
+   globais (não reinjetados por render); neutralizados por prefers-reduced-motion. */
+@keyframes marqueeLeft {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes marqueeRight {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+.animate-marquee-left {
+  animation: marqueeLeft 30s linear infinite;
+  will-change: transform;
+}
+.animate-marquee-right {
+  animation: marqueeRight 30s linear infinite;
+  will-change: transform;
+}
+
 /* Custom smooth scroll */
 html {
   scroll-behavior: smooth;
