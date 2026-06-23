@@ -71,7 +71,11 @@ export default function Header() {
   // Trava o scroll do fundo enquanto o modal da Área do Cliente está aberto.
   useLockBodyScroll(showClientArea);
 
-  // Clock in standard Brazilian / UTC format
+  // Relógio da top-bar (formato pt-BR / fuso de São Paulo).
+  // Só tica quando de fato importa: a top-bar recolhe ao rolar (`scrolled`),
+  // então fora dela não há por que re-renderizar o Header a cada segundo.
+  // Também pausa com a aba em background e respeita prefers-reduced-motion —
+  // mesmo padrão de performance dos loops do carrossel (Memberships).
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -85,10 +89,23 @@ export default function Header() {
       setCurrentTime(now.toLocaleTimeString('pt-BR', options));
     };
 
+    // Mantém a hora correta ao reaparecer, mas sem manter o tick ativo
+    // enquanto a barra está recolhida.
     updateTime();
-    const interval = setInterval(updateTime, 1000);
+    if (scrolled) return;
+
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    const tick = () => {
+      if (document.hidden) return;
+      updateTime();
+    };
+    const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [scrolled]);
 
   useEffect(() => {
     const handleScroll = () => {
