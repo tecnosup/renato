@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase-admin";
+import { rateLimit, clientKey } from "@/lib/rate-limit";
 import type { AppointmentInput, ComandaItem } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -16,6 +17,15 @@ const ACTIVE = ["pendente", "agendado", "concluido"];
  * privados nas Security Rules).
  */
 export async function POST(req: Request) {
+  // Anti-spam de agendamentos falsos vindos de um mesmo IP.
+  const rl = rateLimit(`create:${clientKey(req)}`, 6, 60_000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Muitas tentativas. Aguarde um instante e tente de novo." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+    );
+  }
+
   let body: AppointmentInput;
   try {
     body = (await req.json()) as AppointmentInput;

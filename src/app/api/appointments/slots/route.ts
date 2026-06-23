@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase-admin";
+import { rateLimit, clientKey } from "@/lib/rate-limit";
 import { generateSlots, DEFAULT_SCHEDULE } from "@/lib/schedules";
 import type { WeeklySchedule, DaySchedule } from "@/lib/types";
 
@@ -22,6 +23,15 @@ export const dynamic = "force-dynamic";
  * 5. Se barberId === "qualquer", slot só bloqueado quando TODOS os barbeiros estiverem ocupados
  */
 export async function GET(req: Request) {
+  // Leitura legítima e frequente (navegar datas), mas ainda limita varredura/custo.
+  const rl = rateLimit(`slots:${clientKey(req)}`, 40, 60_000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Muitas requisições. Tente novamente em instantes." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+    );
+  }
+
   const { searchParams } = new URL(req.url);
   const date = searchParams.get("date");
   const barberId = searchParams.get("barberId");

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase-admin";
+import { rateLimit, clientKey } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,6 +22,16 @@ function onlyDigits(s: string): string {
 }
 
 export async function POST(req: Request) {
+  // Ação destrutiva + a trava é só o telefone (que não é segredo). Limita
+  // tentativas por IP para conter cancelamento abusivo em massa.
+  const rl = rateLimit(`cancel:${clientKey(req)}`, 8, 60_000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Muitas tentativas. Tente novamente em instantes." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+    );
+  }
+
   let body: { id?: string; phone?: string };
   try {
     body = (await req.json()) as { id?: string; phone?: string };

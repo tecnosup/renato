@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import type { QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase-admin";
+import { rateLimit, clientKey } from "@/lib/rate-limit";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+/** Máximo de agendamentos retornados (evita resposta gigante e abuso). */
+const MAX_RESULTS = 20;
 
 /**
  * POST /api/appointments/by-phone  { phone: string }
@@ -22,6 +26,16 @@ function onlyDigits(s: string): string {
 }
 
 export async function POST(req: Request) {
+  // Anti-enumeração: limita consultas por IP (alguém poderia varrer telefones
+  // para vazar dados de clientes). 10 por minuto é folgado para uso legítimo.
+  const rl = rateLimit(`by-phone:${clientKey(req)}`, 10, 60_000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Muitas consultas. Tente novamente em instantes." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+    );
+  }
+
   let body: { phone?: string };
   try {
     body = (await req.json()) as { phone?: string };
@@ -68,7 +82,8 @@ export async function POST(req: Request) {
         };
       })
       // Mais recentes primeiro (por data + horário).
-      .sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+      .sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time))
+      .slice(0, MAX_RESULTS);
 
     return NextResponse.json({ appointments: list });
   } catch (err) {
