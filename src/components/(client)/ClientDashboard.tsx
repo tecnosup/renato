@@ -54,6 +54,10 @@ interface SavedAppointment {
   customerName: string;
   customerPhone: string;
   status: string;
+  // Pagamento vindo da comanda vinculada (by-phone anexa). Pode faltar em
+  // agendamentos antigos sem comanda.
+  comandaStatus?: string | null;
+  formaPagamento?: string | null;
 }
 
 export default function ClientDashboard({ member, onClose, onLogout }: ClientDashboardProps) {
@@ -461,25 +465,26 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
 
                   <div className="space-y-2.5">
                     {appointments.map((appt) => {
-                      const isUpcoming = appt.status !== 'concluido';
+                      const isUpcoming = appt.status !== 'concluido' && appt.status !== 'cancelado';
+                      const atend = atendimentoBadge(appt.status);
+                      const pag = pagamentoBadge(appt.comandaStatus, appt.formaPagamento);
                       return (
-                        <div 
+                        <div
                           key={appt.id}
                           className={`p-3.5 border rounded-xl flex justify-between items-center gap-4 transition-all ${
-                            isUpcoming 
-                              ? 'bg-white/5 backdrop-blur-md border-[#c8ccd4]/30 shadow-[0_0_15px_rgba(200, 204, 212,0.1)]' 
+                            isUpcoming
+                              ? 'bg-white/5 backdrop-blur-md border-[#c8ccd4]/30 shadow-[0_0_15px_rgba(200, 204, 212,0.1)]'
                               : 'bg-black/20 backdrop-blur-sm border-white/5 opacity-60'
                           }`}
                         >
                           <div className="flex flex-col text-left space-y-1">
-                            {/* Badges */}
-                            <div className="flex items-center gap-1.5">
-                              <span className={`font-mono text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                                isUpcoming 
-                                  ? 'bg-[#c8ccd4]/15 text-[#c8ccd4] border border-[#c8ccd4]/20' 
-                                  : 'bg-zinc-900 text-zinc-500 border border-zinc-850'
-                              }`}>
-                                {isUpcoming ? 'upcoming' : 'concluido'}
+                            {/* Badges: status do atendimento + status de pagamento */}
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className={`font-mono text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${atend.cls}`}>
+                                {atend.label}
+                              </span>
+                              <span className={`font-mono text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${pag.cls}`}>
+                                {pag.label}
                               </span>
                               <span className="font-mono text-[7px] text-zinc-550">Código: {appt.id}</span>
                             </div>
@@ -728,4 +733,44 @@ function formatSelectedDatePt(dateStr: string) {
     'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
   ][dateObj.getMonth()];
   return `${wk}, ${day} de ${mth}`;
+}
+
+/** Rótulo + cor do status do atendimento (em pt-BR). */
+function atendimentoBadge(status: string): { label: string; cls: string } {
+  switch (status) {
+    case 'concluido':
+      return { label: 'Concluído', cls: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25' };
+    case 'cancelado':
+      return { label: 'Cancelado', cls: 'bg-rose-500/10 text-rose-400 border border-rose-500/25' };
+    case 'agendado':
+      return { label: 'Confirmado', cls: 'bg-[#c8ccd4]/15 text-[#c8ccd4] border border-[#c8ccd4]/20' };
+    default: // pendente
+      return { label: 'Agendado', cls: 'bg-[#c8ccd4]/15 text-[#c8ccd4] border border-[#c8ccd4]/20' };
+  }
+}
+
+/**
+ * Rótulo + cor do status de pagamento, derivado da comanda vinculada.
+ * - paga                → "Pago" (+ forma, se houver)
+ * - pagamento_pendente  → "Pagamento pendente"
+ * - aberta / sem comanda → "A pagar no balcão"
+ */
+function pagamentoBadge(
+  comandaStatus?: string | null,
+  formaPagamento?: string | null
+): { label: string; cls: string } {
+  if (comandaStatus === 'paga') {
+    return {
+      label: formaPagamento ? `Pago • ${formaPagamento}` : 'Pago',
+      cls: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25',
+    };
+  }
+  if (comandaStatus === 'cancelada') {
+    return { label: 'Sem cobrança', cls: 'bg-zinc-900 text-zinc-500 border border-zinc-800' };
+  }
+  if (comandaStatus === 'pagamento_pendente') {
+    return { label: 'Pagamento pendente', cls: 'bg-amber-500/10 text-amber-400 border border-amber-500/25' };
+  }
+  // aberta ou sem comanda (agendamento antigo)
+  return { label: 'A pagar no balcão', cls: 'bg-zinc-800/60 text-zinc-400 border border-zinc-700' };
 }

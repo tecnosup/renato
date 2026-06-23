@@ -2,13 +2,19 @@ import { NextResponse } from "next/server";
 import type { QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase-admin";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
-import type { Appointment, AppointmentStatus } from "@/lib/types";
+import type { Appointment, AppointmentStatus, ComandaStatus } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /** Máximo de agendamentos retornados (evita resposta gigante e abuso). */
 const MAX_RESULTS = 20;
+
+/** Agendamento + estado de pagamento (vindo da comanda vinculada). */
+export interface AppointmentWithPayment extends Appointment {
+  comandaStatus: ComandaStatus | null;
+  formaPagamento: string | null;
+}
 
 /**
  * POST /api/appointments/by-phone  { phone: string }
@@ -85,7 +91,30 @@ export async function POST(req: Request) {
       .sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time))
       .slice(0, MAX_RESULTS);
 
-    return NextResponse.json({ appointments: list });
+    // Anexa o pagamento de cada agendamento a partir da comanda vinculada
+    // (comandas.appointmentId). Todo agendamento gera uma comanda; o status
+    // (paga / pagamento_pendente / aberta) e a formaPagamento vêm de lá.
+    const withPayment: AppointmentWithPayment[] = await Promise.all(
+      list.map(async (appt) => {
+        try {
+          const cSnap = await adminDb
+            .collection("comandas")
+            .where("appointmentId", "==", appt.id)
+            .limit(1)
+            .get();
+          const c = cSnap.docs[0]?.data();
+          return {
+            ...appt,
+            comandaStatus: (c?.status as ComandaStatus) ?? null,
+            formaPagamento: (c?.formaPagamento as string) ?? null,
+          };
+        } catch {
+          return { ...appt, comandaStatus: null, formaPagamento: null };
+        }
+      })
+    );
+
+    return NextResponse.json({ appointments: withPayment });
   } catch (err) {
     console.error("Falha ao buscar agendamentos por telefone:", err);
     return NextResponse.json({ error: "Não foi possível carregar seus agendamentos." }, { status: 500 });
