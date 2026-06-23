@@ -1,11 +1,13 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BarberService, BarberSpecialist, Employee } from '@/lib/types';
 import { subscribeToEmployees } from '@/lib/employees';
 import { subscribeToServices } from '@/lib/services';
 import { useLockBodyScroll } from '@/hooks/useLockBodyScroll';
-import { 
+import { usePaymentMethod } from '@/hooks/usePaymentMethod';
+import PaymentMethodFields from './PaymentMethodFields';
+import {
   Sparkles, 
   Check, 
   CheckCircle2, 
@@ -55,6 +57,10 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
   const [name, setName] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  // Pagamento "na hora" — fluxo completo (QR Pix, form de cartão, dinheiro),
+  // igual ao checkout de produto. O agendamento só confirma após pagar.
+  const payment = usePaymentMethod('Pix');
   
   // Coupon state
   const [coupon, setCoupon] = useState<string>('');
@@ -333,6 +339,10 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
     if (!phone.trim() || phone.length < 14) {
       newErrors.phone = 'WhatsApp inválido. Ex formato: (11) 99999-9999';
     }
+    // Cartão (débito/crédito) só prossegue com dados válidos. Pix/dinheiro livres.
+    if (!payment.canPay) {
+      newErrors.pagamento = 'Complete os dados do cartão para confirmar.';
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -361,6 +371,9 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
           customerName: name.trim(),
           customerPhone: phone,
           origin: 'landing',
+          // Forma de pagamento pretendida (presencial). Registrada para o caixa
+          // do admin; o pagamento de fato é confirmado lá. Front-only por ora.
+          formaPagamento: payment.forma,
         }),
       });
 
@@ -432,6 +445,16 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
   };
 
   const discountedPrice = (selectedService?.price ?? 0) * (1 - appliedDiscount);
+
+  // Código PIX copia-e-cola (placeholder até existir gateway) — valor do serviço
+  // já com desconto. Mesmo formato do checkout de produto.
+  const pixCode = useMemo(
+    () =>
+      `00020126360014BR.GOV.BCB.PIX0114+5512996555081520400005303986540${discountedPrice
+        .toFixed(2)
+        .replace('.', '')}5802BR5913SECULO XXI SA6008CRUZEIRO62070503***6304SX21`,
+    [discountedPrice],
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/70 backdrop-blur-md" id="reservar-modal">
@@ -933,6 +956,19 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                           )}
                         </div>
 
+                        {/* Pagamento — fluxo completo (QR Pix, form de cartão,
+                            dinheiro), igual ao checkout de produto. */}
+                        <div className="space-y-2 text-left">
+                          <label className="font-mono text-[8.5px] text-brand-blue font-bold tracking-wider block uppercase select-none">
+                            Pagamento
+                          </label>
+                          <PaymentMethodFields
+                            payment={payment}
+                            pixCode={pixCode}
+                            dinheiroHint="Você paga em dinheiro no balcão, presencialmente, no dia do atendimento."
+                          />
+                        </div>
+
                         {/* Submit Action Block */}
                         <div className="pt-2 space-y-2">
                           {errors.slot && (
@@ -940,9 +976,14 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                               {errors.slot}
                             </p>
                           )}
+                          {errors.pagamento && (
+                            <p className="text-rose-400 font-sans text-[10px] text-center leading-snug px-2">
+                              {errors.pagamento}
+                            </p>
+                          )}
                           <button
                             type="submit"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || !payment.canPay}
                             className="relative overflow-hidden w-full py-3.5 btn-game btn-game-sm text-sm uppercase rounded-2xl transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 border-2 border-black/55 bg-[linear-gradient(135deg,#5a93de_0%,#2f5f8f_42%,#c41f16_70%,#e23a2e_100%)] hover:brightness-110 active:scale-[0.98] shadow-[0_8px_24px_rgba(0,0,0,0.45)] disabled:opacity-60 disabled:cursor-not-allowed"
                             id="submit-booking-action"
                           >
@@ -954,7 +995,9 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
                             ) : (
                               <>
                                 <Sparkles className="w-4 h-4" />
-                                Confirmar horário
+                                {payment.forma === 'Dinheiro'
+                                  ? 'Confirmar horário'
+                                  : `Pagar R$ ${discountedPrice.toFixed(0)},00`}
                               </>
                             )}
                           </button>

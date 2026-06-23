@@ -28,10 +28,16 @@ const FORMA_LABEL: Record<FormaPagamento, string> = {
 interface PaymentMethodFieldsProps {
   /** Estado vindo do hook usePaymentMethod (controlado pela tela). */
   payment: UsePaymentMethod;
-  /** Código Pix copia-e-cola (placeholder até existir gateway). */
-  pixCode: string;
+  /** Código Pix copia-e-cola (placeholder até existir gateway). Não usado em selectorOnly. */
+  pixCode?: string;
   /** Texto de retirada/realização do dinheiro (varia por contexto). */
   dinheiroHint?: string;
+  /**
+   * Só o seletor de forma + aviso de presencial, sem QR do Pix nem formulário de
+   * cartão. Usado no agendamento, onde o cliente apenas DECLARA como vai pagar
+   * (paga no balcão). No checkout de produto fica false (fluxo completo).
+   */
+  selectorOnly?: boolean;
 }
 
 /**
@@ -42,8 +48,9 @@ interface PaymentMethodFieldsProps {
  */
 export default function PaymentMethodFields({
   payment,
-  pixCode,
+  pixCode = "",
   dinheiroHint = "Você paga em dinheiro no balcão, presencialmente, no dia do atendimento.",
+  selectorOnly = false,
 }: PaymentMethodFieldsProps) {
   const {
     forma,
@@ -100,6 +107,10 @@ export default function PaymentMethodFields({
         Pagamento presencial • no balcão do salão
       </p>
 
+      {/* Painéis detalhados (QR Pix, form de cartão, aviso dinheiro). No modo
+          selectorOnly o cliente apenas DECLARA a forma — sem QR nem form. */}
+      {!selectorOnly && (
+        <>
       {/* PIX */}
       {forma === "Pix" && (
         <div className="flex flex-col items-center text-center space-y-3 bg-white/[0.03] border-2 border-black/55 rounded-2xl p-5">
@@ -196,6 +207,8 @@ export default function PaymentMethodFields({
           </div>
           <p className="font-sans text-[11px] text-zinc-400 leading-relaxed">{dinheiroHint}</p>
         </div>
+      )}
+        </>
       )}
     </div>
   );
