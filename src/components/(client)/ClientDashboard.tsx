@@ -47,6 +47,7 @@ interface SavedAppointment {
   id: string;
   serviceName: string;
   servicePrice: number;
+  barberId?: string;
   barberName: string;
   date: string;
   time: string;
@@ -61,84 +62,76 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
   const [isCopied, setIsCopied] = useState(false);
   const [showCancelPrompt, setShowCancelPrompt] = useState<string | null>(null);
 
-  // Load appointments from localStorage
-  useEffect(() => {
-    const loadAppointments = () => {
-      try {
-        const stored = localStorage.getItem('seculo-xxi-appointments');
-        const list: SavedAppointment[] = stored ? JSON.parse(stored) : [];
-        
-        // Filter appointments relevant to this client name (fuzzy matching of first name or exact match)
-        const relevant = list.filter(appt => {
-          const apptNameClean = appt.customerName?.toLowerCase().trim() || '';
-          const memberNameClean = member.name?.toLowerCase().trim() || '';
-          return apptNameClean.includes(memberNameClean) || memberNameClean.includes(apptNameClean);
-        });
+  const [isLoadingAppointments, setIsLoadingAppointments] = useState(true);
 
-        // Add some premium mock historic appointments to look established if none exists
-        const mockHistoric: SavedAppointment[] = [
-          {
-            id: 'BC-582910',
-            serviceName: 'Corte Pivot Point + Ritual de Toalhas Quentes',
-            servicePrice: 150,
-            barberName: 'Alexandre Ortega',
-            date: '2026-05-15',
-            time: '14:00',
-            customerName: member.name,
-            customerPhone: member.phone,
-            status: 'concluido'
-          },
-          {
-            id: 'BC-204918',
-            serviceName: 'Tratamento de Argiloterapia Facial',
-            servicePrice: 90,
-            barberName: 'Gabriel Enzo',
-            date: '2026-04-10',
-            time: '18:00',
-            customerName: member.name,
-            customerPhone: member.phone,
-            status: 'concluido'
-          }
-        ];
-
-        // Combine upcoming relevant with mock historic ones
-        setAppointments([...relevant, ...mockHistoric]);
-      } catch (err) {
-        console.error('Error loading appointments:', err);
-      }
-    };
-
-    loadAppointments();
-    
-    // Listen to local storage changes or standard updates
-    window.addEventListener('storage', loadAppointments);
-    return () => window.removeEventListener('storage', loadAppointments);
-  }, [member.name, member.phone]);
-
-  // Cancel an appointment in real-time
-  const handleCancelAppointment = (apptId: string) => {
+  // Carrega os agendamentos REAIS do cliente (Firestore via API).
+  // A landing é anonima e nao lê `appointments` direto — a busca passa por
+  // /api/appointments/by-phone (Admin SDK), casando pelo telefone do membro.
+  const loadAppointments = React.useCallback(async () => {
+    if (!member.phone) {
+      setAppointments([]);
+      setIsLoadingAppointments(false);
+      return;
+    }
+    setIsLoadingAppointments(true);
     try {
-      const stored = localStorage.getItem('seculo-xxi-appointments');
-      const list: SavedAppointment[] = stored ? JSON.parse(stored) : [];
-      
-      // Remove from central database list
-      const updated = list.filter(appt => appt.id !== apptId);
-      localStorage.setItem('seculo-xxi-appointments', JSON.stringify(updated));
-      
-      // Update local state list
+      const res = await fetch('/api/appointments/by-phone', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: member.phone }),
+      });
+      const data = await res.json();
+      // Ignora os cancelados na lista do cliente (mantem agendados + concluidos).
+      const list: SavedAppointment[] = (data.appointments ?? []).filter(
+        (a: SavedAppointment) => a.status !== 'cancelado'
+      );
+      setAppointments(list);
+    } catch (err) {
+      console.error('Erro ao carregar agendamentos:', err);
+      setAppointments([]);
+    } finally {
+      setIsLoadingAppointments(false);
+    }
+  }, [member.phone]);
+
+  useEffect(() => {
+    loadAppointments();
+  }, [loadAppointments]);
+
+  // Cancela um agendamento real via API (trava por telefone no servidor).
+  const handleCancelAppointment = async (apptId: string) => {
+    try {
+      const res = await fetch('/api/appointments/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: apptId, phone: member.phone }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? 'Falha ao cancelar.');
+      }
+
+      // Remove da lista local imediatamente (a fonte real já foi atualizada).
       setAppointments(prev => prev.filter(appt => appt.id !== apptId));
       setShowCancelPrompt(null);
 
-      // Trigger global toast dispatch
       window.dispatchEvent(new CustomEvent('show-toast', {
         detail: {
           title: 'HORÁRIO CANCELADO',
-          message: 'O cancelamento foi realizado com sucesso. Seus créditos de assinatura foram estornados automaticamente.',
+          message: 'O cancelamento foi realizado com sucesso. O horário já foi liberado na agenda.',
           type: 'success'
         }
       }));
     } catch (err) {
-      console.error('Error canceling appointment:', err);
+      console.error('Erro ao cancelar agendamento:', err);
+      setShowCancelPrompt(null);
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: {
+          title: 'NÃO FOI POSSÍVEL CANCELAR',
+          message: err instanceof Error ? err.message : 'Tente novamente em instantes.',
+          type: 'error'
+        }
+      }));
     }
   };
 
@@ -413,13 +406,18 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                 </button>
               </div>
 
-              {appointments.length === 0 ? (
+              {isLoadingAppointments ? (
+                <div className="bg-white/5 backdrop-blur-xl p-8 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl text-center flex flex-col items-center justify-center space-y-3">
+                  <CalendarDays className="w-8 h-8 text-zinc-600 animate-pulse" />
+                  <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest">Carregando sua agenda…</span>
+                </div>
+              ) : appointments.length === 0 ? (
                 <div className="bg-white/5 backdrop-blur-xl p-8 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl text-center flex flex-col items-center justify-center space-y-3">
                   <CalendarDays className="w-8 h-8 text-zinc-700 animate-pulse" />
                   <div className="space-y-1">
                     <span className="font-display font-bold text-xs text-white uppercase tracking-wider block">Nenhum agendamento futuro</span>
                     <p className="font-sans text-[11px] text-zinc-500 leading-normal max-w-xs">
-                      Não encontramos nenhuma reserva ativa de horário de corte ou barba no seu CPF para as próximas semanas.
+                      Não encontramos nenhuma reserva ativa no telefone cadastrado para as próximas semanas.
                     </p>
                   </div>
                   <button
