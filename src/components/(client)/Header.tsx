@@ -214,7 +214,7 @@ export default function Header() {
         >
           <div className="flex items-center gap-5">
             <span className="flex items-center gap-2 tracking-[0.08em] font-medium text-zinc-400">
-              <span className="inline-block w-1.5 h-1.5 bg-[#c8ccd4]/85 rounded-full" />
+              <span className="inline-block w-1.5 h-1.5 bg-brand-blue/85 rounded-full" />
               VAGAS HOJE DISPONÍVEIS
             </span>
             <span className="hidden sm:inline-block text-zinc-800">•</span>
@@ -255,7 +255,7 @@ export default function Header() {
                 className="font-sans text-[10px] font-semibold tracking-[0.22em] text-zinc-400 hover:text-white transition-colors duration-300 relative group py-2"
               >
                 {item.label}
-                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#c8ccd4]/60 transition-all duration-300 group-hover:w-full" />
+                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-brand-blue/60 transition-all duration-300 group-hover:w-full" />
               </a>
             ))}
           </nav>
@@ -267,9 +267,9 @@ export default function Header() {
               className="flex items-center gap-2 font-sans text-[10px] font-semibold tracking-[0.22em] text-zinc-400 hover:text-white transition-all cursor-pointer py-2 group/client"
               id="header-client-area-btn"
             >
-              <User className="w-3.5 h-3.5 text-[#c8ccd4] group-hover/client:scale-110 transition-transform" />
+              <User className="w-3.5 h-3.5 text-brand-blue group-hover/client:scale-110 transition-transform" />
               <span>ÁREA DO CLIENTE</span>
-              <span className="font-mono text-[7px] text-[#c8ccd4] border border-[#c8ccd4]/30 px-1 py-0.5 rounded ml-0.5 font-bold uppercase shrink-0">
+              <span className="font-mono text-[7px] text-brand-blue border border-brand-blue/30 px-1 py-0.5 rounded ml-0.5 font-bold uppercase shrink-0">
                 CLUBE
               </span>
             </button>
@@ -313,7 +313,7 @@ export default function Header() {
                     key={item.label}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="font-sans text-[11px] font-bold tracking-[0.22em] text-zinc-100 hover:text-[#c8ccd4] transition-colors py-2 border-b border-white/10 uppercase"
+                    className="font-sans text-[11px] font-bold tracking-[0.22em] text-zinc-100 hover:text-brand-blue transition-colors py-2 border-b border-white/10 uppercase"
                   >
                     {item.label}
                   </a>
@@ -326,10 +326,10 @@ export default function Header() {
                     setIsOpen(false);
                     setShowClientArea(true);
                   }}
-                  className="font-sans text-[11px] font-bold tracking-[0.22em] text-[#c8ccd4] hover:text-white transition-colors py-2 border-b border-white/10 uppercase text-left flex items-center justify-between"
+                  className="font-sans text-[11px] font-bold tracking-[0.22em] text-brand-blue hover:text-white transition-colors py-2 border-b border-white/10 uppercase text-left flex items-center justify-between"
                 >
                   <span>ÁREA DO CLIENTE (ASSINANTES)</span>
-                  <span className="font-mono text-[7px] text-[#c8ccd4] border border-[#c8ccd4]/30 px-1 py-0.5 rounded font-black uppercase">
+                  <span className="font-mono text-[7px] text-brand-blue border border-brand-blue/30 px-1 py-0.5 rounded font-black uppercase">
                     ENTRAR
                   </span>
                 </button>
@@ -347,9 +347,9 @@ export default function Header() {
                 </button>
 
                 {/* Info block */}
-                <div className="flex flex-col gap-2 font-mono text-[9px] text-[#c8ccd4]/60 pt-4 border-t border-zinc-900">
+                <div className="flex flex-col gap-2 font-mono text-[9px] text-brand-blue/60 pt-4 border-t border-zinc-900">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-[#c8ccd4]/85" />
+                    <MapPin className="w-3.5 h-3.5 text-brand-blue/85" />
                     <span>R. Dr. José Rodrigues Alves Sobrinho, 351 - Cruzeiro, SP</span>
                   </div>
                   <div className="pl-5">Segunda a Sábado: 08:30 às 21:00</div>
@@ -384,7 +384,7 @@ export default function Header() {
               id="client-portal-modal"
             >
               {/* Refraction ambient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[#c8ccd4]/5 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/5 to-transparent pointer-events-none" />
 
               {/* Close Button */}
               {!portalSuccess && (
@@ -404,17 +404,17 @@ export default function Header() {
               {/* SUCCESS LOADING ANIMATION STATE */}
               {portalSuccess ? (
                 <div className="py-12 text-center flex flex-col items-center justify-center space-y-4 select-none animate-fade-in">
-                  <div className="w-14 h-14 bg-[#c8ccd4]/10 border border-[#c8ccd4]/45 text-[#c8ccd4] rounded-full flex items-center justify-center animate-bounce">
+                  <div className="w-14 h-14 bg-brand-blue/10 border border-brand-blue/45 text-brand-blue rounded-full flex items-center justify-center animate-bounce">
                     <CheckCircle2 className="w-7 h-7" />
                   </div>
                   <h3 className="font-display font-medium text-[#e2e2e2] text-xl uppercase tracking-widest mt-2 leading-none">
                     Acesso Liberado
                   </h3>
                   <p className="font-sans text-xs text-zinc-400 max-w-xs leading-relaxed">
-                    Entrando na sua área de assinante da <strong className="text-[#c8ccd4]">Século XXI</strong>...
+                    Entrando na sua área de assinante da <strong className="text-brand-blue">Século XXI</strong>...
                   </p>
                   <div className="w-24 h-1 bg-[#111214] mt-2 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#c8ccd4] w-1/2 animate-[progress_1.2s_ease-in-out_infinite]" />
+                    <div className="h-full bg-brand-blue w-1/2 animate-[progress_1.2s_ease-in-out_infinite]" />
                   </div>
                 </div>
               ) : currentLoggedMember ? (
@@ -462,8 +462,8 @@ export default function Header() {
                             onClick={() => setSimulationPlan(pOpt.plan as any)}
                             className={`p-2.5 border rounded-xl text-left font-mono tracking-tight cursor-pointer transition-all flex flex-col justify-between ${
                               simulationPlan === pOpt.plan
-                                ? 'bg-[#c8ccd4]/10 border-[#c8ccd4] shadow-[inset_0_0_15px_rgba(200, 204, 212,0.15)] text-[#c8ccd4]'
-                                : 'bg-white/5 backdrop-blur-md border-white/10 text-slate-500 hover:border-[#c8ccd4]/30 hover:bg-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]'
+                                ? 'bg-brand-blue/10 border-brand-blue shadow-[inset_0_0_15px_rgba(43,79,184,0.15)] text-brand-blue'
+                                : 'bg-white/5 backdrop-blur-md border-white/10 text-slate-500 hover:border-brand-blue/30 hover:bg-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]'
                             }`}
                           >
                             <span className="text-[9px] font-bold block">{pOpt.label}</span>
@@ -487,7 +487,7 @@ export default function Header() {
                           setSimulationName(e.target.value);
                           if (portalError) setPortalError('');
                         }}
-                        className="w-full bg-white/5 backdrop-blur-md border border-white/10 focus:border-[#c8ccd4]/50 focus:bg-white/10 focus:outline-none text-slate-100 font-sans text-xs rounded-xl px-4 py-3 tracking-wider placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all"
+                        className="w-full bg-white/5 backdrop-blur-md border border-white/10 focus:border-brand-blue/50 focus:bg-white/10 focus:outline-none text-slate-100 font-sans text-xs rounded-xl px-4 py-3 tracking-wider placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all"
                         name="simName"
                         required
                       />
@@ -506,7 +506,7 @@ export default function Header() {
                       </button>
                       <button
                         type="submit"
-                        className="flex-1 bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] text-slate-950 hover:opacity-90 font-sans text-[9px] font-black tracking-[0.24em] uppercase py-3.5 rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(200, 204, 212,0.3)]"
+                        className="flex-1 btn-game bg-brand-blue hover:bg-brand-blue-deep text-white font-sans text-[9px] font-black tracking-[0.24em] uppercase py-3.5 rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer border-2 border-black shadow-[0_4px_0_rgba(0,0,0,0.85)] active:translate-y-[2px] active:shadow-none"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
                         Ativar &amp; Entrar
@@ -519,8 +519,8 @@ export default function Header() {
                 <div className="space-y-6 animate-fade-in" id="portal-login-credentials-panel">
                   {/* Header info */}
                   <div className="space-y-2">
-                    <div className="inline-flex items-center gap-1.5 font-mono text-[8px] text-[#c8ccd4] tracking-widest uppercase bg-[#c8ccd4]/5 border border-[#c8ccd4]/15 px-2.5 py-1 rounded-full">
-                      <Lock className="w-3 h-3 text-[#c8ccd4]" />
+                    <div className="inline-flex items-center gap-1.5 font-mono text-[8px] text-brand-blue tracking-widest uppercase bg-brand-blue/5 border border-brand-blue/15 px-2.5 py-1 rounded-full">
+                      <Lock className="w-3 h-3 text-brand-blue" />
                       <span>ÁREA EXCLUSIVA PARA ASSINANTES</span>
                     </div>
                     <h3 className="font-display font-medium text-xl text-white uppercase tracking-wider leading-none">
@@ -546,7 +546,7 @@ export default function Header() {
                           setSubscriberId(e.target.value);
                           if (portalError) setPortalError('');
                         }}
-                        className="w-full bg-white/5 backdrop-blur-md border border-white/10 focus:border-[#c8ccd4]/50 focus:bg-white/10 focus:outline-none text-slate-100 font-mono text-xs rounded-xl px-4 py-3.5 tracking-wider placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all"
+                        className="w-full bg-white/5 backdrop-blur-md border border-white/10 focus:border-brand-blue/50 focus:bg-white/10 focus:outline-none text-slate-100 font-mono text-xs rounded-xl px-4 py-3.5 tracking-wider placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all"
                         name="memberId"
                       />
                       {portalError && (
@@ -558,7 +558,7 @@ export default function Header() {
 
                     <button
                       type="submit"
-                      className="w-full bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] hover:opacity-90 text-slate-950 font-sans text-[9px] font-black tracking-[0.24em] uppercase py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(200, 204, 212,0.3)]"
+                      className="w-full btn-game bg-brand-blue hover:bg-brand-blue-deep text-white font-sans text-[9px] font-black tracking-[0.24em] uppercase py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border-2 border-black shadow-[0_4px_0_rgba(0,0,0,0.85)] active:translate-y-[2px] active:shadow-none"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
                       Entrar
@@ -567,7 +567,7 @@ export default function Header() {
 
                   {/* Dica de teste para o salão experimentar a área do assinante */}
                   <div className="bg-black/30 p-3 border border-white/5 rounded-xl space-y-1.5">
-                    <span className="font-mono text-[7px] text-[#c8ccd4] uppercase block font-bold">PARA TESTAR</span>
+                    <span className="font-mono text-[7px] text-brand-blue uppercase block font-bold">PARA TESTAR</span>
                     <p className="font-sans text-[10px] text-zinc-400 leading-normal">
                       Digite <strong className="text-zinc-200">123</strong> para entrar como <strong className="text-zinc-200">Lincon Cardoso</strong> (Plano Lendário) ou digite qualquer CPF para criar uma conta de teste.
                     </p>
@@ -580,7 +580,7 @@ export default function Header() {
                       <a
                         href="#assinaturas"
                         onClick={() => setShowClientArea(false)}
-                        className="font-sans text-[9px] font-bold text-[#c8ccd4] hover:text-white hover:underline transition-colors mt-0.5 block uppercase tracking-wider"
+                        className="font-sans text-[9px] font-bold text-brand-blue hover:text-white hover:underline transition-colors mt-0.5 block uppercase tracking-wider"
                       >
                         Conhecer os Planos →
                       </a>
