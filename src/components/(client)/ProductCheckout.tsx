@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   Loader2,
   ShieldCheck,
-  ChevronLeft,
   Minus,
   Plus,
   MapPin,
@@ -22,7 +21,7 @@ import { useLockBodyScroll } from '@/hooks/useLockBodyScroll';
 import { usePaymentMethod } from '@/hooks/usePaymentMethod';
 import PaymentMethodFields from './PaymentMethodFields';
 
-type Step = 'resumo' | 'pagamento' | 'processando' | 'sucesso';
+type Step = 'checkout' | 'processando' | 'sucesso';
 
 interface ProductCheckoutProps {
   product: Product;
@@ -32,16 +31,23 @@ interface ProductCheckoutProps {
 /**
  * Checkout de produto (simulado — sem banco/gateway real).
  *
- * Fluxo em passos: resumo → pagamento (PIX / cartão / dinheiro) →
- * processando (spinner fake) → sucesso (nº do pedido + retirada no salão).
+ * Layout tradicional de 2 colunas em TELA ÚNICA (estilo e-commerce): à esquerda
+ * o formulário (contato + forma de pagamento), à direita o resumo do pedido
+ * fixo. Sem login: quem compra produto avulso não é assinante (a "Área do
+ * Cliente" é só para assinantes), então só pedimos nome + telefone para
+ * identificar a retirada.
  *
  * Toda a "transação" é client-side: o `processando` é um setTimeout e o
  * número do pedido é gerado localmente. Nenhuma chamada de rede.
  */
 export default function ProductCheckout({ product, onClose }: ProductCheckoutProps) {
-  const [step, setStep] = useState<Step>('resumo');
+  const [step, setStep] = useState<Step>('checkout');
   const [qty, setQty] = useState(1);
   const [orderId, setOrderId] = useState('');
+
+  // Contato do comprador (sem login — só identifica o pedido na retirada).
+  const [nome, setNome] = useState('');
+  const [telefone, setTelefone] = useState('');
 
   // Forma de pagamento "na hora" (estado + validação compartilhados).
   const payment = usePaymentMethod('Pix');
@@ -49,6 +55,10 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
 
   const maxStock = product.stock > 0 ? product.stock : 99;
   const subtotal = product.price * qty;
+
+  // Contato mínimo preenchido (nome + telefone com dígitos suficientes).
+  const contatoOk = nome.trim().length > 1 && telefone.replace(/\D/g, '').length >= 10;
+  const canFinish = contatoOk && payment.canPay;
 
   // Trava o scroll do fundo enquanto o checkout está aberto (fecha só no X/ESC).
   useLockBodyScroll(true);
@@ -69,6 +79,15 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
+  // Máscara simples de telefone BR: (00) 00000-0000
+  const onTelefone = (v: string) => {
+    const d = v.replace(/\D/g, '').slice(0, 11);
+    let out = d;
+    if (d.length > 2) out = `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    if (d.length > 7) out = `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+    setTelefone(out);
+  };
+
   // Código PIX copia-e-cola fake (formato visualmente plausível) — placeholder
   // até existir gateway. O valor entra no campo de valor do payload Pix.
   const pixCode = useMemo(
@@ -81,6 +100,7 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
 
   // Dispara o "pagamento" simulado
   const handlePay = () => {
+    if (!canFinish) return;
     setStep('processando');
     const id = 'SX-' + Math.floor(100000 + Math.random() * 899999);
     setTimeout(() => {
@@ -109,7 +129,7 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
         animate={{ y: 0, opacity: 1, scale: 1 }}
         exit={{ y: 20, opacity: 0, scale: 0.97 }}
         transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-        className="relative w-full max-w-lg bg-[#0b0b0d] bg-tijolo border-2 border-black rounded-3xl shadow-[0_8px_0_rgba(0,0,0,0.85),0_30px_60px_rgba(0,0,0,0.6)] overflow-hidden max-h-[88vh] flex flex-col"
+        className="relative w-full max-w-3xl bg-[#0b0b0d] bg-tijolo border-2 border-black rounded-3xl shadow-[0_8px_0_rgba(0,0,0,0.85),0_30px_60px_rgba(0,0,0,0.6)] overflow-hidden max-h-[90vh] flex flex-col"
         role="dialog"
         aria-modal="true"
         aria-label={`Comprar ${product.name}`}
@@ -119,25 +139,13 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
 
         {/* Header */}
         <div className="relative flex items-center justify-between gap-3 px-5 py-4 border-b border-white/5 shrink-0 z-10">
-          <div className="flex items-center gap-2.5">
-            {step !== 'resumo' && step !== 'sucesso' && (
-              <button
-                type="button"
-                onClick={() => setStep('resumo')}
-                className="w-8 h-8 grid place-items-center rounded-lg bg-[#16161a] border-2 border-black text-zinc-300 hover:text-white transition-colors cursor-pointer shadow-[0_3px_0_rgba(0,0,0,0.8)] active:translate-y-[2px] active:shadow-none"
-                aria-label="Voltar"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-            )}
-            <div className="flex flex-col leading-none">
-              <span className="font-mono text-[8px] text-brand-blue uppercase tracking-[0.25em] font-black">
-                SÉCULO XXI • LOJA
-              </span>
-              <span className="font-toon text-logo-3d text-lg uppercase tracking-wide mt-1" data-text="Comprar">
-                Comprar
-              </span>
-            </div>
+          <div className="flex flex-col leading-none">
+            <span className="font-mono text-[8px] text-brand-blue uppercase tracking-[0.25em] font-black">
+              SÉCULO XXI • LOJA
+            </span>
+            <span className="font-toon text-logo-3d text-lg uppercase tracking-wide mt-1" data-text="Finalizar compra">
+              Finalizar compra
+            </span>
           </div>
           <button
             type="button"
@@ -149,111 +157,178 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
           </button>
         </div>
 
-        {/* Corpo (scrollável) */}
-        <div className="relative z-10 flex-1 overflow-y-auto px-5 py-5">
+        {/* Corpo */}
+        <div className="relative z-10 flex-1 overflow-y-auto">
           <AnimatePresence mode="wait">
 
-            {/* PASSO 1 — RESUMO */}
-            {step === 'resumo' && (
+            {/* TELA ÚNICA — CHECKOUT (2 colunas) */}
+            {step === 'checkout' && (
               <motion.div
-                key="resumo"
-                initial={{ opacity: 0, x: -12 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -12 }}
+                key="checkout"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="space-y-5"
+                className="grid grid-cols-1 md:grid-cols-[1fr_320px]"
               >
-                {/* Card do produto */}
-                <div className="flex gap-4 bg-white/[0.03] border-2 border-black/55 rounded-2xl p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-                  <div className="w-24 h-24 shrink-0 rounded-xl bg-zinc-950 border border-zinc-800 grid place-items-center overflow-hidden">
-                    {product.imageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <ShoppingBag className="w-8 h-8 text-zinc-700" />
-                    )}
-                  </div>
-                  <div className="flex flex-col justify-between min-w-0 flex-1">
+                {/* ===== COLUNA ESQUERDA — FORMULÁRIO ===== */}
+                <div className="px-5 py-5 space-y-5 md:border-r md:border-white/5">
+
+                  {/* Contato */}
+                  <div className="space-y-3">
+                    <h4 className="font-display font-black text-[11px] text-zinc-100 uppercase tracking-widest">
+                      Seus dados
+                    </h4>
                     <div>
-                      <h4 className="font-display font-black text-sm text-zinc-100 uppercase leading-tight">
-                        {product.name}
-                      </h4>
-                      {product.volume && (
-                        <span className="font-mono text-[9px] text-zinc-500 uppercase">{product.volume}</span>
+                      <label className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold block mb-1">
+                        Nome completo
+                      </label>
+                      <input
+                        value={nome}
+                        onChange={(e) => setNome(e.target.value)}
+                        placeholder="Seu nome"
+                        className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-sans text-sm text-white placeholder:text-zinc-700 focus:border-brand-blue/60 outline-none transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold block mb-1">
+                        Telefone (WhatsApp)
+                      </label>
+                      <input
+                        inputMode="numeric"
+                        value={telefone}
+                        onChange={(e) => onTelefone(e.target.value)}
+                        placeholder="(12) 99999-9999"
+                        className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-sans text-sm text-white placeholder:text-zinc-700 focus:border-brand-blue/60 outline-none transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Forma de pagamento */}
+                  <div className="space-y-3">
+                    <h4 className="font-display font-black text-[11px] text-zinc-100 uppercase tracking-widest">
+                      Pagamento
+                    </h4>
+                    <PaymentMethodFields
+                      payment={payment}
+                      pixCode={pixCode}
+                      dinheiroHint="Seu pedido será reservado e você paga em dinheiro ao retirar no salão. Guardamos o item por 48h."
+                    />
+                  </div>
+
+                  {/* Aviso de retirada */}
+                  <div className="flex items-start gap-2.5 bg-brand-blue/5 border border-brand-blue/20 rounded-xl px-3.5 py-3">
+                    <MapPin className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
+                    <p className="font-sans text-[10.5px] text-zinc-400 leading-normal">
+                      A retirada é feita no salão em <strong className="text-zinc-200">Cruzeiro/SP</strong>. Separamos seu pedido assim que o pagamento for confirmado.
+                    </p>
+                  </div>
+                </div>
+
+                {/* ===== COLUNA DIREITA — RESUMO DO PEDIDO ===== */}
+                <aside className="px-5 py-5 bg-white/[0.02] space-y-4">
+                  <h4 className="font-display font-black text-[11px] text-zinc-100 uppercase tracking-widest">
+                    Seu pedido
+                  </h4>
+
+                  {/* Card do produto */}
+                  <div className="flex gap-3 bg-white/[0.03] border-2 border-black/55 rounded-2xl p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                    <div className="w-16 h-16 shrink-0 rounded-xl bg-zinc-950 border border-zinc-800 grid place-items-center overflow-hidden">
+                      {product.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <ShoppingBag className="w-7 h-7 text-zinc-700" />
                       )}
                     </div>
-                    <span className="font-display font-extrabold text-lg text-brand-blue">
-                      R$ {product.price},00
-                    </span>
+                    <div className="flex flex-col justify-between min-w-0 flex-1">
+                      <div>
+                        <h5 className="font-display font-black text-xs text-zinc-100 uppercase leading-tight">
+                          {product.name}
+                        </h5>
+                        {product.volume && (
+                          <span className="font-mono text-[9px] text-zinc-500 uppercase">{product.volume}</span>
+                        )}
+                      </div>
+                      <span className="font-display font-extrabold text-sm text-brand-blue">
+                        R$ {product.price},00
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                {/* Quantidade */}
-                <div className="flex items-center justify-between bg-white/[0.03] border-2 border-black/55 rounded-2xl px-4 py-3">
-                  <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-widest font-bold">
-                    Quantidade
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setQty((q) => Math.max(1, q - 1))}
-                      disabled={qty <= 1}
-                      className="w-8 h-8 grid place-items-center rounded-lg bg-[#16161a] border-2 border-black text-zinc-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-[0_3px_0_rgba(0,0,0,0.8)] active:translate-y-[2px] active:shadow-none transition-all"
-                      aria-label="Diminuir quantidade"
-                    >
-                      <Minus className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="font-display font-black text-base text-white w-6 text-center tabular-nums">
-                      {qty}
+                  {/* Quantidade */}
+                  <div className="flex items-center justify-between bg-white/[0.03] border-2 border-black/55 rounded-2xl px-4 py-2.5">
+                    <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-widest font-bold">
+                      Quantidade
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => setQty((q) => Math.min(maxStock, q + 1))}
-                      disabled={qty >= maxStock}
-                      className="w-8 h-8 grid place-items-center rounded-lg bg-[#16161a] border-2 border-black text-zinc-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-[0_3px_0_rgba(0,0,0,0.8)] active:translate-y-[2px] active:shadow-none transition-all"
-                      aria-label="Aumentar quantidade"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setQty((q) => Math.max(1, q - 1))}
+                        disabled={qty <= 1}
+                        className="w-7 h-7 grid place-items-center rounded-lg bg-[#16161a] border-2 border-black text-zinc-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-[0_3px_0_rgba(0,0,0,0.8)] active:translate-y-[2px] active:shadow-none transition-all"
+                        aria-label="Diminuir quantidade"
+                      >
+                        <Minus className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="font-display font-black text-base text-white w-6 text-center tabular-nums">
+                        {qty}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setQty((q) => Math.min(maxStock, q + 1))}
+                        disabled={qty >= maxStock}
+                        className="w-7 h-7 grid place-items-center rounded-lg bg-[#16161a] border-2 border-black text-zinc-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-[0_3px_0_rgba(0,0,0,0.8)] active:translate-y-[2px] active:shadow-none transition-all"
+                        aria-label="Aumentar quantidade"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                {/* Aviso de retirada */}
-                <div className="flex items-start gap-2.5 bg-brand-blue/5 border border-brand-blue/20 rounded-xl px-3.5 py-3">
-                  <MapPin className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
-                  <p className="font-sans text-[10.5px] text-zinc-400 leading-normal">
-                    A retirada é feita no salão em <strong className="text-zinc-200">Cruzeiro/SP</strong>. Separamos seu pedido assim que o pagamento for confirmado.
+                  {/* Totais */}
+                  <div className="space-y-2 border-t border-white/5 pt-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest">Subtotal</span>
+                      <span className="font-display font-bold text-sm text-zinc-200">R$ {subtotal},00</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Total</span>
+                      <span className="font-display font-black text-xl text-white">R$ {subtotal},00</span>
+                    </div>
+                  </div>
+
+                  {/* CTA finalizar */}
+                  <button
+                    type="button"
+                    onClick={handlePay}
+                    disabled={!canFinish}
+                    className="relative overflow-hidden w-full btn-game text-sm uppercase py-3.5 rounded-xl border-2 border-black/55 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] group/pay"
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover/pay:animate-shimmer" />
+                    <ShieldCheck className="w-4 h-4" />
+                    {isDinheiro ? 'Reservar pedido' : `Pagar R$ ${subtotal},00`}
+                  </button>
+                  {!contatoOk && (
+                    <p className="font-mono text-[8.5px] text-zinc-600 uppercase tracking-widest text-center">
+                      Preencha nome e telefone para continuar
+                    </p>
+                  )}
+                  <p className="flex items-center justify-center gap-1.5 font-mono text-[8px] text-zinc-600 uppercase tracking-widest">
+                    <ShieldCheck className="w-3 h-3" /> Ambiente seguro • Século XXI
                   </p>
-                </div>
+                </aside>
               </motion.div>
             )}
 
-            {/* PASSO 2 — PAGAMENTO */}
-            {step === 'pagamento' && (
-              <motion.div
-                key="pagamento"
-                initial={{ opacity: 0, x: 12 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 12 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-4"
-              >
-                <PaymentMethodFields
-                  payment={payment}
-                  pixCode={pixCode}
-                  dinheiroHint="Seu pedido será reservado e você paga em dinheiro ao retirar no salão. Guardamos o item por 48h."
-                />
-              </motion.div>
-            )}
-
-            {/* PASSO 3 — PROCESSANDO */}
+            {/* PROCESSANDO */}
             {step === 'processando' && (
               <motion.div
                 key="processando"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex flex-col items-center justify-center text-center py-14 space-y-4"
+                className="flex flex-col items-center justify-center text-center py-20 px-5 space-y-4"
               >
                 <Loader2 className="w-10 h-10 text-brand-blue animate-spin" />
                 <div>
@@ -265,14 +340,14 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
               </motion.div>
             )}
 
-            {/* PASSO 4 — SUCESSO */}
+            {/* SUCESSO */}
             {step === 'sucesso' && (
               <motion.div
                 key="sucesso"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex flex-col items-center text-center py-8 space-y-4"
+                className="flex flex-col items-center text-center py-12 px-5 space-y-4"
               >
                 <motion.div
                   initial={{ scale: 0 }}
@@ -293,62 +368,22 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
                       : 'confirmado. Já estamos separando para retirada no salão.'}
                   </p>
                 </div>
-                <div className="w-full bg-[#0e0e11] border-2 border-black rounded-xl px-4 py-3 flex items-center justify-between">
+                <div className="w-full max-w-xs bg-[#0e0e11] border-2 border-black rounded-xl px-4 py-3 flex items-center justify-between">
                   <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest font-bold">Nº do pedido</span>
                   <span className="font-mono text-sm text-brand-blue font-bold tracking-widest">{orderId}</span>
                 </div>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full max-w-xs btn-game text-sm uppercase py-3.5 rounded-xl border-2 border-black/55 bg-brand-blue hover:bg-brand-blue-deep transition-all cursor-pointer active:scale-[0.98]"
+                >
+                  Concluir
+                </button>
               </motion.div>
             )}
 
           </AnimatePresence>
         </div>
-
-        {/* Rodapé fixo com total + CTA */}
-        {(step === 'resumo' || step === 'pagamento') && (
-          <div className="relative z-10 border-t border-white/5 px-5 py-4 shrink-0 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Total</span>
-              <span className="font-display font-black text-xl text-white">R$ {subtotal},00</span>
-            </div>
-            {step === 'resumo' ? (
-              <button
-                type="button"
-                onClick={() => setStep('pagamento')}
-                className="relative overflow-hidden w-full btn-game text-sm uppercase py-3.5 rounded-xl border-2 border-black/55 bg-brand-blue hover:bg-brand-blue-deep transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] group/cta"
-              >
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover/cta:animate-shimmer" />
-                Ir para pagamento
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handlePay}
-                disabled={!payment.canPay}
-                className="relative overflow-hidden w-full btn-game text-sm uppercase py-3.5 rounded-xl border-2 border-black/55 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] group/pay"
-              >
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover/pay:animate-shimmer" />
-                <ShieldCheck className="w-4 h-4" />
-                {isDinheiro ? 'Reservar pedido' : `Pagar R$ ${subtotal},00`}
-              </button>
-            )}
-            <p className="flex items-center justify-center gap-1.5 font-mono text-[8px] text-zinc-600 uppercase tracking-widest">
-              <ShieldCheck className="w-3 h-3" /> Ambiente seguro • Século XXI
-            </p>
-          </div>
-        )}
-
-        {/* Rodapé do sucesso */}
-        {step === 'sucesso' && (
-          <div className="relative z-10 border-t border-white/5 px-5 py-4 shrink-0">
-            <button
-              type="button"
-              onClick={onClose}
-              className="w-full btn-game text-sm uppercase py-3.5 rounded-xl border-2 border-black/55 bg-brand-blue hover:bg-brand-blue-deep transition-all cursor-pointer active:scale-[0.98]"
-            >
-              Concluir
-            </button>
-          </div>
-        )}
       </motion.div>
     </motion.div>
   );
