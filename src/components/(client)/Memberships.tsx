@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Sparkles, Check, Gift, Crown, Flame, CheckCircle, ChevronLeft, ChevronRight, Eye, Award, Gem } from 'lucide-react';
+import PlanCheckout from './PlanCheckout';
 
 type Tier = 'Ouro' | 'Platina' | 'Diamante';
 
@@ -146,6 +147,8 @@ export default function Memberships() {
   const autoRotateTimer = useRef<NodeJS.Timeout | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const [windowWidth, setWindowWidth] = useState<number>(1200);
+  // Plano selecionado para o checkout de assinatura (null = fechado).
+  const [checkoutPlan, setCheckoutPlan] = useState<Plan | null>(null);
 
   useEffect(() => {
     setWindowWidth(window.innerWidth);
@@ -154,17 +157,10 @@ export default function Memberships() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleSubscribe = (planName: string, e: React.MouseEvent) => {
+  const handleSubscribe = (plan: Plan, e: React.MouseEvent) => {
     e.stopPropagation(); // prevent triggering slide change
-    window.dispatchEvent(
-      new CustomEvent('show-toast', {
-        detail: {
-          title: "SOLICITAÇÃO RECEBIDA",
-          message: `Seu interesse no "${planName}" da Século XXI foi registrado. Prossiga com o agendamento de sua simulação ou fale conosco diretamente via WhatsApp para ativação imediata.`,
-          type: "success"
-        }
-      })
-    );
+    // Abre o checkout de assinatura (tela única, 2 colunas, tema street).
+    setCheckoutPlan(plan);
   };
 
   // Safe cyclic index manipulation
@@ -490,7 +486,7 @@ export default function Memberships() {
                               handleCardClick(idx);
                               return;
                             }
-                            handleSubscribe(plan.name, e);
+                            handleSubscribe(plan, e);
                           }}
                           className={`relative overflow-hidden w-full py-3 sm:py-3.5 btn-game btn-game-sm text-xs sm:text-sm uppercase rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 transform active:scale-[0.98] hover:scale-[1.02] border-2 border-black group/btn-subs hover:brightness-110 shadow-[0_5px_0_rgba(0,0,0,0.9),0_10px_24px_rgba(0,0,0,0.45)] active:translate-y-[3px] active:shadow-[0_2px_0_rgba(0,0,0,0.9)] ${plan.ctaBg}`}
                           aria-label={matchesSelection ? `Assinar o ${plan.name}` : `Ver o ${plan.name}`}
@@ -576,6 +572,23 @@ export default function Memberships() {
         </motion.div>
 
       </div>
+
+      {/* Checkout de assinatura (overlay, tela única estilo street) */}
+      <AnimatePresence>
+        {checkoutPlan && (
+          <PlanCheckout
+            plan={{
+              id: checkoutPlan.id,
+              name: checkoutPlan.name,
+              price: checkoutPlan.price,
+              period: checkoutPlan.period,
+              tagline: checkoutPlan.tagline,
+              benefits: checkoutPlan.benefits,
+            }}
+            onClose={() => setCheckoutPlan(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }
