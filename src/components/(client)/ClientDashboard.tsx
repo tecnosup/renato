@@ -473,7 +473,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                           key={appt.id}
                           className={`p-3.5 border rounded-xl flex justify-between items-center gap-4 transition-all ${
                             isUpcoming
-                              ? 'bg-white/5 backdrop-blur-md border-brand-blue/30 shadow-[0_0_15px_rgba(200, 204, 212,0.1)]'
+                              ? 'bg-white/5 backdrop-blur-md border-brand-blue/30 shadow-[0_0_15px_rgba(43,79,184,0.1)]'
                               : 'bg-black/20 backdrop-blur-sm border-white/5 opacity-60'
                           }`}
                         >
