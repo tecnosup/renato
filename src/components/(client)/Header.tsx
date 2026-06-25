@@ -386,8 +386,10 @@ export default function Header() {
               {/* Refraction ambient overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/5 to-transparent pointer-events-none" />
 
-              {/* Close Button */}
-              {!portalSuccess && (
+              {/* Close Button — escondido quando o cliente está logado: lá o
+                  próprio dashboard já tem o botão "Sair" (evita 2 formas de
+                  fechar no mesmo modal). No login/wizard o X é mantido. */}
+              {!portalSuccess && !currentLoggedMember && (
                 <button
                   type="button"
                   onClick={() => {
