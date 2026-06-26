@@ -393,7 +393,7 @@ export default function Memberships() {
                 >
                   <div className="w-full flex group/club h-full">
                     <div
-                      className={`w-full bg-[#0e0e11] p-4 sm:p-5 md:p-6 flex flex-col justify-between text-left relative rounded-[20px] sm:rounded-[24px] transition-all duration-300 h-full overflow-hidden border-2 ${
+                      className={`w-full bg-[#0e0e11] p-4 sm:p-5 md:p-6 flex flex-col justify-start text-left relative rounded-[20px] sm:rounded-[24px] transition-all duration-300 h-full overflow-hidden border-2 ${
                         matchesSelection
                           ? plan.activeBorder
                           : 'border-black/55 opacity-90 shadow-[0_4px_0_rgba(0,0,0,0.85)]'
@@ -409,7 +409,7 @@ export default function Memberships() {
                       <div className="absolute inset-[1px] rounded-[19px] sm:rounded-[23px] bg-gradient-to-tr from-transparent via-transparent to-white/[0.02] pointer-events-none" />
 
                       {/* Card Content Interior Details */}
-                      <div className="space-y-2 sm:space-y-3 relative z-10 w-full">
+                      <div className="space-y-2 sm:space-y-3 relative z-10 w-full flex-1 flex flex-col">
 
                         {/* Header Row — mini-orbe do nível + selo de estado */}
                         <div className="flex justify-between items-center gap-2">
@@ -464,7 +464,7 @@ export default function Memberships() {
                         </div>
 
                         {/* Benefits List */}
-                        <ul className="space-y-1 sm:space-y-1.5 pt-0.5">
+                        <ul className="space-y-1 sm:space-y-1.5 pt-0.5 flex-1">
                           {plan.benefits.map((benefit, bIdx) => (
                             <li key={bIdx} className="flex gap-1.5 items-start text-[9.5px] sm:text-[10.5px] text-zinc-350">
                               <div className="w-3 h-3 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-emerald-500/20 text-emerald-300">
