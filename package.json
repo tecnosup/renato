@@ -2,6 +2,16 @@
   "name": "renato",
   "version": "0.1.0",
   "private": true,
+  "//browserslist": "O padrão do Next 16 é Safari 16.4+/Chrome 111+. O iPhone 7 para no iOS 15 e Androids antigos travam em Chrome antigo — nesse alvo o bundle usa sintaxe que o aparelho não sabe ler e a página fica em branco. Baixar o alvo faz o SWC transpilar para essas versões. Ver docs/compatibilidade.md.",
+  "browserslist": [
+    "chrome >= 88",
+    "edge >= 88",
+    "firefox >= 88",
+    "safari >= 14",
+    "ios_saf >= 14",
+    "samsung >= 13",
+    "not dead"
+  ],
   "scripts": {
     "dev": "cross-env NODE_USE_SYSTEM_CA=1 next dev",
     "build": "cross-env NODE_USE_SYSTEM_CA=1 next build",

@@ -119,7 +119,7 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
     >
       {/* Backdrop — sem fechar ao clicar (saída só pelo X/ESC) */}
       <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-[rgba(0,0,0,0.8)] backdrop-blur-sm"
         aria-hidden="true"
       />
 
@@ -129,21 +129,21 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
         animate={{ y: 0, opacity: 1, scale: 1 }}
         exit={{ y: 20, opacity: 0, scale: 0.97 }}
         transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-        className="relative w-full max-w-3xl bg-[#0b0b0d] bg-tijolo border-2 border-black rounded-3xl shadow-[0_8px_0_rgba(0,0,0,0.85),0_30px_60px_rgba(0,0,0,0.6)] overflow-hidden max-h-[90vh] flex flex-col"
+        className="relative w-full max-w-3xl bg-[#0b0b0d] border-2 border-black rounded-3xl shadow-[0_8px_0_rgba(0,0,0,0.85),0_30px_60px_rgba(0,0,0,0.6)] overflow-hidden max-h-[90vh] flex flex-col"
         role="dialog"
         aria-modal="true"
         aria-label={`Comprar ${product.name}`}
       >
         {/* Glow ambiente — glow-decor: só no desktop (blur caro no mobile) */}
-        <div className="glow-decor absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-brand-blue/15 blur-[120px] rounded-full pointer-events-none" />
+        <div className="glow-decor absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-xxi-graphite-hi blur-[120px] rounded-full pointer-events-none" />
 
         {/* Header */}
-        <div className="relative flex items-center justify-between gap-3 px-5 py-4 border-b border-white/5 shrink-0 z-10">
+        <div className="relative flex items-center justify-between gap-3 px-5 py-4 border-b border-[rgba(255,255,255,0.05)] shrink-0 z-10">
           <div className="flex flex-col leading-none">
-            <span className="font-mono text-[8px] text-brand-blue uppercase tracking-[0.25em] font-black">
+            <span className="font-mono text-[8px] text-xxi-yellow uppercase tracking-[0.25em] font-black">
               SÉCULO XXI • LOJA
             </span>
-            <span className="font-toon text-logo-3d text-lg uppercase tracking-wide mt-1" data-text="Finalizar compra">
+            <span className="xxi-title text-lg uppercase tracking-wide mt-1" data-text="Finalizar compra">
               Finalizar compra
             </span>
           </div>
@@ -172,7 +172,7 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
                 className="grid grid-cols-1 md:grid-cols-[1fr_320px]"
               >
                 {/* ===== COLUNA ESQUERDA — FORMULÁRIO ===== */}
-                <div className="px-5 py-5 space-y-5 md:border-r md:border-white/5">
+                <div className="px-5 py-5 space-y-5 md:border-r md:border-[rgba(255,255,255,0.05)]">
 
                   {/* Contato */}
                   <div className="space-y-3">
@@ -187,7 +187,7 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
                         value={nome}
                         onChange={(e) => setNome(e.target.value)}
                         placeholder="Seu nome"
-                        className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-sans text-sm text-white placeholder:text-zinc-700 focus:border-brand-blue/60 outline-none transition-colors"
+                        className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-sans text-sm text-white placeholder:text-zinc-700 focus:border-xxi-line outline-none transition-colors"
                       />
                     </div>
                     <div>
@@ -199,7 +199,7 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
                         value={telefone}
                         onChange={(e) => onTelefone(e.target.value)}
                         placeholder="(12) 99999-9999"
-                        className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-sans text-sm text-white placeholder:text-zinc-700 focus:border-brand-blue/60 outline-none transition-colors"
+                        className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-sans text-sm text-white placeholder:text-zinc-700 focus:border-xxi-line outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -217,8 +217,8 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
                   </div>
 
                   {/* Aviso de retirada */}
-                  <div className="flex items-start gap-2.5 bg-brand-blue/5 border border-brand-blue/20 rounded-xl px-3.5 py-3">
-                    <MapPin className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-2.5 bg-xxi-graphite-hi border border-xxi-line rounded-xl px-3.5 py-3">
+                    <MapPin className="w-4 h-4 text-xxi-yellow shrink-0 mt-0.5" />
                     <p className="font-sans text-[10.5px] text-zinc-400 leading-normal">
                       A retirada é feita no salão em <strong className="text-zinc-200">Cruzeiro/SP</strong>. Separamos seu pedido assim que o pagamento for confirmado.
                     </p>
@@ -232,7 +232,7 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
                   </h4>
 
                   {/* Card do produto */}
-                  <div className="flex gap-3 bg-white/[0.03] border-2 border-black/55 rounded-2xl p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                  <div className="flex gap-3 bg-white/[0.03] border-2 border-[rgba(0,0,0,0.55)] rounded-2xl p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                     <div className="w-16 h-16 shrink-0 rounded-xl bg-zinc-950 border border-zinc-800 grid place-items-center overflow-hidden">
                       {product.imageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -250,14 +250,14 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
                           <span className="font-mono text-[9px] text-zinc-500 uppercase">{product.volume}</span>
                         )}
                       </div>
-                      <span className="font-display font-extrabold text-sm text-brand-blue">
+                      <span className="font-display font-extrabold text-sm text-xxi-yellow">
                         R$ {product.price},00
                       </span>
                     </div>
                   </div>
 
                   {/* Quantidade */}
-                  <div className="flex items-center justify-between bg-white/[0.03] border-2 border-black/55 rounded-2xl px-4 py-2.5">
+                  <div className="flex items-center justify-between bg-white/[0.03] border-2 border-[rgba(0,0,0,0.55)] rounded-2xl px-4 py-2.5">
                     <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-widest font-bold">
                       Quantidade
                     </span>
@@ -287,7 +287,7 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
                   </div>
 
                   {/* Totais */}
-                  <div className="space-y-2 border-t border-white/5 pt-3">
+                  <div className="space-y-2 border-t border-[rgba(255,255,255,0.05)] pt-3">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest">Subtotal</span>
                       <span className="font-display font-bold text-sm text-zinc-200">R$ {subtotal},00</span>
@@ -303,9 +303,9 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
                     type="button"
                     onClick={handlePay}
                     disabled={!canFinish}
-                    className="relative overflow-hidden w-full btn-game text-sm uppercase py-3.5 rounded-xl border-2 border-black/55 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] group/pay"
+                    className="relative overflow-hidden w-full text-sm uppercase py-3.5 rounded-xl border-2 border-[rgba(0,0,0,0.55)] bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] group/pay"
                   >
-                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover/pay:animate-shimmer" />
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.4)] to-transparent -translate-x-full group-hover/pay:animate-shimmer" />
                     <ShieldCheck className="w-4 h-4" />
                     {isDinheiro ? 'Reservar pedido' : `Pagar R$ ${subtotal},00`}
                   </button>
@@ -330,7 +330,7 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
                 exit={{ opacity: 0 }}
                 className="flex flex-col items-center justify-center text-center py-20 px-5 space-y-4"
               >
-                <Loader2 className="w-10 h-10 text-brand-blue animate-spin" />
+                <Loader2 className="w-10 h-10 text-xxi-yellow animate-spin" />
                 <div>
                   <p className="font-display font-black text-sm text-white uppercase tracking-wide">
                     {isDinheiro ? 'Reservando pedido' : 'Processando pagamento'}
@@ -353,12 +353,12 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', damping: 12, stiffness: 200, delay: 0.1 }}
-                  className="w-16 h-16 rounded-full bg-emerald-500/15 border-2 border-emerald-500/50 grid place-items-center text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.4)]"
+                  className="w-16 h-16 rounded-full bg-[rgba(16,185,129,0.15)] border-2 border-[rgba(16,185,129,0.5)] grid place-items-center text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.4)]"
                 >
                   <CheckCircle2 className="w-9 h-9" />
                 </motion.div>
                 <div>
-                  <h4 className="font-toon text-logo-3d text-xl uppercase tracking-wide" data-text={isDinheiro ? 'Pedido reservado!' : 'Pagamento aprovado!'}>
+                  <h4 className="xxi-title text-xl uppercase tracking-wide" data-text={isDinheiro ? 'Pedido reservado!' : 'Pagamento aprovado!'}>
                     {isDinheiro ? 'Pedido reservado!' : 'Pagamento aprovado!'}
                   </h4>
                   <p className="font-sans text-[11px] text-zinc-400 leading-normal mt-2 max-w-xs mx-auto">
@@ -370,12 +370,12 @@ export default function ProductCheckout({ product, onClose }: ProductCheckoutPro
                 </div>
                 <div className="w-full max-w-xs bg-[#0e0e11] border-2 border-black rounded-xl px-4 py-3 flex items-center justify-between">
                   <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest font-bold">Nº do pedido</span>
-                  <span className="font-mono text-sm text-brand-blue font-bold tracking-widest">{orderId}</span>
+                  <span className="font-mono text-sm text-xxi-yellow font-bold tracking-widest">{orderId}</span>
                 </div>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="w-full max-w-xs btn-game text-sm uppercase py-3.5 rounded-xl border-2 border-black/55 bg-brand-blue hover:bg-brand-blue-deep transition-all cursor-pointer active:scale-[0.98]"
+                  className="w-full max-w-xs text-sm uppercase py-3.5 rounded-xl border-2 border-[rgba(0,0,0,0.55)] bg-xxi-yellow hover:bg-xxi-yellow transition-all cursor-pointer active:scale-[0.98]"
                 >
                   Concluir
                 </button>

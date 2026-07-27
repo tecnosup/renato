@@ -41,14 +41,14 @@ export default function Toast() {
           initial={{ opacity: 0, y: 50, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
-          className="fixed bottom-6 right-6 z-50 max-w-sm w-full bg-white/5 backdrop-blur-3xl text-[#e2e2e2] p-5 rounded-2xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] flex items-start gap-4 text-left"
+          className="fixed bottom-6 right-6 z-50 max-w-sm w-full bg-[rgba(255,255,255,0.05)] backdrop-blur-3xl text-[#e2e2e2] p-5 rounded-2xl border border-[rgba(255,255,255,0.1)] shadow-[0_20px_60px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] flex items-start gap-4 text-left"
           id="global-success-toast"
         >
           {/* Accent light decoration */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-[#c8ccd4]/2 to-transparent pointer-events-none rounded-2xl" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-[rgba(200,204,212,0.02)] to-transparent pointer-events-none rounded-2xl" />
 
           {/* Icon frame */}
-          <div className="w-10 h-10 bg-[#c8ccd4]/10 rounded-xl flex items-center justify-center text-[#c8ccd4] shrink-0 border border-[#c8ccd4]/15 relative z-10">
+          <div className="w-10 h-10 bg-[rgba(200,204,212,0.1)] rounded-xl flex items-center justify-center text-[#c8ccd4] shrink-0 border border-[rgba(200,204,212,0.15)] relative z-10">
             {toast.type === 'success' ? (
               <CheckCircle2 className="w-5 h-5" />
             ) : (

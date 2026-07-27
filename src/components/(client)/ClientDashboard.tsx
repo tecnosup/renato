@@ -162,9 +162,9 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
         <div className="flex items-center gap-3">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center border font-display ${
             member.tier === 'Black' 
-              ? 'bg-zinc-950 border-brand-blue/40 text-brand-blue shadow-md shadow-brand-blue/5' 
+              ? 'bg-zinc-950 border-xxi-line text-xxi-yellow shadow-md shadow-xxi-yellow/5' 
               : member.tier === 'Gold' 
-                ? 'bg-[#181510] border-amber-600/35 text-amber-500' 
+                ? 'bg-[#181510] border-[rgba(217,119,6,0.35)] text-amber-500' 
                 : 'bg-zinc-900 border-zinc-800 text-zinc-400'
           }`}>
             <Award className="w-5 h-5" />
@@ -174,9 +174,9 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               Olá, {member.name.split(' ')[0]} 
               <span className={`text-[7px] font-mono tracking-widest uppercase border px-1.5 py-0.5 rounded-full font-black ${
                 member.tier === 'Black' 
-                  ? 'border-brand-blue text-brand-blue bg-brand-blue/5 animate-pulse' 
+                  ? 'border-xxi-yellow text-xxi-yellow bg-xxi-graphite-hi animate-pulse' 
                   : member.tier === 'Gold' 
-                    ? 'border-amber-600/30 text-amber-500 bg-amber-600/5' 
+                    ? 'border-[rgba(217,119,6,0.3)] text-amber-500 bg-[rgba(217,119,6,0.05)]' 
                     : 'border-zinc-850 text-zinc-400 bg-zinc-900'
               }`}>
                 TIER {member.tier}
@@ -192,7 +192,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
           <button
             type="button"
             onClick={copyMemberCode}
-            className="font-mono text-[9px] text-brand-blue hover:text-white bg-zinc-950 border border-zinc-900 hover:border-brand-blue/40 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer min-w-0 flex-1 sm:flex-initial truncate"
+            className="font-mono text-[9px] text-xxi-yellow hover:text-white bg-zinc-950 border border-zinc-900 hover:border-xxi-line px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer min-w-0 flex-1 sm:flex-initial truncate"
           >
             <span className="shrink-0">ID:</span> <strong className="tracking-widest truncate">{member.id}</strong>
             <span className="text-[7.5px] text-zinc-650 font-normal shrink-0">({isCopied ? 'Copiado!' : 'Copiar'})</span>
@@ -200,7 +200,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
 
           <button
             onClick={onLogout}
-            className="p-2 bg-zinc-900/40 hover:bg-rose-950/20 border border-zinc-850 hover:border-rose-900/30 text-zinc-500 hover:text-rose-400 rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
+            className="p-2 bg-[rgba(24,24,27,0.4)] hover:bg-[rgba(76,5,25,0.2)] border border-zinc-850 hover:border-[rgba(136,19,55,0.3)] text-zinc-500 hover:text-rose-400 rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
             aria-label="Sair da Conta"
           >
             <LogOut className="w-3.5 h-3.5" />
@@ -210,7 +210,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
       </div>
 
       {/* Tabs navigation row (Swiss Minimal Bauhaus look) */}
-      <div className="flex bg-black/30 backdrop-blur-2xl border border-white/10 p-1.5 rounded-xl my-5 gap-1 select-none shrink-0" id="dashboard-navbar">
+      <div className="flex bg-[rgba(0,0,0,0.3)] backdrop-blur-2xl border border-[rgba(255,255,255,0.1)] p-1.5 rounded-xl my-5 gap-1 select-none shrink-0" id="dashboard-navbar">
         {[
           { icon: TrendingUp, id: 'benefits', label: 'Benefícios' },
           { icon: Calendar, id: 'appointments', label: 'Agenda Estética' },
@@ -222,7 +222,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
             className={`flex-1 py-1.5 px-1 sm:px-2 flex items-center justify-center gap-1.5 font-sans text-[8.5px] sm:text-[9.5px] font-bold uppercase tracking-widest rounded-lg transition-all cursor-pointer ${
               activeTab === tab.id
-                ? 'bg-brand-blue text-white border-2 border-black shadow-[0_2px_0_rgba(0,0,0,0.9)] font-extrabold'
+                ? 'bg-xxi-yellow text-white border-2 border-black shadow-[0_2px_0_rgba(0,0,0,0.9)] font-extrabold'
                 : 'text-zinc-500 hover:text-zinc-200'
             }`}
           >
@@ -249,12 +249,12 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               className="space-y-4"
             >
               {/* Dynamic Welcome card showing subscription value details */}
-              <div className="bg-white/5 backdrop-blur-3xl border border-white/10 p-4 rounded-xl relative overflow-hidden flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]" id="benefits-masthead">
+              <div className="bg-[rgba(255,255,255,0.05)] backdrop-blur-3xl border border-[rgba(255,255,255,0.1)] p-4 rounded-xl relative overflow-hidden flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]" id="benefits-masthead">
                 <div className="absolute top-0 right-0 p-3 select-none">
-                  <span className="font-mono text-[16px] text-brand-blue/10 font-black tracking-widest uppercase">SECULO XXI</span>
+                  <span className="font-mono text-[16px] text-xxi-mute font-black tracking-widest uppercase">SECULO XXI</span>
                 </div>
                 <div className="space-y-1 z-10">
-                  <span className="text-brand-blue font-mono text-[8px] uppercase tracking-widest font-bold">PLANO DE ASSINATURA</span>
+                  <span className="text-xxi-yellow font-mono text-[8px] uppercase tracking-widest font-bold">PLANO DE ASSINATURA</span>
                   <div className="flex items-baseline gap-2">
                     <h4 className="font-display font-bold text-xl text-white uppercase tracking-wider">{member.planName}</h4>
                     <span className="font-mono text-zinc-550 text-[10px]">R$ {member.price}/mês</span>
@@ -266,15 +266,15 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               </div>
 
               {/* Progress grid of actual consumable points */}
-              <h5 className="font-mono text-[8px] text-brand-blue/85 font-black uppercase tracking-widest pr-1 flex items-center gap-1">[CONSUMO_E_COCKPIT_MENSAL]</h5>
+              <h5 className="font-mono text-[8px] text-xxi-mute font-black uppercase tracking-widest pr-1 flex items-center gap-1">[CONSUMO_E_COCKPIT_MENSAL]</h5>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 
                 {/* Visual tracker card 1: Cuts */}
-                <div className="bg-white/5 backdrop-blur-md p-3 border border-white/10 rounded-xl relative flex flex-col justify-between min-h-[90px] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <div className="bg-[rgba(255,255,255,0.05)] backdrop-blur-md p-3 border border-[rgba(255,255,255,0.1)] rounded-xl relative flex flex-col justify-between min-h-[90px] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="flex justify-between items-start">
                     <span className="font-mono text-[7px] text-zinc-500 uppercase">Cortes Mensais</span>
-                    <Scissors className="w-3 h-3 text-brand-blue/80" />
+                    <Scissors className="w-3 h-3 text-xxi-mute" />
                   </div>
                   <div className="pt-2">
                     <div className="text-lg font-display font-light text-white uppercase tracking-wide">
@@ -287,7 +287,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                     {member.totalCuts !== 'Ilimitado' && (
                       <div className="w-full h-1 bg-zinc-900 rounded-full overflow-hidden mt-1.5">
                         <div 
-                          className="h-full bg-brand-blue rounded-full" 
+                          className="h-full bg-xxi-yellow rounded-full" 
                           style={{ width: `${((member.totalCuts - member.cutsUsed) / member.totalCuts) * 100}%` }} 
                         />
                       </div>
@@ -299,10 +299,10 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                 </div>
 
                 {/* Visual tracker card 2: Premium Treatments or Facials */}
-                <div className="bg-white/5 backdrop-blur-md p-3 border border-white/10 rounded-xl relative flex flex-col justify-between min-h-[90px] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <div className="bg-[rgba(255,255,255,0.05)] backdrop-blur-md p-3 border border-[rgba(255,255,255,0.1)] rounded-xl relative flex flex-col justify-between min-h-[90px] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="flex justify-between items-start">
                     <span className="font-mono text-[7px] text-zinc-500 uppercase">Serviços Especiais</span>
-                    <Sparkles className="w-3 h-3 text-brand-blue/80 animate-pulse" />
+                    <Sparkles className="w-3 h-3 text-xxi-mute animate-pulse" />
                   </div>
                   <div className="pt-2">
                     <div className="text-lg font-display font-light text-white uppercase tracking-wide">
@@ -315,7 +315,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                     {member.specialCredits !== 100 && (
                       <div className="w-full h-1 bg-zinc-900 rounded-full overflow-hidden mt-1.5">
                         <div 
-                          className="h-full bg-brand-blue rounded-full" 
+                          className="h-full bg-xxi-yellow rounded-full" 
                           style={{ width: `${((member.specialCredits - member.specialUsed) / member.specialCredits) * 100}%` }} 
                         />
                       </div>
@@ -327,10 +327,10 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                 </div>
 
                 {/* Visual tracker card 3: Beverages / Beer */}
-                <div className="bg-white/5 backdrop-blur-md p-3 border border-white/10 rounded-xl relative flex flex-col justify-between min-h-[90px] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <div className="bg-[rgba(255,255,255,0.05)] backdrop-blur-md p-3 border border-[rgba(255,255,255,0.1)] rounded-xl relative flex flex-col justify-between min-h-[90px] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="flex justify-between items-start">
                     <span className="font-mono text-[7px] text-zinc-500 uppercase">Artisanal Drinks</span>
-                    <Beer className="w-3 h-3 text-brand-blue/80" />
+                    <Beer className="w-3 h-3 text-xxi-mute" />
                   </div>
                   <div className="pt-2">
                     <div className="text-lg font-display font-light text-white uppercase tracking-wide font-medium">
@@ -343,7 +343,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                     {member.beerLimit > 0 && (
                       <div className="w-full h-1 bg-zinc-900 rounded-full overflow-hidden mt-1.5">
                         <div 
-                          className="h-full bg-brand-blue" 
+                          className="h-full bg-xxi-yellow" 
                           style={{ width: `${((member.beerLimit - member.beerUsed) / member.beerLimit) * 100}%` }} 
                         />
                       </div>
@@ -357,8 +357,8 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               </div>
 
               {/* Extra Perks checklist */}
-              <div className="bg-black/20 backdrop-blur-lg p-3.5 border border-white/5 rounded-xl space-y-1.5">
-                <span className="font-mono text-[7.5px] text-brand-blue uppercase block font-bold">[BENEFÍCIOS_ATIVOS_ADICIONAIS]</span>
+              <div className="bg-[rgba(0,0,0,0.2)] backdrop-blur-lg p-3.5 border border-[rgba(255,255,255,0.05)] rounded-xl space-y-1.5">
+                <span className="font-mono text-[7.5px] text-xxi-yellow uppercase block font-bold">[BENEFÍCIOS_ATIVOS_ADICIONAIS]</span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-zinc-400 font-sans text-xs pt-1">
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
@@ -382,7 +382,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               {/* Quick Book Button */}
               <button
                 onClick={handleQuickBook}
-                className="w-full bg-brand-blue/10 hover:bg-brand-blue text-brand-blue hover:text-white border-2 border-black hover:border-black py-3.5 rounded-xl transition-all font-sans text-[10px] font-bold tracking-[0.16em] uppercase flex items-center justify-center gap-2 cursor-pointer mt-2 shadow-[0_3px_0_rgba(0,0,0,0.6)] active:translate-y-[2px] active:shadow-none"
+                className="w-full bg-xxi-graphite-hi hover:bg-xxi-yellow text-xxi-yellow hover:text-white border-2 border-black hover:border-black py-3.5 rounded-xl transition-all font-sans text-[10px] font-bold tracking-[0.16em] uppercase flex items-center justify-center gap-2 cursor-pointer mt-2 shadow-[0_3px_0_rgba(0,0,0,0.6)] active:translate-y-[2px] active:shadow-none"
               >
                 <Scissors className="w-3.5 h-3.5" />
                 Agendar Próximo Ritual com Crédito
@@ -401,22 +401,22 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               className="space-y-4"
             >
               <div className="flex justify-between items-center pr-1">
-                <h5 className="font-mono text-[8px] text-brand-blue/85 font-black uppercase tracking-widest">[CRONOGRAMA_DE_AGENDAMENTOS]</h5>
+                <h5 className="font-mono text-[8px] text-xxi-mute font-black uppercase tracking-widest">[CRONOGRAMA_DE_AGENDAMENTOS]</h5>
                 <button 
                   onClick={handleQuickBook}
-                  className="font-mono text-[8px] text-brand-blue hover:text-white uppercase font-bold tracking-wider hover:underline flex items-center gap-1"
+                  className="font-mono text-[8px] text-xxi-yellow hover:text-white uppercase font-bold tracking-wider hover:underline flex items-center gap-1"
                 >
                   + Agendar Novo
                 </button>
               </div>
 
               {isLoadingAppointments ? (
-                <div className="bg-white/5 backdrop-blur-xl p-8 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl text-center flex flex-col items-center justify-center space-y-3">
+                <div className="bg-[rgba(255,255,255,0.05)] backdrop-blur-xl p-8 border border-[rgba(255,255,255,0.1)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl text-center flex flex-col items-center justify-center space-y-3">
                   <CalendarDays className="w-8 h-8 text-zinc-600 animate-pulse" />
                   <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest">Carregando sua agenda…</span>
                 </div>
               ) : appointments.length === 0 ? (
-                <div className="bg-white/5 backdrop-blur-xl p-8 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl text-center flex flex-col items-center justify-center space-y-3">
+                <div className="bg-[rgba(255,255,255,0.05)] backdrop-blur-xl p-8 border border-[rgba(255,255,255,0.1)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl text-center flex flex-col items-center justify-center space-y-3">
                   <CalendarDays className="w-8 h-8 text-zinc-700 animate-pulse" />
                   <div className="space-y-1">
                     <span className="font-display font-bold text-xs text-white uppercase tracking-wider block">Nenhum agendamento futuro</span>
@@ -426,7 +426,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                   </div>
                   <button
                     onClick={handleQuickBook}
-                    className="bg-brand-blue text-white font-sans text-[9px] font-bold tracking-[0.2em] px-5 py-2.5 rounded-lg uppercase hover:bg-brand-blue-deep cursor-pointer transition-all border-2 border-black shadow-[0_3px_0_rgba(0,0,0,0.7)] active:translate-y-[2px] active:shadow-none"
+                    className="bg-xxi-yellow text-white font-sans text-[9px] font-bold tracking-[0.2em] px-5 py-2.5 rounded-lg uppercase hover:bg-xxi-yellow cursor-pointer transition-all border-2 border-black shadow-[0_3px_0_rgba(0,0,0,0.7)] active:translate-y-[2px] active:shadow-none"
                   >
                     Agendar agora
                   </button>
@@ -436,7 +436,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                   
                   {/* Dynamic cancellation validation prompt overlay if active */}
                   {showCancelPrompt && (
-                    <div className="bg-rose-950/20 border border-rose-900/40 p-4 rounded-xl space-y-3 animation-fade-in text-left">
+                    <div className="bg-[rgba(76,5,25,0.2)] border border-[rgba(136,19,55,0.4)] p-4 rounded-xl space-y-3 animation-fade-in text-left">
                       <div className="flex gap-2 items-start text-rose-400">
                         <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                         <div>
@@ -455,7 +455,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                         </button>
                         <button
                           onClick={() => handleCancelAppointment(showCancelPrompt)}
-                          className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-mono text-[8.5px] uppercase rounded-md font-bold transition-all cursor-pointer shadow-lg shadow-rose-950/20"
+                          className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-mono text-[8.5px] uppercase rounded-md font-bold transition-all cursor-pointer shadow-lg shadow-[rgba(76,5,25,0.2)]"
                         >
                           Confirmar Cancelamento
                         </button>
@@ -473,8 +473,8 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                           key={appt.id}
                           className={`p-3.5 border rounded-xl flex justify-between items-center gap-4 transition-all ${
                             isUpcoming
-                              ? 'bg-white/5 backdrop-blur-md border-brand-blue/30 shadow-[0_0_15px_rgba(43,79,184,0.1)]'
-                              : 'bg-black/20 backdrop-blur-sm border-white/5 opacity-60'
+                              ? 'bg-[rgba(255,255,255,0.05)] backdrop-blur-md border-xxi-line shadow-[0_0_15px_rgba(43,79,184,0.1)]'
+                              : 'bg-[rgba(0,0,0,0.2)] backdrop-blur-sm border-[rgba(255,255,255,0.05)] opacity-60'
                           }`}
                         >
                           <div className="flex flex-col text-left space-y-1">
@@ -494,8 +494,8 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                             
                             {/* Schedule data label */}
                             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-sans text-[10.5px] text-zinc-400 font-light pt-0.5 select-none">
-                              <span className="flex items-center gap-1 text-brand-blue/85">
-                                <CalendarDays className="w-3.5 h-3.5 text-brand-blue/75" />
+                              <span className="flex items-center gap-1 text-xxi-mute">
+                                <CalendarDays className="w-3.5 h-3.5 text-xxi-mute" />
                                 {formatSelectedDatePt(appt.date)}
                               </span>
                               <span className="flex items-center gap-1 text-zinc-500">
@@ -512,7 +512,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                               <button
                                 type="button"
                                 onClick={() => setShowCancelPrompt(appt.id)}
-                                className="w-8 h-8 rounded-lg bg-zinc-950 hover:bg-rose-950/20 text-zinc-650 hover:text-rose-400 border border-zinc-900 hover:border-rose-900/30 flex items-center justify-center transition-all cursor-pointer"
+                                className="w-8 h-8 rounded-lg bg-zinc-950 hover:bg-[rgba(76,5,25,0.2)] text-zinc-650 hover:text-rose-400 border border-zinc-900 hover:border-[rgba(136,19,55,0.3)] flex items-center justify-center transition-all cursor-pointer"
                                 title="Cancelar Agendamento"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -539,7 +539,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               transition={{ duration: 0.18 }}
               className="space-y-4"
             >
-              <h5 className="font-mono text-[8px] text-brand-blue/85 font-black uppercase tracking-widest">[PASSAPORTE_MEMBRO_VIP]</h5>
+              <h5 className="font-mono text-[8px] text-xxi-mute font-black uppercase tracking-widest">[PASSAPORTE_MEMBRO_VIP]</h5>
               
               <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
                 
@@ -548,28 +548,28 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                   {/* Digital Card casing */}
                   <div className={`relative w-full max-w-[280px] h-[170px] rounded-2xl p-5 border shadow-2xl overflow-hidden flex flex-col justify-between transition-transform duration-500 transform hover:rotate-1 hover:scale-102 ${
                     member.tier === 'Black' 
-                      ? 'bg-gradient-to-br from-zinc-950 via-[#101011] to-[#0a0a0b] border-brand-blue/45 shadow-brand-blue/5' 
+                      ? 'bg-gradient-to-br from-zinc-950 via-[#101011] to-[#0a0a0b] border-xxi-line shadow-xxi-yellow/5' 
                       : member.tier === 'Gold' 
-                        ? 'bg-gradient-to-br from-[#1b1912] via-[#100f0c] to-zinc-950 border-amber-600/30' 
+                        ? 'bg-gradient-to-br from-[#1b1912] via-[#100f0c] to-zinc-950 border-[rgba(217,119,6,0.3)]' 
                         : 'bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 border-zinc-800'
                   }`} id="luxury-membro-wallet-card">
                     {/* Security microtext holographic texture */}
-                    <div className="absolute inset-x-0 bottom-0 top-0 pointer-events-none opacity-5 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-blue via-transparent to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 top-0 pointer-events-none opacity-5 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-xxi-yellow via-transparent to-transparent" />
                     <div className="absolute bottom-2 right-2 opacity-10">
-                      <QrCode className="w-20 h-20 text-brand-blue" />
+                      <QrCode className="w-20 h-20 text-xxi-yellow" />
                     </div>
 
                     {/* Top Row: Brand & Tier indicators */}
                     <div className="flex justify-between items-start z-10 w-full">
                       <div className="flex flex-col">
                         <span className="font-display font-light text-[11px] text-white tracking-[0.15em] leading-none uppercase">SÉCULO XXI</span>
-                        <span className="font-sans text-[6px] tracking-[0.25em] text-brand-blue font-bold mt-1 uppercase">ESTÉTICA DO CUIDADO</span>
+                        <span className="font-sans text-[6px] tracking-[0.25em] text-xxi-yellow font-bold mt-1 uppercase">ESTÉTICA DO CUIDADO</span>
                       </div>
                       <div className={`text-[6.5px] font-mono font-bold tracking-[0.2em] border rounded px-1.5 py-0.5 uppercase flex items-center gap-1 leading-none shrink-0 ${
                         member.tier === 'Black' 
-                          ? 'border-brand-blue text-brand-blue bg-brand-blue/5' 
+                          ? 'border-xxi-yellow text-xxi-yellow bg-xxi-graphite-hi' 
                           : member.tier === 'Gold' 
-                            ? 'border-amber-600/30 text-amber-500' 
+                            ? 'border-[rgba(217,119,6,0.3)] text-amber-500' 
                             : 'border-zinc-800 text-zinc-500'
                       }`}>
                         <span className="w-1 h-1 bg-current rounded-full" />
@@ -581,7 +581,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                     <div className="z-10 text-left">
                       <span className="font-mono text-[6px] text-zinc-500 uppercase block leading-none mb-1">[TITULAR_ASSOCIADO]</span>
                       <h4 className="font-display font-bold text-sm text-zinc-100 uppercase tracking-widest leading-none truncate max-w-[210px]">{member.name}</h4>
-                      <p className="font-mono text-[10px] text-brand-blue font-semibold mt-1.5 tracking-widest leading-none">{member.id}</p>
+                      <p className="font-mono text-[10px] text-xxi-yellow font-semibold mt-1.5 tracking-widest leading-none">{member.id}</p>
                     </div>
 
                     {/* Footer micro guidelines */}
@@ -596,7 +596,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
 
                 {/* Micro instructions regarding priority queueing */}
                 <div className="md:col-span-6 space-y-3 font-sans text-left">
-                  <span className="font-mono text-[7.5px] text-brand-blue/75 uppercase block font-bold">[COMO_ATIVAR_FILA_EXPRESSA]</span>
+                  <span className="font-mono text-[7.5px] text-xxi-mute uppercase block font-bold">[COMO_ATIVAR_FILA_EXPRESSA]</span>
                   <p className="text-xs text-zinc-405 leading-relaxed font-light">
                     Como membro estético ativo, você é prioridade estrita em nosso salão físico em Cruzeiro. Ao chegar, basta abrir seu celular nesta carteira e apresentar para as recepcionistas.
                   </p>
@@ -622,7 +622,7 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                         }
                       }));
                     }}
-                    className="bg-zinc-950 border border-zinc-850 hover:border-brand-blue hover:text-brand-blue px-4 py-2 rounded-lg font-sans font-bold uppercase text-[9px] tracking-widest transition-all cursor-pointer block"
+                    className="bg-zinc-950 border border-zinc-850 hover:border-xxi-yellow hover:text-xxi-yellow px-4 py-2 rounded-lg font-sans font-bold uppercase text-[9px] tracking-widest transition-all cursor-pointer block"
                   >
                     Ativar no Apple Wallet / Google Pay
                   </button>
@@ -643,15 +643,15 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               transition={{ duration: 0.18 }}
               className="space-y-4"
             >
-              <h5 className="font-mono text-[8px] text-brand-blue/85 font-black uppercase tracking-widest">[GESTOR_DE_COBRANÇA_E_ASSINATURA]</h5>
+              <h5 className="font-mono text-[8px] text-xxi-mute font-black uppercase tracking-widest">[GESTOR_DE_COBRANÇA_E_ASSINATURA]</h5>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-2">
                 
                 {/* Current card stored */}
-                <div className="bg-white/5 backdrop-blur-md p-3.5 border border-white/10 rounded-xl space-y-2.5 text-left relative overflow-hidden flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <div className="bg-[rgba(255,255,255,0.05)] backdrop-blur-md p-3.5 border border-[rgba(255,255,255,0.1)] rounded-xl space-y-2.5 text-left relative overflow-hidden flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="flex justify-between items-start">
                     <span className="font-mono text-[7.5px] text-zinc-550 uppercase">MÉTODO DE PAGAMENTO</span>
-                    <CreditCard className="w-4 h-4 text-brand-blue/80" />
+                    <CreditCard className="w-4 h-4 text-xxi-mute" />
                   </div>
                   <div>
                     <span className="font-mono text-[10.5px] text-zinc-300 block tracking-widest">••••  ••••  ••••  8829</span>
@@ -668,21 +668,21 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
                         }
                       }));
                     }}
-                    className="font-mono text-[8.5px] text-brand-blue uppercase tracking-wider hover:underline text-left cursor-pointer font-bold select-none pt-1 inline-block"
+                    className="font-mono text-[8.5px] text-xxi-yellow uppercase tracking-wider hover:underline text-left cursor-pointer font-bold select-none pt-1 inline-block"
                   >
                     Alterar Cartão
                   </button>
                 </div>
 
                 {/* Next Payment Detail */}
-                <div className="bg-white/5 backdrop-blur-md p-3.5 border border-white/10 rounded-xl space-y-2 text-left relative overflow-hidden flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <div className="bg-[rgba(255,255,255,0.05)] backdrop-blur-md p-3.5 border border-[rgba(255,255,255,0.1)] rounded-xl space-y-2 text-left relative overflow-hidden flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="flex justify-between items-start">
                     <span className="font-mono text-[7.5px] text-zinc-550 uppercase">PRÓXIMO RECORRÊNCIA</span>
-                    <Receipt className="w-4 h-4 text-brand-blue/80" />
+                    <Receipt className="w-4 h-4 text-xxi-mute" />
                   </div>
                   <div>
                     <div className="text-sm font-sans font-bold text-white uppercase tracking-wider leading-none">
-                      R$ {member.price},00 <span className="text-[9px] font-mono text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded ml-1 font-bold">AGENDADO</span>
+                      R$ {member.price},00 <span className="text-[9px] font-mono text-emerald-500 bg-[rgba(16,185,129,0.1)] px-1.5 py-0.5 rounded ml-1 font-bold">AGENDADO</span>
                     </div>
                     <span className="font-sans text-[10px] text-zinc-500 mt-1 block">Renoação automática dia 01 de Julho de 2026.</span>
                   </div>
@@ -694,21 +694,21 @@ export default function ClientDashboard({ member, onClose, onLogout }: ClientDas
               {/* Invoices List */}
               <div className="space-y-2">
                 <span className="font-mono text-[7.5px] text-zinc-550 uppercase block pl-1 font-bold">[HISTÓRICO_INANCIADOR_DE_FATURAS]</span>
-                <div className="space-y-1.5 bg-black/20 backdrop-blur-lg p-2 border border-white/5 rounded-xl">
+                <div className="space-y-1.5 bg-[rgba(0,0,0,0.2)] backdrop-blur-lg p-2 border border-[rgba(255,255,255,0.05)] rounded-xl">
                   {[
                     { date: '01/06/2026', desc: 'Renovação Mensal Assinante - Clube', val: member.price, status: 'PAGO', method: 'MasterCard •••• 8829' },
                     { date: '01/05/2026', desc: 'Renovação Mensal Assinante - Clube', val: member.price, status: 'PAGO', method: 'MasterCard •••• 8829' },
                     { date: '01/04/2026', desc: 'Renovação Mensal Assinante - Clube', val: member.price, status: 'PAGO', method: 'MasterCard •••• 8829' }
                   ].map((invoice, iIdx) => (
-                    <div key={iIdx} className="flex justify-between items-center py-2 px-2.5 border-b border-white/5 last:border-0 font-mono text-[10px] hover:bg-white/5 rounded-lg transition-colors">
+                    <div key={iIdx} className="flex justify-between items-center py-2 px-2.5 border-b border-[rgba(255,255,255,0.05)] last:border-0 font-mono text-[10px] hover:bg-[rgba(255,255,255,0.05)] rounded-lg transition-colors">
                       <div className="flex flex-col text-left">
                         <span className="text-zinc-650 text-[8.5px]">{invoice.date}</span>
                         <span className="font-sans font-medium text-zinc-300 uppercase text-[10px] mt-0.5">{invoice.desc}</span>
                         <span className="text-zinc-500 text-[8.5px] font-normal leading-tight mt-0.5">{invoice.method}</span>
                       </div>
                       <div className="text-right flex flex-col items-end">
-                        <span className="text-brand-blue font-semibold">R$ {invoice.val},00</span>
-                        <span className="text-[7.5px] text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-1 py-0.5 rounded mt-1 font-bold">PAGO</span>
+                        <span className="text-xxi-yellow font-semibold">R$ {invoice.val},00</span>
+                        <span className="text-[7.5px] text-emerald-500 bg-[rgba(16,185,129,0.1)] border border-[rgba(16,185,129,0.2)] px-1 py-0.5 rounded mt-1 font-bold">PAGO</span>
                       </div>
                     </div>
                   ))}
@@ -739,13 +739,13 @@ function formatSelectedDatePt(dateStr: string) {
 function atendimentoBadge(status: string): { label: string; cls: string } {
   switch (status) {
     case 'concluido':
-      return { label: 'Concluído', cls: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25' };
+      return { label: 'Concluído', cls: 'bg-[rgba(16,185,129,0.15)] text-emerald-400 border border-[rgba(16,185,129,0.25)]' };
     case 'cancelado':
-      return { label: 'Cancelado', cls: 'bg-rose-500/10 text-rose-400 border border-rose-500/25' };
+      return { label: 'Cancelado', cls: 'bg-[rgba(244,63,94,0.1)] text-rose-400 border border-[rgba(244,63,94,0.25)]' };
     case 'agendado':
-      return { label: 'Confirmado', cls: 'bg-brand-blue/15 text-brand-blue border border-brand-blue/20' };
+      return { label: 'Confirmado', cls: 'bg-xxi-graphite-hi text-xxi-yellow border border-xxi-line' };
     default: // pendente
-      return { label: 'Agendado', cls: 'bg-brand-blue/15 text-brand-blue border border-brand-blue/20' };
+      return { label: 'Agendado', cls: 'bg-xxi-graphite-hi text-xxi-yellow border border-xxi-line' };
   }
 }
 
@@ -762,15 +762,15 @@ function pagamentoBadge(
   if (comandaStatus === 'paga') {
     return {
       label: formaPagamento ? `Pago • ${formaPagamento}` : 'Pago',
-      cls: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25',
+      cls: 'bg-[rgba(16,185,129,0.15)] text-emerald-400 border border-[rgba(16,185,129,0.25)]',
     };
   }
   if (comandaStatus === 'cancelada') {
     return { label: 'Sem cobrança', cls: 'bg-zinc-900 text-zinc-500 border border-zinc-800' };
   }
   if (comandaStatus === 'pagamento_pendente') {
-    return { label: 'Pagamento pendente', cls: 'bg-amber-500/10 text-amber-400 border border-amber-500/25' };
+    return { label: 'Pagamento pendente', cls: 'bg-[rgba(245,158,11,0.1)] text-amber-400 border border-[rgba(245,158,11,0.25)]' };
   }
   // aberta ou sem comanda (agendamento antigo)
-  return { label: 'A pagar no balcão', cls: 'bg-zinc-800/60 text-zinc-400 border border-zinc-700' };
+  return { label: 'A pagar no balcão', cls: 'bg-[rgba(39,39,42,0.6)] text-zinc-400 border border-zinc-700' };
 }

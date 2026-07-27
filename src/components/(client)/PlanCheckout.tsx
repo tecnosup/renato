@@ -115,7 +115,7 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
       id="plan-checkout-overlay"
     >
       {/* Backdrop — sem fechar ao clicar (saída só pelo X/ESC) */}
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" aria-hidden="true" />
+      <div className="absolute inset-0 bg-[rgba(0,0,0,0.8)] backdrop-blur-sm" aria-hidden="true" />
 
       {/* Painel */}
       <motion.div
@@ -123,21 +123,21 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
         animate={{ y: 0, opacity: 1, scale: 1 }}
         exit={{ y: 20, opacity: 0, scale: 0.97 }}
         transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-        className="relative w-full max-w-3xl bg-[#0b0b0d] bg-tijolo border-2 border-black rounded-3xl shadow-[0_8px_0_rgba(0,0,0,0.85),0_30px_60px_rgba(0,0,0,0.6)] overflow-hidden max-h-[90vh] flex flex-col"
+        className="relative w-full max-w-3xl bg-[#0b0b0d] border-2 border-black rounded-3xl shadow-[0_8px_0_rgba(0,0,0,0.85),0_30px_60px_rgba(0,0,0,0.6)] overflow-hidden max-h-[90vh] flex flex-col"
         role="dialog"
         aria-modal="true"
         aria-label={`Assinar ${plan.name}`}
       >
         {/* Glow ambiente — só no desktop */}
-        <div className="glow-decor absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-brand-blue/15 blur-[120px] rounded-full pointer-events-none" />
+        <div className="glow-decor absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-xxi-graphite-hi blur-[120px] rounded-full pointer-events-none" />
 
         {/* Header */}
-        <div className="relative flex items-center justify-between gap-3 px-5 py-4 border-b border-white/5 shrink-0 z-10">
+        <div className="relative flex items-center justify-between gap-3 px-5 py-4 border-b border-[rgba(255,255,255,0.05)] shrink-0 z-10">
           <div className="flex flex-col leading-none">
-            <span className="font-mono text-[8px] text-brand-blue uppercase tracking-[0.25em] font-black">
+            <span className="font-mono text-[8px] text-xxi-yellow uppercase tracking-[0.25em] font-black">
               SÉCULO XXI • CLUBE
             </span>
-            <span className="font-toon text-logo-3d text-lg uppercase tracking-wide mt-1" data-text="Assinar plano">
+            <span className="xxi-title text-lg uppercase tracking-wide mt-1" data-text="Assinar plano">
               Assinar plano
             </span>
           </div>
@@ -166,7 +166,7 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
                 className="grid grid-cols-1 md:grid-cols-[1fr_320px]"
               >
                 {/* ===== ESQUERDA — FORMULÁRIO ===== */}
-                <div className="px-5 py-5 space-y-5 md:border-r md:border-white/5">
+                <div className="px-5 py-5 space-y-5 md:border-r md:border-[rgba(255,255,255,0.05)]">
                   {/* Dados do assinante */}
                   <div className="space-y-3">
                     <h4 className="font-display font-black text-[11px] text-zinc-100 uppercase tracking-widest">
@@ -180,7 +180,7 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
                         value={nome}
                         onChange={(e) => setNome(e.target.value)}
                         placeholder="Seu nome"
-                        className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-sans text-sm text-white placeholder:text-zinc-700 focus:border-brand-blue/60 outline-none transition-colors"
+                        className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-sans text-sm text-white placeholder:text-zinc-700 focus:border-xxi-line outline-none transition-colors"
                       />
                     </div>
                     <div>
@@ -192,7 +192,7 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
                         value={telefone}
                         onChange={(e) => onTelefone(e.target.value)}
                         placeholder="(12) 99999-9999"
-                        className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-sans text-sm text-white placeholder:text-zinc-700 focus:border-brand-blue/60 outline-none transition-colors"
+                        className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-sans text-sm text-white placeholder:text-zinc-700 focus:border-xxi-line outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -210,8 +210,8 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
                   </div>
 
                   {/* Aviso de recorrência */}
-                  <div className="flex items-start gap-2.5 bg-brand-blue/5 border border-brand-blue/20 rounded-xl px-3.5 py-3">
-                    <CalendarClock className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-2.5 bg-xxi-graphite-hi border border-xxi-line rounded-xl px-3.5 py-3">
+                    <CalendarClock className="w-4 h-4 text-xxi-yellow shrink-0 mt-0.5" />
                     <p className="font-sans text-[10.5px] text-zinc-400 leading-normal">
                       Assinatura mensal de <strong className="text-zinc-200">R$ {plan.price}/{plan.period}</strong>. Você pode cancelar quando quiser, sem multa.
                     </p>
@@ -225,9 +225,9 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
                   </h4>
 
                   {/* Card do plano */}
-                  <div className="bg-white/[0.03] border-2 border-black/55 rounded-2xl p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] space-y-2">
+                  <div className="bg-white/[0.03] border-2 border-[rgba(0,0,0,0.55)] rounded-2xl p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] space-y-2">
                     <div className="flex items-center gap-2">
-                      <Crown className="w-4 h-4 text-brand-blue" />
+                      <Crown className="w-4 h-4 text-xxi-yellow" />
                       <h5 className="font-display font-black text-sm text-white uppercase leading-tight">
                         {plan.name}
                       </h5>
@@ -241,7 +241,7 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
 
                   {/* Benefícios */}
                   <div className="space-y-2">
-                    <span className="font-mono text-[8px] text-brand-blue uppercase tracking-widest font-bold">
+                    <span className="font-mono text-[8px] text-xxi-yellow uppercase tracking-widest font-bold">
                       O que está incluso
                     </span>
                     <ul className="space-y-1.5">
@@ -255,7 +255,7 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
                   </div>
 
                   {/* Total recorrente */}
-                  <div className="border-t border-white/5 pt-3 flex items-center justify-between">
+                  <div className="border-t border-[rgba(255,255,255,0.05)] pt-3 flex items-center justify-between">
                     <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Hoje</span>
                     <span className="font-display font-black text-xl text-white">R$ {plan.price},00</span>
                   </div>
@@ -265,9 +265,9 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
                     type="button"
                     onClick={handleSubscribe}
                     disabled={!canFinish}
-                    className="relative overflow-hidden w-full btn-game text-sm uppercase py-3.5 rounded-xl border-2 border-black/55 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] group/pay"
+                    className="relative overflow-hidden w-full text-sm uppercase py-3.5 rounded-xl border-2 border-[rgba(0,0,0,0.55)] bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] group/pay"
                   >
-                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover/pay:animate-shimmer" />
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.4)] to-transparent -translate-x-full group-hover/pay:animate-shimmer" />
                     <ShieldCheck className="w-4 h-4" />
                     {isDinheiro ? 'Reservar assinatura' : `Assinar por R$ ${plan.price},00`}
                   </button>
@@ -292,7 +292,7 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
                 exit={{ opacity: 0 }}
                 className="flex flex-col items-center justify-center text-center py-20 px-5 space-y-4"
               >
-                <Loader2 className="w-10 h-10 text-brand-blue animate-spin" />
+                <Loader2 className="w-10 h-10 text-xxi-yellow animate-spin" />
                 <div>
                   <p className="font-display font-black text-sm text-white uppercase tracking-wide">
                     {isDinheiro ? 'Reservando assinatura' : 'Ativando assinatura'}
@@ -315,12 +315,12 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', damping: 12, stiffness: 200, delay: 0.1 }}
-                  className="w-16 h-16 rounded-full bg-emerald-500/15 border-2 border-emerald-500/50 grid place-items-center text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.4)]"
+                  className="w-16 h-16 rounded-full bg-[rgba(16,185,129,0.15)] border-2 border-[rgba(16,185,129,0.5)] grid place-items-center text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.4)]"
                 >
                   <CheckCircle2 className="w-9 h-9" />
                 </motion.div>
                 <div>
-                  <h4 className="font-toon text-logo-3d text-xl uppercase tracking-wide" data-text={isDinheiro ? 'Assinatura reservada!' : 'Bem-vindo ao Clube!'}>
+                  <h4 className="xxi-title text-xl uppercase tracking-wide" data-text={isDinheiro ? 'Assinatura reservada!' : 'Bem-vindo ao Clube!'}>
                     {isDinheiro ? 'Assinatura reservada!' : 'Bem-vindo ao Clube!'}
                   </h4>
                   <p className="font-sans text-[11px] text-zinc-400 leading-normal mt-2 max-w-xs mx-auto">
@@ -332,12 +332,12 @@ export default function PlanCheckout({ plan, onClose }: PlanCheckoutProps) {
                 </div>
                 <div className="w-full max-w-xs bg-[#0e0e11] border-2 border-black rounded-xl px-4 py-3 flex items-center justify-between">
                   <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest font-bold">Nº da assinatura</span>
-                  <span className="font-mono text-sm text-brand-blue font-bold tracking-widest">{subId}</span>
+                  <span className="font-mono text-sm text-xxi-yellow font-bold tracking-widest">{subId}</span>
                 </div>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="w-full max-w-xs btn-game text-sm uppercase py-3.5 rounded-xl border-2 border-black/55 bg-brand-blue hover:bg-brand-blue-deep transition-all cursor-pointer active:scale-[0.98]"
+                  className="w-full max-w-xs text-sm uppercase py-3.5 rounded-xl border-2 border-[rgba(0,0,0,0.55)] bg-xxi-yellow hover:bg-xxi-yellow transition-all cursor-pointer active:scale-[0.98]"
                 >
                   Concluir
                 </button>

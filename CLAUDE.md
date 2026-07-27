@@ -39,6 +39,38 @@ Como dois agentes de IA diferentes trabalham nesse repo, é importante:
   discordar de algo que está escrito aqui (mesmo sem pedir explicitamente para mudar),
   perguntar se devemos atualizar este CLAUDE.md para refletir a nova decisão.
 
+## Compatibilidade de aparelhos (landing) — não negociável
+
+A landing roda no celular do cliente, que vem do Instagram e pode ser um
+**iPhone 7 (para no iOS 15)** ou um Android de entrada. Next 16 e Tailwind 4
+miram Safari 16.4+ por padrão, e o Tailwind **ignora o `browserslist`**.
+
+Na landing, portanto:
+
+- **Nunca** usar modificador de opacidade do Tailwind (`bg-white/10`,
+  `text-black/70`) — no Tailwind 4 isso vira `color-mix()`, que o Safari 15
+  descarta, deixando o elemento sem fundo. Usar `rgba()` ou token sólido.
+- Evitar utilitários que dependem de `@property` (gradiente, `shadow-*`
+  composta, `ring-*`, transforms combinados).
+- Layout (flex/grid/gap/breakpoints) é seguro.
+
+Detalhe completo, com o porquê e como verificar: **`docs/compatibilidade.md`**.
+
+## Identidade visual da landing
+
+A marca real está em `public/Barbearia Século 21/` (manual + logos + grafismos).
+Cores medidas dos arquivos oficiais, não estimadas: **`#ffc200`** (amarelo),
+`#1a1a1a` (grafite), `#f2f2f2` (off-white). Tokens `--color-xxi-*` no
+`globals.css`.
+
+Regra de contraste que define os pares: amarelo sobre preto e preto sobre
+amarelo passam com folga; **branco sobre amarelo dá 1.6:1 e reprova** — sobre
+amarelo, texto é preto.
+
+Logo e monograma são SVG vetorizados dos arquivos oficiais, em
+`src/components/brand/` (`Monogram`, `Lockup`) — não usar os PNGs de 4500×4500
+na web.
+
 ## Stack
 
 - Next.js 16.2.7 (Turbopack) — **atenção**: versão com mudanças relevantes em relação ao que

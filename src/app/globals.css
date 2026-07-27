@@ -1,19 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-/* Fonte de display da marca (cartoon/comic) — CC That's All Folks Bold, hospedada
-   localmente. Usada nos títulos/CTAs via .font-toon. */
-@font-face {
-  font-family: "CC Thats All Folks";
-  src: url("/fonts/CCThatsAllFolks-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+/* As fontes são carregadas por `next/font` no layout de cada área (Boldonse +
+   Poppins na landing, que é o que o manual da marca especifica). Não voltar a
+   usar `@import` de CDN aqui: um @import de folha externa é render-blocking e
+   adiava a primeira pintura no 3G — era o caso das 5 famílias (Bricolage,
+   Playfair, Space Grotesk, JetBrains, Inter) que ficavam nesta linha. */
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+}
+
+/* ============================================================================
+   IDENTIDADE DA MARCA — Barbearia Século 21
+   ----------------------------------------------------------------------------
+   Paleta e tipografia vêm do manual da marca (PDF em
+   `public/Barbearia Século 21/Manual da Marca/`), não de estimativa:
+     p. 29  cores: #000000 #333333 #808080 #f2f2f2 #ffc200 #f0eddc #ffffff
+     p. 22  fontes: Boldonse (títulos) · Poppins (texto) · Adventures (script)
+
+   Regra de contraste que define os pares possíveis (WCAG):
+     amarelo sobre preto ....... 13.0:1  ✓ pode até em texto pequeno
+     preto  sobre amarelo ...... 13.0:1  ✓
+     branco sobre amarelo ......  1.6:1  ✗ nunca — sobre amarelo, texto é preto
+   ========================================================================== */
+@theme {
+  /* Paleta oficial, página 29 do manual:
+     #000000  #333333  #808080  #f2f2f2  #ffc200  #f0eddc  #ffffff        */
+  --color-xxi-yellow: #ffc200;
+  /* Estados de pressão e sombra dura do amarelo (não é uma segunda cor de
+     marca — é o mesmo amarelo escurecido). */
+  --color-xxi-yellow-deep: #d9a400;
+  --color-xxi-yellow-dark: #9c7600;
+
+  --color-xxi-ink: #000000;
+  /* Superfícies entre o preto e o #333 do manual — degraus de elevação. */
+  --color-xxi-graphite: #141414;
+  --color-xxi-graphite-hi: #1f1f1f;
+  --color-xxi-line: #333333;
+
+  --color-xxi-white: #f2f2f2;
+  /* Cinza médio do manual: é o token de texto secundário. */
+  --color-xxi-mute: #808080;
+  /* Creme do manual — único tom quente da paleta. Usar com parcimônia, em
+     texto sobre preto onde o branco puro fica duro demais. */
+  --color-xxi-cream: #f0eddc;
 }
 
 @theme inline {
@@ -23,24 +54,14 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Inter", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
-  --font-display: "Playfair Display", serif;
-  --font-serif: "Playfair Display", serif;
-  /* Fonte de identidade da LANDING (não usar no admin) */
-  --font-brand: "Bricolage Grotesque", "Inter", sans-serif;
-
-  --color-gold: #c2a35d;
-  --color-gold-light: #ece4cb;
-  --color-sleek-dark: #090a0a;
-  --color-card-dark: #121314;
-
-  /* Identidade tricolor da marca (logo graffiti vermelho/azul/branco) */
-  --color-brand-red: #e23a2e;
-  --color-brand-red-deep: #b81e16;
-  --color-brand-blue: #2b4fb8;
-  --color-brand-blue-deep: #1d3585;
-  --color-brand-cream: #f4f4f2;
+  /* Tipografia do manual (p. 22): Poppins no texto, Boldonse nos títulos. */
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Mono de sistema: zero download e idêntica em uso (tabelas, valores). */
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  /* A Boldonse é bem mais larga que a Poppins; o fallback usa Poppins 900
+     para o salto de largura não ser gritante enquanto ela carrega. */
+  --font-display: var(--font-boldonse), var(--font-poppins), system-ui, sans-serif;
+  --font-serif: var(--font-boldonse), var(--font-poppins), sans-serif;
 }
 
 /* Tokens do tema do painel admin (Configurações > Tema).
@@ -172,119 +193,251 @@ body {
 }
 
 @layer utilities {
-  /* Tipografia de identidade da LANDING: dentro de .landing-fonts, os títulos
-     (font-display) e os textos serifados (font-serif) passam a usar a
-     Bricolage Grotesque. O admin não usa esta classe, então fica intocado. */
-  .landing-fonts .font-display,
-  .landing-fonts .font-serif {
-    font-family: var(--font-brand) !important;
+  /* ======================================================================
+     SISTEMA VISUAL DA LANDING — Barbearia Século 21
+     ----------------------------------------------------------------------
+     Regra de compatibilidade destas classes: nada de `color-mix()` e nada
+     que dependa de `@property`. As duas coisas pedem Safari 16.4+, e o
+     iPhone 7 para no iOS 15 — quando o navegador não entende a função, ele
+     descarta a declaração inteira e o elemento fica sem fundo/sem borda.
+     Transparência aqui é sempre rgba() literal; nunca `bg-branco/10`.
+     ====================================================================== */
+
+  /* Rótulo de seção. Em Poppins Black, não na display: a Boldonse em corpo
+     pequeno com tracking aberto fica ilegível. */
+  .xxi-eyebrow {
+    font-family: var(--font-sans);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.75rem;
+    line-height: 1;
+    color: var(--color-xxi-yellow);
   }
 
-  /* ASPECTO "LOGO DE JOGO" (anydesign sobre a logo): fonte spray + contorno preto
-     GROSSO atrás do fill (paint-order) + sombra dupla. O contorno é 47% da arte da
-     logo — é ele que dá a cara de pichação. Ver docs/element-logo-cta.md.
+  /* Títulos em Boldonse caixa-alta — o manual pede caixa alta ("imponente:
+     valorizar letra caixa", p. 23).
 
-     .btn-game  → só o EFEITO (fill creme padrão), reutilizável em qualquer botão,
-                  preservando a cor/gradiente que o botão já tem no fundo.
-     .font-graffiti → alias mantido para os CTAs do hero (mesmo efeito). */
-  /* Fonte cartoon/comic da marca (CC That's All Folks) — display dos títulos/CTAs.
-     Diferente da Rubik Spray Paint, ela é legível mesmo em tamanho menor. */
-  .font-toon {
-    font-family: "CC Thats All Folks", var(--font-brand), sans-serif !important;
-    font-style: normal !important;
-    letter-spacing: 0.01em;
+     ATENÇÃO ao line-height. Medido no navegador com TextMetrics, a maiúscula
+     da Boldonse tem 1,21em de altura de tinta — contra 0,71em da Poppins no
+     mesmo font-size. Ou seja: qualquer line-height menor que 1.21 faz as
+     linhas se sobreporem, por definição. 1.38 deixa ~0,17em de respiro entre
+     elas. Não baixar disso sem medir de novo.
+     A largura também é fora do comum: 0,766em por caractere em caixa alta
+     (Poppins: 0,647em) — é o que faz um título estourar telas estreitas. */
+  .xxi-title {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 400;
+    line-height: 1.38;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    /* A Boldonse é larga; em telas estreitas uma palavra comprida
+       ("ASSINATURAS") passaria da borda sem isso. */
+    overflow-wrap: break-word;
   }
 
-  /* Lettering tricolor da logo: 2 camadas sobrepostas (gradiente NÃO convive com
-     duplo contorno na mesma camada — por isso separamos).
-     - ::before  = camada de baixo: o MESMO texto, opaco, só com os contornos
-       (preto fino por dentro + dourado por fora via text-shadow) + profundidade.
-     - elemento  = camada de cima: o gradiente vertical branco→azul→branco→vermelho
-       clipado no texto, cobrindo o miolo e deixando só os contornos aparecerem.
-     Requer atributo data-text com o mesmo texto. Tudo CSS — não pesa. */
-  .text-logo-3d {
-    position: relative;
-    display: inline-block;
-    /* 4 faixas sólidas branco→azul→branco→vermelho, proporção 20/30/15/35,
-       transição mínima entre elas (~1.5%). */
-    background-image: linear-gradient(
-      180deg,
-      #ffffff 0%,
-      #ffffff 19%,
-      #5a93de 21%,
-      #5a93de 49%,
-      #f4f1ea 51%,
-      #f4f1ea 64%,
-      #e23a2e 66%,
-      #e23a2e 100%
-    ) !important;
-    -webkit-background-clip: text !important;
-    background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    color: transparent !important;
+  /* Escala fluida de título: o tamanho acompanha a largura da tela
+     continuamente, então não existe a faixa entre dois breakpoints em que o
+     texto fica grande demais para caber. */
+
+  /* Título do hero: linhas curtas empilhadas, escala de cartaz. Cada linha é
+     um bloco próprio, então nenhuma quebra sozinha e o line-height governa
+     todo o respiro. */
+  /* Hero. O teto de tamanho vem de conta, não de gosto: a linha mais longa
+     ("SEM FILA.", 9 caracteres) ocupa 9 × 0,766em = 6,9em de largura, e
+     precisa caber em (100vw − 40px de respiro). Em 320px isso dá ~40px, e
+     12vw = 38,4px — passa com folga. Mexer no texto do h1 exige refazer
+     esta conta. */
+  .xxi-title-hero {
+    font-size: clamp(2rem, 12vw, 5.5rem);
+    line-height: 1.46;
+    letter-spacing: -0.025em;
   }
-  .text-logo-3d::before {
-    content: attr(data-text);
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: -1;
-    color: #000; /* miolo opaco da camada de baixo (some atrás do gradiente) */
-    -webkit-text-fill-color: #000;
-    /* preto fino por dentro + prata por fora (contornos discretos, distância
-       reduzida para não fechar hastes finas como a cedilha do "ç")
-       + halo escuro difuso que "apaga" o fundo atrás do texto (legibilidade). */
+
+  /* Relevo de letreiro de fachada — letra em caixa montada na parede, com
+     profundidade e o halo de quem está aceso. É a mesma leitura da placa da
+     loja real.
+
+     Como funciona: uma pilha de text-shadow sólidos deslocados para baixo
+     desenha a "lateral" da letra; depois vem uma sombra difusa (o contato com
+     a parede) e um halo da própria cor (a luz). Tudo em `em`, então a
+     profundidade acompanha o tamanho da fonte sozinha.
+
+     Por que text-shadow e não transform 3D: isto é pintado uma única vez e
+     não cria camada de composição nem anima — num aparelho antigo custa o
+     mesmo que texto comum, enquanto um `transform: perspective()` por letra
+     custaria uma camada de GPU para cada uma. */
+  .xxi-relevo {
+    --relevo-face: #6b5200;
+    --relevo-halo: rgba(255, 194, 0, 0.28);
     text-shadow:
-      -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000,
-      -1px 0 0 #c8ccd4, 1px 0 0 #c8ccd4, 0 -1px 0 #c8ccd4, 0 1px 0 #c8ccd4,
-      0 0 8px rgba(0, 0, 0, 0.9), 0 0 16px rgba(0, 0, 0, 0.8), 0 3px 10px rgba(0, 0, 0, 0.7);
+      0 0.014em 0 var(--relevo-face),
+      0 0.028em 0 var(--relevo-face),
+      0 0.042em 0 var(--relevo-face),
+      0 0.056em 0 var(--relevo-face),
+      0 0.07em 0 var(--relevo-face),
+      0 0.085em 0.03em rgba(0, 0, 0, 0.7),
+      0 0 0.5em var(--relevo-halo);
+  }
+  /* Linha clara: a lateral da letra puxa para o cinza do manual, e o halo é
+     branco — é assim que a placa da fachada se lê à noite. */
+  .xxi-relevo-claro {
+    --relevo-face: #4a4a4a;
+    --relevo-halo: rgba(242, 242, 242, 0.22);
   }
 
-  .btn-game,
-  .font-graffiti {
-    font-family: "CC Thats All Folks", var(--font-brand), sans-serif !important;
-    color: #f0ebe4 !important;
-    paint-order: stroke fill;
-    -webkit-text-stroke: 2px #000000;
-    text-shadow:
-      0 2px 0 rgba(0, 0, 0, 0.7),
-      0 3px 8px rgba(0, 0, 0, 0.5);
-    letter-spacing: 0.02em;
+  /* Letra vazada — o recurso tipográfico do manual (p. 20), onde o lettering
+     aparece só em contorno. Aqui é o miolo da composição do hero: a linha do
+     meio fica em contorno e as vizinhas cheias, criando o ritmo.
+     `-webkit-text-stroke` é o caminho com suporte largo (Safari desde o 5). */
+  .xxi-outline {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-xxi-yellow);
+    /* text-shadow atravessaria o miolo vazado da letra; o drop-shadow segue o
+       contorno de verdade. Um filtro só — dois já pesariam no celular. */
+    filter: drop-shadow(0 0.05em 0.02em rgba(0, 0, 0, 0.85));
   }
-  /* CTAs grandes do hero levam contorno mais grosso; botões menores (.btn-game-sm)
-     ficam com stroke fino para não fechar as letras. */
   @media (min-width: 640px) {
-    .font-graffiti {
-      -webkit-text-stroke: 4px #000000;
-    }
-    .btn-game {
-      -webkit-text-stroke: 2.5px #000000;
+    .xxi-outline {
+      -webkit-text-stroke-width: 2.5px;
     }
   }
-  .btn-game-sm {
-    -webkit-text-stroke: 1.5px #000000 !important;
+  /* Se o navegador não fizer text-stroke, o texto ficaria invisível — este
+     bloco devolve o preenchimento nesse caso. */
+  @supports not (-webkit-text-stroke: 1px red) {
+    .xxi-outline {
+      color: var(--color-xxi-yellow);
+      -webkit-text-fill-color: var(--color-xxi-yellow);
+    }
   }
-  /* Gradiente de TEXTO da marca (tons da logo): azul dessaturado → vinho médio.
-     Limpo, sem contorno — fonte spray/contorno só funciona em texto grande (botões),
-     em título fino vira borrão ilegível. */
-  .text-grad-logo {
-    background-image: linear-gradient(to right, #7cc6e6 0%, #e23a2e 100%) !important;
-    -webkit-background-clip: text !important;
-    background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    color: transparent !important;
-    /* Sombra escura sutil para destacar as letras do fundo (contraste). */
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.85));
+  .xxi-title-lg {
+    font-size: clamp(1.75rem, 6vw, 2.75rem);
+  }
+  .xxi-title-md {
+    font-size: clamp(1.125rem, 3.4vw, 1.5rem);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
   }
 
-  /* Variante para botão de FUNDO CLARO (ex: prata): fill escuro + contorno
-     branco, para o aspecto de jogo "invertido" ainda contrastar. */
-  .btn-game-light {
-    color: #16245c !important;
-    -webkit-text-stroke: 2px #ffffff !important;
-    text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.7),
-      0 2px 6px rgba(0, 0, 0, 0.2);
+  /* Corpo de texto: largura de leitura confortável (~65 caracteres) sem
+     estourar telas estreitas — em 360px, 62ch sozinho passaria da viewport. */
+  .xxi-prose {
+    max-width: min(62ch, 100%);
+    line-height: 1.7;
+    color: var(--color-xxi-mute);
+  }
+
+  /* --- Botões ---------------------------------------------------------
+     Sombra dura deslocada (placa de rua) que encolhe ao pressionar. O
+     estado de pressão está em :active, não em :hover — no celular não
+     existe hover, e o retorno tátil é o que confirma o toque.
+     min-height 48px cobre o alvo mínimo de 44px com folga. */
+  /* O `display` sai num :where() — especificidade zero — para que utilitários
+     do Tailwind como `hidden` ou `sm:inline-flex` consigam sobrepor. Sem isso
+     um botão marcado `hidden sm:inline-flex` aparecia no celular, porque
+     .xxi-btn e .hidden empatam em especificidade e vence quem vem depois. */
+  :where(.xxi-btn) {
+    display: inline-flex;
+  }
+
+  .xxi-btn {
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+    /* Poppins Black, não Boldonse: a display é larga demais para caber num
+       botão junto do ícone em telas estreitas. */
+    font-family: var(--font-sans);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.9375rem;
+    line-height: 1;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
+  }
+
+  .xxi-btn-primary {
+    background-color: var(--color-xxi-yellow);
+    color: #000000;
+    border-color: #000000;
+    box-shadow: 0 4px 0 var(--color-xxi-yellow-dark);
+  }
+  .xxi-btn-primary:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--color-xxi-yellow-dark);
+  }
+
+  /* Secundário sobre fundo escuro: contorno, sem peso de cor. */
+  .xxi-btn-ghost {
+    background-color: transparent;
+    color: var(--color-xxi-white);
+    border-color: rgba(242, 242, 242, 0.28);
+  }
+  .xxi-btn-ghost:active {
+    transform: translateY(2px);
+    background-color: rgba(242, 242, 242, 0.07);
+  }
+
+
+  @media (hover: hover) {
+    .xxi-btn-primary:hover { background-color: #ffcf2e; }
+    .xxi-btn-ghost:hover { border-color: var(--color-xxi-yellow); color: var(--color-xxi-yellow); }
+    .xxi-btn-ink:hover { background-color: #141414; }
+  }
+
+  /* --- Superfícies ----------------------------------------------------
+     Card sólido, sem blur. `backdrop-filter` empilhado era o que saturava
+     a GPU dos aparelhos antigos; opacidade sólida custa zero. */
+  .xxi-card {
+    background-color: var(--color-xxi-graphite);
+    border: 1px solid var(--color-xxi-line);
+  }
+  .xxi-card-hi {
+    background-color: var(--color-xxi-graphite-hi);
+    border: 1px solid #3a3a3a;
+  }
+
+  /* Textura do monograma do manual, em amarelo sobre escuro. É respiro, não
+     wallpaper: opacidade baixa e sempre atrás do conteúdo. */
+  .xxi-pattern {
+    position: relative;
+    isolation: isolate;
+  }
+  .xxi-pattern::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: url("/img/xxi-pattern.svg");
+    background-size: 240px auto;
+    background-repeat: repeat;
+    opacity: 0.05;
+    pointer-events: none;
+  }
+
+
+  /* Foco visível e consistente: contorno amarelo com folga. Vale para
+     teclado e para navegação por controle. */
+  .xxi-btn:focus-visible,
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid var(--color-xxi-yellow);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Números alinhados em coluna (preços, horários, durações). */
+  .xxi-nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
   }
 
   /* Cards/painéis do admin, adaptados por tema via tokens em [data-theme] */
@@ -393,118 +546,10 @@ body {
     box-shadow: var(--admin-nav-center-shadow);
   }
 
-  .perspective-1000 {
-    perspective: 1000px;
-  }
-  .preserve-3d {
-    transform-style: preserve-3d;
-  }
-  .backface-hidden {
-    backface-visibility: hidden;
-  }
 
-  .gradient-text {
-    background: linear-gradient(135deg, #f6f5f0 30%, #c2a35d 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
 
-  .gold-border {
-    border: 1px solid #c2a35d;
-  }
-
-  .border-gold-subtle {
-    border-color: rgba(194, 163, 93, 0.2);
-  }
-
-  .bg-pattern {
-    background-image: radial-gradient(circle at 2px 2px, rgba(194, 163, 93, 0.04) 1px, transparent 0);
-    background-size: 40px 40px;
-  }
-
-  .depth-card {
-    box-shadow:
-      0 30px 60px -20px rgba(0,0,0,0.9),
-      0 1px 1px rgba(255,255,255,0.03) inset;
-    border: 1px solid rgb(24, 25, 27);
-  }
-
-  /* ===== Landing (client) — performance mobile =====
-     Cards "liquid glass" da landing. No mobile usamos fundo sólido (sem
-     backdrop-filter) porque o blur empilhado satura a GPU de aparelhos
-     antigos (ex.: iPhone 8) e trava a página. A partir de 768px volta o
-     vidro translúcido com blur. Use estas classes em vez de
-     "bg-white/5 backdrop-blur-*" nos componentes de (client). */
-  /* Cards da landing no estilo COMIC/GAME (alinhado ao lettering de pixação):
-     borda preta marcada (2px) + sombra média mais "encorpada" que o vidro etéreo.
-     Fundo mais sólido (menos translúcido) para dar peso de placa urbana. */
-  .glass-card {
-    background-color: rgba(14, 14, 17, 0.92);
-    border: 2px solid #f0ebe4 !important;
-    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.85), 0 8px 20px rgba(0, 0, 0, 0.5) !important;
-  }
-  .glass-card-strong {
-    background-color: rgba(10, 10, 12, 0.95);
-    border: 2px solid #f0ebe4 !important;
-    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.85), 0 10px 24px rgba(0, 0, 0, 0.55) !important;
-  }
-  @media (min-width: 768px) {
-    .glass-card {
-      background-color: rgba(16, 16, 19, 0.9);
-    }
-    .glass-card-strong {
-      background-color: rgba(10, 10, 12, 0.92);
-    }
-  }
-
-  /* === Vocabulário visual GTA/street (HUD) reutilizável ===
-     hud-card     : painel com borda creme + sombra dura (sticker). Cantos retos.
-     hud-shadow   : só a sombra dura deslocada (para aplicar em outros elementos).
-     hud-stripe   : faixa zebrada dourada (fita de obra) — usar como faixa fina. */
-  .hud-card {
-    background-color: rgba(14, 14, 17, 0.94);
-    border: 2px solid #f0ebe4 !important;
-    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.85), 0 10px 24px rgba(0, 0, 0, 0.5) !important;
-  }
-  .hud-shadow {
-    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.85), 0 10px 24px rgba(0, 0, 0, 0.5) !important;
-  }
-  .hud-stripe {
-    background-image: repeating-linear-gradient(45deg, #c8ccd4 0 14px, #0b0b0d 14px 28px);
-  }
-  /* Fundo de TIJOLO da seção (mesma parede do hero), escurecido por uma camada
-     sobreposta para legibilidade. Aplicar na <section> + position:relative. */
-  .bg-tijolo {
-    position: relative;
-    isolation: isolate;
-  }
-  .bg-tijolo::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-    /* Versão já pré-processada (cinza + contraste) — evita aplicar
-       filter: grayscale()/contrast() em runtime numa camada cover de tela
-       inteira, que causava repaints pesados no iOS durante o scroll. */
-    background-image: url("/img/fundohero-tijolo.webp");
-    background-size: cover;
-    background-position: center;
-    opacity: 0.2;
-  }
-  .bg-tijolo::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: radial-gradient(
-      circle at 50% 40%,
-      rgba(11, 11, 13, 0.72) 0%,
-      rgba(7, 7, 9, 0.93) 100%
-    );
-  }
-
-  /* Glow decorativo borrado (blur-2xl/3xl atrás de cards/orbs). Caro no
-     mobile e puramente estético — escondido abaixo de 768px. */
+  /* Glow decorativo borrado atrás de cards. Caro no mobile e puramente
+     estético — escondido abaixo de 768px. */
   .glow-decor { display: none; }
   @media (min-width: 768px) {
     .glow-decor { display: block; }

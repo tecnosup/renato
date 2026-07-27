@@ -89,7 +89,7 @@ export default function PaymentMethodFields({
               onClick={() => setForma(f)}
               className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 border-black transition-all cursor-pointer ${
                 active
-                  ? "bg-brand-blue text-white shadow-[0_4px_0_rgba(0,0,0,0.85)]"
+                  ? "bg-xxi-yellow text-white shadow-[0_4px_0_rgba(0,0,0,0.85)]"
                   : "bg-[#0e0e11] text-zinc-400 hover:text-white shadow-[0_4px_0_rgba(0,0,0,0.6)] active:translate-y-[2px] active:shadow-none"
               }`}
             >
@@ -113,7 +113,7 @@ export default function PaymentMethodFields({
         <>
       {/* PIX */}
       {forma === "Pix" && (
-        <div className="flex flex-col items-center text-center space-y-3 bg-white/[0.03] border-2 border-black/55 rounded-2xl p-5">
+        <div className="flex flex-col items-center text-center space-y-3 bg-white/[0.03] border-2 border-[rgba(0,0,0,0.55)] rounded-2xl p-5">
           <div className="w-32 h-32 sm:w-40 sm:h-40 bg-white rounded-xl grid place-items-center p-2.5">
             {/* QR placeholder (estático) — ligar gerador real depois */}
             <QrCode className="w-full h-full text-black" strokeWidth={1} />
@@ -124,10 +124,10 @@ export default function PaymentMethodFields({
           <button
             type="button"
             onClick={copyPix}
-            className="w-full flex items-center justify-between gap-2 bg-[#0e0e11] border-2 border-black rounded-xl px-3.5 py-2.5 text-left cursor-pointer hover:border-brand-blue/50 transition-colors"
+            className="w-full flex items-center justify-between gap-2 bg-[#0e0e11] border-2 border-black rounded-xl px-3.5 py-2.5 text-left cursor-pointer hover:border-xxi-line transition-colors"
           >
             <span className="font-mono text-[9px] text-zinc-400 truncate">{pixCode}</span>
-            <span className="shrink-0 text-brand-blue">
+            <span className="shrink-0 text-xxi-yellow">
               {pixCopied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
             </span>
           </button>
@@ -141,7 +141,7 @@ export default function PaymentMethodFields({
 
       {/* CARTÃO (Débito ou Crédito — mesmos campos) */}
       {isCartao(forma) && (
-        <div className="space-y-3 bg-white/[0.03] border-2 border-black/55 rounded-2xl p-4">
+        <div className="space-y-3 bg-white/[0.03] border-2 border-[rgba(0,0,0,0.55)] rounded-2xl p-4">
           <div>
             <label className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest font-bold block mb-1">
               Número do cartão
@@ -151,7 +151,7 @@ export default function PaymentMethodFields({
               value={cardNumber}
               onChange={(e) => onCardNumber(e.target.value)}
               placeholder="0000 0000 0000 0000"
-              className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-mono text-sm text-white tracking-widest placeholder:text-zinc-700 focus:border-brand-blue/60 outline-none transition-colors"
+              className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-mono text-sm text-white tracking-widest placeholder:text-zinc-700 focus:border-xxi-line outline-none transition-colors"
             />
           </div>
           <div>
@@ -162,7 +162,7 @@ export default function PaymentMethodFields({
               value={cardName}
               onChange={(e) => setCardName(e.target.value.toUpperCase())}
               placeholder="COMO ESTÁ NO CARTÃO"
-              className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-mono text-sm text-white uppercase placeholder:text-zinc-700 focus:border-brand-blue/60 outline-none transition-colors"
+              className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-mono text-sm text-white uppercase placeholder:text-zinc-700 focus:border-xxi-line outline-none transition-colors"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -175,7 +175,7 @@ export default function PaymentMethodFields({
                 value={cardExpiry}
                 onChange={(e) => onExpiry(e.target.value)}
                 placeholder="MM/AA"
-                className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-mono text-sm text-white tracking-widest placeholder:text-zinc-700 focus:border-brand-blue/60 outline-none transition-colors"
+                className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-mono text-sm text-white tracking-widest placeholder:text-zinc-700 focus:border-xxi-line outline-none transition-colors"
               />
             </div>
             <div>
@@ -187,7 +187,7 @@ export default function PaymentMethodFields({
                 value={cardCvv}
                 onChange={(e) => setCardCvv(e.target.value)}
                 placeholder="000"
-                className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-mono text-sm text-white tracking-widest placeholder:text-zinc-700 focus:border-brand-blue/60 outline-none transition-colors"
+                className="w-full bg-[#0e0e11] border-2 border-black rounded-lg px-3 py-2.5 font-mono text-sm text-white tracking-widest placeholder:text-zinc-700 focus:border-xxi-line outline-none transition-colors"
               />
             </div>
           </div>
@@ -201,8 +201,8 @@ export default function PaymentMethodFields({
 
       {/* DINHEIRO */}
       {forma === "Dinheiro" && (
-        <div className="flex items-start gap-3 bg-white/[0.03] border-2 border-black/55 rounded-2xl p-4">
-          <div className="w-10 h-10 shrink-0 rounded-full bg-emerald-500/15 border-2 border-emerald-500/40 grid place-items-center text-emerald-400">
+        <div className="flex items-start gap-3 bg-white/[0.03] border-2 border-[rgba(0,0,0,0.55)] rounded-2xl p-4">
+          <div className="w-10 h-10 shrink-0 rounded-full bg-[rgba(16,185,129,0.15)] border-2 border-[rgba(16,185,129,0.4)] grid place-items-center text-emerald-400">
             <Banknote className="w-5 h-5" />
           </div>
           <p className="font-sans text-[11px] text-zinc-400 leading-relaxed">{dinheiroHint}</p>

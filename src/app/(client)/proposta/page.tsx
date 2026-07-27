@@ -82,8 +82,8 @@ export default function PropostaPage() {
       {/* Background ambient */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-[#020202] via-[#080808] to-[#020202]" />
-        <div className="absolute top-[-10%] right-[-15%] w-[700px] h-[700px] bg-[#c8ccd4]/5 rounded-full blur-[140px] hidden md:block" />
-        <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] bg-[#c8ccd4]/4 rounded-full blur-[130px] hidden md:block" />
+        <div className="absolute top-[-10%] right-[-15%] w-[700px] h-[700px] bg-[rgba(200,204,212,0.05)] rounded-full blur-[140px] hidden md:block" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] bg-[rgba(200,204,212,0.04)] rounded-full blur-[130px] hidden md:block" />
       </div>
 
       {/* HERO */}
@@ -92,7 +92,7 @@ export default function PropostaPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2.5 font-sans text-[9px] text-[#c8ccd4] uppercase tracking-[0.35em] font-bold bg-[#c8ccd4]/5 border border-[#c8ccd4]/10 px-4 py-1.5 rounded-full mb-6"
+          className="inline-flex items-center gap-2.5 font-sans text-[9px] text-[#c8ccd4] uppercase tracking-[0.35em] font-bold bg-[rgba(200,204,212,0.05)] border border-[rgba(200,204,212,0.1)] px-4 py-1.5 rounded-full mb-6"
         >
           <span className="inline-block w-1.5 h-1.5 bg-[#c8ccd4] rounded-full" />
           PROPOSTA EXCLUSIVA · BARBEARIA SÉCULO XXI
@@ -183,11 +183,11 @@ export default function PropostaPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6 }}
-          className="relative bg-white/5 backdrop-blur-xl border border-[#c8ccd4]/20 rounded-3xl p-8 sm:p-10 overflow-hidden"
+          className="relative bg-[rgba(255,255,255,0.05)] backdrop-blur-xl border border-[rgba(200,204,212,0.2)] rounded-3xl p-8 sm:p-10 overflow-hidden"
         >
-          <div className="absolute -top-10 -right-10 w-48 h-48 bg-[#c8ccd4]/10 rounded-full blur-[80px]" />
+          <div className="absolute -top-10 -right-10 w-48 h-48 bg-[rgba(200,204,212,0.1)] rounded-full blur-[80px]" />
           <div className="flex flex-col sm:flex-row items-start gap-6 relative z-10">
-            <div className="w-14 h-14 rounded-2xl bg-[#c8ccd4]/10 border border-[#c8ccd4]/30 flex items-center justify-center shrink-0">
+            <div className="w-14 h-14 rounded-2xl bg-[rgba(200,204,212,0.1)] border border-[rgba(200,204,212,0.3)] flex items-center justify-center shrink-0">
               <MessageCircle className="w-7 h-7 text-[#c8ccd4]" />
             </div>
             <div>
@@ -226,7 +226,7 @@ export default function PropostaPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.5 }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-7 sm:p-8 flex flex-col"
+            className="bg-[rgba(255,255,255,0.05)] backdrop-blur-xl border border-[rgba(255,255,255,0.1)] rounded-3xl p-7 sm:p-8 flex flex-col"
           >
             <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-[0.25em] font-bold mb-2">
               NOVA UNIDADE
@@ -252,7 +252,7 @@ export default function PropostaPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="relative bg-white/5 backdrop-blur-xl border-2 border-[#c8ccd4]/50 rounded-3xl p-7 sm:p-8 flex flex-col shadow-[0_0_40px_rgba(200, 204, 212,0.15)]"
+            className="relative bg-[rgba(255,255,255,0.05)] backdrop-blur-xl border-2 border-[rgba(200,204,212,0.5)] rounded-3xl p-7 sm:p-8 flex flex-col shadow-[0_0_40px_rgba(200, 204, 212,0.15)]"
           >
             <span className="absolute -top-3 right-6 bg-linear-to-r from-[#eef1f5] to-[#c8ccd4] text-slate-950 font-sans text-[9px] font-black tracking-[0.2em] uppercase px-4 py-1.5 rounded-full shadow-lg">
               MAIS VANTAJOSO
@@ -289,9 +289,9 @@ export default function PropostaPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.5 }}
-          className="mt-6 bg-black/30 border border-white/5 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-4 text-left"
+          className="mt-6 bg-[rgba(0,0,0,0.3)] border border-[rgba(255,255,255,0.05)] rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-4 text-left"
         >
-          <div className="w-10 h-10 rounded-xl bg-[#c8ccd4]/10 border border-[#c8ccd4]/20 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[rgba(200,204,212,0.1)] border border-[rgba(200,204,212,0.2)] flex items-center justify-center shrink-0">
             <Gift className="w-5 h-5 text-[#c8ccd4]" />
           </div>
           <p className="font-sans text-sm text-zinc-400 leading-relaxed">
@@ -326,7 +326,7 @@ export default function PropostaPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="relative z-10 border-t border-white/5 mt-12 py-10 px-4 md:px-8">
+      <footer className="relative z-10 border-t border-[rgba(255,255,255,0.05)] mt-12 py-10 px-4 md:px-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 bg-[#c8ccd4] text-black rounded-full flex items-center justify-center">
@@ -354,7 +354,7 @@ function SectionHeader({ tag, title }: { tag: string; title: React.ReactNode }) 
       transition={{ duration: 0.5 }}
       className="mb-8 text-center sm:text-left"
     >
-      <span className="font-mono text-[9px] text-[#c8ccd4]/70 uppercase tracking-[0.25em] font-bold">
+      <span className="font-mono text-[9px] text-[rgba(200,204,212,0.7)] uppercase tracking-[0.25em] font-bold">
         {tag}
       </span>
       <h2 className="font-display font-light text-2xl sm:text-3xl text-zinc-100 mt-2">
@@ -380,10 +380,10 @@ function FeatureCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
-      className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 flex flex-col gap-3"
+      className="bg-[rgba(255,255,255,0.05)] backdrop-blur-xl border border-[rgba(255,255,255,0.1)] rounded-2xl p-5 flex flex-col gap-3"
     >
       <div className="flex items-center justify-between">
-        <div className="w-9 h-9 rounded-xl bg-[#c8ccd4]/10 border border-[#c8ccd4]/20 flex items-center justify-center">
+        <div className="w-9 h-9 rounded-xl bg-[rgba(200,204,212,0.1)] border border-[rgba(200,204,212,0.2)] flex items-center justify-center">
           <Icon className="w-4.5 h-4.5 text-[#c8ccd4]" />
         </div>
         {done && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}

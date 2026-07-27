@@ -24,6 +24,15 @@
 .DS_Store
 *.pem
 
+# Arquivos-fonte da marca (Illustrator, vídeo, PDFs de gráfica, PNGs 4500×4500):
+# ~198 MB que o git guardaria para sempre e que a web não usa. Ficam no Drive.
+# O que o site precisa já saiu daqui otimizado:
+#   public/img/marca/*.webp   — fotos (equipe, ambiente, fachada)
+#   public/img/xxi-pattern.svg — grafismo
+#   src/components/brand/     — monograma e lockup vetorizados
+# Para reprocessar, baixe a pasta do Drive e veja docs/marca.md.
+/public/Barbearia Século 21/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
